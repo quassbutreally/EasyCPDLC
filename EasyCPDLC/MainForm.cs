@@ -110,11 +110,17 @@ namespace EasyCPDLC
             popupMenu.Items.Add(deleteMenu);
         }
 
-        private void ReplyMessage(object sender, EventArgs e)
+        private Control SenderToControl(object sender)
         {
             ToolStripItem _sender = (ToolStripItem)sender;
             ContextMenuStrip menu = (ContextMenuStrip)_sender.Owner;
             Control sourceControl = menu.SourceControl;
+            return sourceControl;
+        }
+
+        private void ReplyMessage(object sender, EventArgs e)
+        {
+            Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             if (message.type == "TELEX")
@@ -126,9 +132,7 @@ namespace EasyCPDLC
 
         private void AcknowledgeMessage(object sender, EventArgs e)
         {
-            ToolStripItem _sender = (ToolStripItem)sender;
-            ContextMenuStrip menu = (ContextMenuStrip)_sender.Owner;
-            Control sourceControl = menu.SourceControl;
+            Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
@@ -137,9 +141,7 @@ namespace EasyCPDLC
 
         private void WilcoMessage(object sender, EventArgs e)
         {
-            ToolStripItem _sender = (ToolStripItem)sender;
-            ContextMenuStrip menu = (ContextMenuStrip)_sender.Owner;
-            Control sourceControl = menu.SourceControl;
+            Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
@@ -148,9 +150,7 @@ namespace EasyCPDLC
 
         private void StandbyMessage(object sender, EventArgs e)
         {
-            ToolStripItem _sender = (ToolStripItem)sender;
-            ContextMenuStrip menu = (ContextMenuStrip)_sender.Owner;
-            Control sourceControl = menu.SourceControl;
+            Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
@@ -159,9 +159,7 @@ namespace EasyCPDLC
 
         private void UnableMessage(object sender, EventArgs e)
         {
-            ToolStripItem _sender = (ToolStripItem)sender;
-            ContextMenuStrip menu = (ContextMenuStrip)_sender.Owner;
-            Control sourceControl = menu.SourceControl;
+            Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
