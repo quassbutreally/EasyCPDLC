@@ -38,6 +38,7 @@ namespace EasyCPDLC
         ToolStripMenuItem wilcoMenu;
         ToolStripMenuItem standbyMenu;
         ToolStripMenuItem unableMenu;
+        ToolStripMenuItem deleteMenu;
         private SoundPlayer player = new SoundPlayer(Properties.Resources.honk);
         private RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
         private Pilots pilotList;
@@ -105,9 +106,8 @@ namespace EasyCPDLC
             //replyMenu.DropDownItems.Add(standbyMenu);
             standbyMenu.Click += StandbyMessage;
 
-            ToolStripMenuItem deleteMenu = createMenuItem("DELETE");
+            deleteMenu = createMenuItem("DELETE");
             deleteMenu.Click += DeleteElement;
-            popupMenu.Items.Add(deleteMenu);
         }
 
         private Control SenderToControl(object sender)
@@ -125,6 +125,7 @@ namespace EasyCPDLC
 
             if (message.type == "TELEX")
             {
+                message.acknowledged = true;
                 TelexForm tForm = new TelexForm(this, message.recipient);
                 tForm.Show();
             }
@@ -217,7 +218,7 @@ namespace EasyCPDLC
                 await Task.Delay(interval, cancellationToken);
             }
         }
-        public async Task SendCPDLCMessage(string recipient, string messageType, string packetData)
+        public async Task SendCPDLCMessage(string recipient, string messageType, string packetData, bool _outbound = true)
         {
             var connectionValues = new Dictionary<string, string> {
                 {"logon", logonCode},
@@ -234,7 +235,7 @@ namespace EasyCPDLC
 
             if (messageType != "poll")
             {
-                WriteMessage(packetData, messageType, "POLL");
+                WriteMessage(packetData, messageType, "POLL", _outbound);
             }
 
             if (printString != "OK")
@@ -247,9 +248,9 @@ namespace EasyCPDLC
             return;
 
         }
-        private CPDLCMessage createCPDLCMessage(string _text, string _type, string _recipient)
+        private CPDLCMessage createCPDLCMessage(string _text, string _type, string _recipient, bool _outbound = false)
         {
-            CPDLCMessage _message = new CPDLCMessage(_type, _recipient);
+            CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _outbound);
             _message.MaximumSize = new Size(this.outputTable.Width - 20, 50);
             _message.AutoSize = true;
             _message.BackColor = controlBackColor;
@@ -279,7 +280,9 @@ namespace EasyCPDLC
             _sender.ForeColor = controlFrontColor;
             if (me.Button == MouseButtons.Right)
             {
-                if (_sender.type != "SYSTEM" && !_sender.acknowledged)
+                popupMenu.Items.Clear();
+                popupMenu.Items.Add(deleteMenu);
+                if (_sender.type != "SYSTEM" && !_sender.acknowledged && !_sender.outbound)
                 {
                     popupMenu.Items.Add(replyMenu);
 
@@ -315,9 +318,9 @@ namespace EasyCPDLC
             }
             return;
         }
-        private void WriteMessage(string _response, string _type, string _recipient)
+        private void WriteMessage(string _response, string _type, string _recipient, bool _outbound = false)
         {
-            outputTable.Invoke(new Action(() => outputTable.Controls.Add(createCPDLCMessage(DateTime.Now.ToString("HH:mm") + "  -  " + _response + ".", _type, _recipient), 0, outputTable.RowCount - 1)));
+            outputTable.Invoke(new Action(() => outputTable.Controls.Add(createCPDLCMessage(DateTime.Now.ToString("HH:mm") + "  -  " + _response + ".", _type, _recipient, _outbound), 0, outputTable.RowCount - 1)));
             outputTable.Invoke(new Action(() => outputTable.RowCount += 1));
             outputTable.Invoke(new Action(() => outputTable.RowStyles.Add(new RowStyle(SizeType.AutoSize))));
         }
@@ -355,7 +358,7 @@ namespace EasyCPDLC
 
             finally
             {
-                WriteMessage(response, "SYSTEM", "SYSTEM");
+                WriteMessage(response, "SYSTEM", "SYSTEM", true);
             }
         }
         private void telexButton_Click(object sender, EventArgs e)
