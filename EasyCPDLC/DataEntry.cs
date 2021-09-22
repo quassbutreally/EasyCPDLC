@@ -67,7 +67,7 @@ namespace EasyCPDLC
             {
                 MessageBox.Show("Invalid CID/Code, please check and try again.", "Error!", MessageBoxButtons.OK);
             }
-            
+
         }
 
         private void vatsimCIDTextBox_TextChanged(object sender, EventArgs e)
@@ -78,7 +78,7 @@ namespace EasyCPDLC
                 {
                     throw new FormatException();
                 }
-                
+
                 Convert.ToInt32(vatsimCIDTextBox.Text);
                 connectButton.Enabled = true;
             }

@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using Microsoft.Win32;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Media;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Media;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EasyCPDLC
 {
@@ -90,7 +88,7 @@ namespace EasyCPDLC
 
             replyMenu = createMenuItem("REPLY");
             replyMenu.Click += ReplyMessage;
-            
+
             acknowledgeMenu = createMenuItem("ACKNOWLEDGE");
             //replyMenu.DropDownItems.Add(acknowledgeMenu);
             acknowledgeMenu.Click += AcknowledgeMessage;
@@ -119,7 +117,7 @@ namespace EasyCPDLC
             Control sourceControl = menu.SourceControl;
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
-            if(message.type == "TELEX")
+            if (message.type == "TELEX")
             {
                 TelexForm tForm = new TelexForm(this, message.recipient);
                 tForm.Show();
@@ -236,7 +234,7 @@ namespace EasyCPDLC
             var responseString = await response.Content.ReadAsStringAsync();
             string printString = responseString.ToString().ToUpper();
 
-            if(messageType != "poll")
+            if (messageType != "poll")
             {
                 WriteMessage(packetData, messageType, "POLL");
             }
@@ -283,7 +281,7 @@ namespace EasyCPDLC
             _sender.ForeColor = controlFrontColor;
             if (me.Button == MouseButtons.Right)
             {
-                if(_sender.type != "SYSTEM" && !_sender.acknowledged)
+                if (_sender.type != "SYSTEM" && !_sender.acknowledged)
                 {
                     popupMenu.Items.Add(replyMenu);
 
@@ -296,7 +294,7 @@ namespace EasyCPDLC
                         replyMenu.DropDownItems.Add(unableMenu);
                     }
                 }
-                
+
                 popupMenu.Show(_sender, _sender.PointToClient(Cursor.Position));
             }
         }

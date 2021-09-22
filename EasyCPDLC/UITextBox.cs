@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -11,7 +10,7 @@ namespace EasyCPDLC
             BorderStyle = BorderStyle.None;
             AutoSize = false;
             Controls.Add(new Label()
-            { Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(-10, 0, 0, 0)});
+            { Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(-10, 0, 0, 0) });
         }
     }
 }

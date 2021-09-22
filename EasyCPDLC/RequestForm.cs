@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -118,7 +112,7 @@ namespace EasyCPDLC
             string _formatMessage = "";
             string _recipient = messageFormatPanel.Controls[1].Text;
 
-            for(int i = 2; i < messageFormatPanel.Controls.Count; i++)
+            for (int i = 2; i < messageFormatPanel.Controls.Count; i++)
             {
                 _formatMessage += messageFormatPanel.Controls[i].Text + " ";
             }

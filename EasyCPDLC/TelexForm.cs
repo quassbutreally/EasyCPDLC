@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -98,7 +92,7 @@ namespace EasyCPDLC
             _temp.MaxLength = 255;
             _temp.Height = 20;
             _temp.TextChanged += ExpandMultiLineBox;
-            
+
             _temp.CharacterCasing = CharacterCasing.Upper;
             _temp.Padding = new Padding(3, 0, 3, -10);
             _temp.Margin = new Padding(3, 5, 3, -10);
