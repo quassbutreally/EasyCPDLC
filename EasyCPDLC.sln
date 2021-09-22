@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCPDLC", "EasyCPDLC\EasyCPDLC.csproj", "{B9CA396A-4CB3-4D9A-B985-946443322AB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9CA396A-4CB3-4D9A-B985-946443322AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9CA396A-4CB3-4D9A-B985-946443322AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9CA396A-4CB3-4D9A-B985-946443322AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9CA396A-4CB3-4D9A-B985-946443322AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {668915C8-639F-4DDB-BC56-901E602F30BE}
+	EndGlobalSection
+EndGlobal
