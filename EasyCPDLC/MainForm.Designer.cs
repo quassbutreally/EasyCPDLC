@@ -31,7 +31,7 @@
             this.titleLabel = new System.Windows.Forms.Label();
             this.exitButton = new System.Windows.Forms.Button();
             this.outputTable = new System.Windows.Forms.TableLayoutPanel();
-            this.requestButton = new System.Windows.Forms.Button();
+            this.atcButton = new System.Windows.Forms.Button();
             this.telexButton = new System.Windows.Forms.Button();
             this.retrieveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -79,20 +79,20 @@
             this.outputTable.Size = new System.Drawing.Size(513, 125);
             this.outputTable.TabIndex = 3;
             // 
-            // requestButton
+            // atcButton
             // 
-            this.requestButton.Enabled = false;
-            this.requestButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.requestButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
-            this.requestButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.requestButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.requestButton.Location = new System.Drawing.Point(232, 12);
-            this.requestButton.Name = "requestButton";
-            this.requestButton.Size = new System.Drawing.Size(104, 37);
-            this.requestButton.TabIndex = 4;
-            this.requestButton.Text = "REQUEST";
-            this.requestButton.UseVisualStyleBackColor = true;
-            this.requestButton.Click += new System.EventHandler(this.requestButton_Click);
+            this.atcButton.Enabled = false;
+            this.atcButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.atcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.atcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.atcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.atcButton.Location = new System.Drawing.Point(232, 12);
+            this.atcButton.Name = "atcButton";
+            this.atcButton.Size = new System.Drawing.Size(104, 37);
+            this.atcButton.TabIndex = 4;
+            this.atcButton.Text = "ATC";
+            this.atcButton.UseVisualStyleBackColor = true;
+            this.atcButton.Click += new System.EventHandler(this.requestButton_Click);
             // 
             // telexButton
             // 
@@ -132,7 +132,7 @@
             this.ClientSize = new System.Drawing.Size(537, 192);
             this.Controls.Add(this.retrieveButton);
             this.Controls.Add(this.telexButton);
-            this.Controls.Add(this.requestButton);
+            this.Controls.Add(this.atcButton);
             this.Controls.Add(this.outputTable);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
@@ -151,7 +151,7 @@
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.TableLayoutPanel outputTable;
-        private System.Windows.Forms.Button requestButton;
+        private System.Windows.Forms.Button atcButton;
         private System.Windows.Forms.Button telexButton;
         private System.Windows.Forms.Button retrieveButton;
     }

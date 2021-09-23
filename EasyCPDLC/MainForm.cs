@@ -338,6 +338,11 @@ namespace EasyCPDLC
             {
                 popupMenu.Items.Clear();
                 popupMenu.Items.Add(deleteMenu);
+                deleteMenu.Enabled = true;
+                if(_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
+                {
+                    deleteMenu.Enabled = false;
+                }
                 if (_sender.type != "SYSTEM" && !_sender.acknowledged && !_sender.outbound)
                 {
                     popupMenu.Items.Add(replyMenu);
@@ -464,7 +469,7 @@ namespace EasyCPDLC
                 response = "DETAILS RETRIEVED FOR " + userVATSIMData.callsign;
                 callsign = userVATSIMData.callsign;
                 PeriodicCheckMessage(updateTimer, requestCancellationToken);
-                requestButton.Enabled = true;
+                atcButton.Enabled = true;
                 telexButton.Enabled = true;
 
                 CPDLCParser("/data2/5//WU/EDDM PDC 002 . . . . . CLD 1919 210921 EDDM PDC 002 @ACA81@ CLRD TO @LFLL@ OFF @26L@ VIA @MERSI5S@ SQUAWK @1000@ ADT @MDI@ CLIMB TO @FL070@ NEXT FREQ @@ STARTUP APPROVED");
@@ -472,7 +477,7 @@ namespace EasyCPDLC
             catch (Exception)
             {
                 response = "ERROR RETRIEVING DETAILS. ENSURE A FLIGHT PLAN HAS BEEN FILED AND TRY AGAIN";
-                requestButton.Enabled = false;
+                atcButton.Enabled = false;
                 telexButton.Enabled = false;
             }
 
