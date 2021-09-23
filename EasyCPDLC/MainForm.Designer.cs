@@ -120,7 +120,7 @@
             this.retrieveButton.Name = "retrieveButton";
             this.retrieveButton.Size = new System.Drawing.Size(104, 37);
             this.retrieveButton.TabIndex = 6;
-            this.retrieveButton.Text = "RETRIEVE";
+            this.retrieveButton.Text = "LOGON";
             this.retrieveButton.UseVisualStyleBackColor = true;
             this.retrieveButton.Click += new System.EventHandler(this.retrieveButton_Click);
             // 

@@ -136,8 +136,16 @@ namespace EasyCPDLC
             int border = _sender.Height - _sender.ClientSize.Height;
             // set height (height of one line * number of lines + spacing)
             _sender.Height = _sender.Font.Height * numLines + padding + border;
+            ScrollToBottom(messageFormatPanel);
+        }
 
-            messageFormatPanel.ScrollControlIntoView(_sender);
+        private void ScrollToBottom(FlowLayoutPanel p)
+        {
+            using (Control c = new Control() { Parent = p, Dock = DockStyle.Bottom })
+            {
+                p.ScrollControlIntoView(c);
+                c.Parent = null;
+            }
         }
 
         private void sendButton_Click(object sender, EventArgs e)
