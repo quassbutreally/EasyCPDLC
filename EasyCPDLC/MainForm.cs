@@ -350,7 +350,7 @@ namespace EasyCPDLC
             _message.Font = controlFont;
             _message.Text = _text;
             _message.BorderStyle = BorderStyle.None;
-            _message.Margin = new Padding(0, 3, 0, 0);
+            _message.Margin = new Padding(5, 3, 0, 0);
 
 
 
