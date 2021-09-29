@@ -66,15 +66,13 @@
             // outputTable
             // 
             this.outputTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.outputTable.ColumnCount = 1;
-            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.outputTable.ColumnCount = 2;
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 463F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.Location = new System.Drawing.Point(12, 55);
             this.outputTable.Name = "outputTable";
             this.outputTable.RowCount = 1;
-            this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputTable.Size = new System.Drawing.Size(513, 125);
             this.outputTable.TabIndex = 3;

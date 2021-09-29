@@ -44,7 +44,7 @@
             this.messageFormatPanel.Margin = new System.Windows.Forms.Padding(5);
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
-            this.messageFormatPanel.Size = new System.Drawing.Size(357, 127);
+            this.messageFormatPanel.Size = new System.Drawing.Size(367, 127);
             this.messageFormatPanel.TabIndex = 4;
             // 
             // clearButton
@@ -53,7 +53,7 @@
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.clearButton.Location = new System.Drawing.Point(157, 190);
+            this.clearButton.Location = new System.Drawing.Point(167, 190);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
             this.clearButton.TabIndex = 8;
@@ -67,7 +67,7 @@
             this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.sendButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.sendButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.sendButton.Location = new System.Drawing.Point(267, 190);
+            this.sendButton.Location = new System.Drawing.Point(277, 190);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(104, 37);
             this.sendButton.TabIndex = 9;

@@ -35,15 +35,14 @@
             this.clearButton = new System.Windows.Forms.Button();
             this.pdcButton = new System.Windows.Forms.Button();
             this.logonButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.requestButton = new System.Windows.Forms.Button();
+            this.reportButton = new System.Windows.Forms.Button();
             this.radioContainer = new System.Windows.Forms.Panel();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.reportRadioButton = new System.Windows.Forms.RadioButton();
+            this.requestRadioButton = new System.Windows.Forms.RadioButton();
             this.logonRadioButton = new System.Windows.Forms.RadioButton();
             this.pdcRadioButton = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioContainer.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,7 +81,7 @@
             this.messageFormatPanel.Location = new System.Drawing.Point(122, 53);
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
-            this.messageFormatPanel.Size = new System.Drawing.Size(567, 209);
+            this.messageFormatPanel.Size = new System.Drawing.Size(577, 166);
             this.messageFormatPanel.TabIndex = 3;
             // 
             // sendButton
@@ -91,7 +90,7 @@
             this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.sendButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.sendButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.sendButton.Location = new System.Drawing.Point(585, 268);
+            this.sendButton.Location = new System.Drawing.Point(595, 225);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(104, 37);
             this.sendButton.TabIndex = 6;
@@ -105,7 +104,7 @@
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.clearButton.Location = new System.Drawing.Point(475, 268);
+            this.clearButton.Location = new System.Drawing.Point(485, 225);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
             this.clearButton.TabIndex = 7;
@@ -141,50 +140,38 @@
             this.logonButton.UseVisualStyleBackColor = true;
             this.logonButton.Click += new System.EventHandler(this.logonButton_Click);
             // 
-            // button2
+            // requestButton
             // 
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
-            this.button2.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.button2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button2.Location = new System.Drawing.Point(12, 139);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(104, 37);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "PDC";
-            this.button2.UseVisualStyleBackColor = true;
+            this.requestButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.requestButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.requestButton.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.requestButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.requestButton.Location = new System.Drawing.Point(12, 139);
+            this.requestButton.Name = "requestButton";
+            this.requestButton.Size = new System.Drawing.Size(104, 37);
+            this.requestButton.TabIndex = 9;
+            this.requestButton.Text = "REQUEST";
+            this.requestButton.UseVisualStyleBackColor = true;
+            this.requestButton.Click += new System.EventHandler(this.requestButton_Click);
             // 
-            // button3
+            // reportButton
             // 
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
-            this.button3.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.button3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button3.Location = new System.Drawing.Point(12, 182);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(104, 37);
-            this.button3.TabIndex = 10;
-            this.button3.Text = "PDC";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
-            this.button4.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.button4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button4.Location = new System.Drawing.Point(12, 225);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(104, 37);
-            this.button4.TabIndex = 11;
-            this.button4.Text = "PDC";
-            this.button4.UseVisualStyleBackColor = true;
+            this.reportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.reportButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.reportButton.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.reportButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.reportButton.Location = new System.Drawing.Point(12, 182);
+            this.reportButton.Name = "reportButton";
+            this.reportButton.Size = new System.Drawing.Size(104, 37);
+            this.reportButton.TabIndex = 10;
+            this.reportButton.Text = "REPORT";
+            this.reportButton.UseVisualStyleBackColor = true;
             // 
             // radioContainer
             // 
             this.radioContainer.Controls.Add(this.radioButton3);
-            this.radioContainer.Controls.Add(this.radioButton2);
-            this.radioContainer.Controls.Add(this.radioButton1);
+            this.radioContainer.Controls.Add(this.reportRadioButton);
+            this.radioContainer.Controls.Add(this.requestRadioButton);
             this.radioContainer.Controls.Add(this.logonRadioButton);
             this.radioContainer.Controls.Add(this.pdcRadioButton);
             this.radioContainer.Location = new System.Drawing.Point(122, 8);
@@ -192,6 +179,39 @@
             this.radioContainer.Size = new System.Drawing.Size(103, 26);
             this.radioContainer.TabIndex = 12;
             this.radioContainer.Visible = false;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(84, 7);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(14, 13);
+            this.radioButton3.TabIndex = 4;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.Visible = false;
+            // 
+            // reportRadioButton
+            // 
+            this.reportRadioButton.AutoSize = true;
+            this.reportRadioButton.Location = new System.Drawing.Point(64, 7);
+            this.reportRadioButton.Name = "reportRadioButton";
+            this.reportRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.reportRadioButton.TabIndex = 3;
+            this.reportRadioButton.TabStop = true;
+            this.reportRadioButton.UseVisualStyleBackColor = true;
+            this.reportRadioButton.Visible = false;
+            // 
+            // requestRadioButton
+            // 
+            this.requestRadioButton.AutoSize = true;
+            this.requestRadioButton.Location = new System.Drawing.Point(44, 7);
+            this.requestRadioButton.Name = "requestRadioButton";
+            this.requestRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.requestRadioButton.TabIndex = 2;
+            this.requestRadioButton.TabStop = true;
+            this.requestRadioButton.UseVisualStyleBackColor = true;
+            this.requestRadioButton.Visible = false;
             // 
             // logonRadioButton
             // 
@@ -215,49 +235,15 @@
             this.pdcRadioButton.UseVisualStyleBackColor = true;
             this.pdcRadioButton.Visible = false;
             // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(44, 7);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(14, 13);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Visible = false;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(64, 7);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(14, 13);
-            this.radioButton2.TabIndex = 3;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Visible = false;
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(84, 7);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(14, 13);
-            this.radioButton3.TabIndex = 4;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.Visible = false;
-            // 
             // RequestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(713, 313);
+            this.ClientSize = new System.Drawing.Size(713, 270);
+            this.Controls.Add(this.requestButton);
             this.Controls.Add(this.radioContainer);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.reportButton);
             this.Controls.Add(this.logonButton);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.sendButton);
@@ -285,14 +271,13 @@
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button pdcButton;
         private System.Windows.Forms.Button logonButton;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button requestButton;
+        private System.Windows.Forms.Button reportButton;
         private System.Windows.Forms.Panel radioContainer;
         private System.Windows.Forms.RadioButton logonRadioButton;
         private System.Windows.Forms.RadioButton pdcRadioButton;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton requestRadioButton;
         private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton reportRadioButton;
     }
 }

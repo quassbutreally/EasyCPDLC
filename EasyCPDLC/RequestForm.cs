@@ -15,6 +15,11 @@ namespace EasyCPDLC
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
+        private ContextMenuStrip popupMenu = new ContextMenuStrip();
+        private ToolStripMenuItem directRequestMenu;// = new ToolStripMenuItem();
+        private ToolStripMenuItem levelRequestMenu;// = new ToolStripMenuItem();
+        private ToolStripMenuItem speedRequestMenu;// = new ToolStripMenuItem();
+
         private MainForm parent;
         private PilotData userVATSIMData;
         private Color controlBackColor;
@@ -22,16 +27,125 @@ namespace EasyCPDLC
         private Font controlFont;
         private Font controlFontBold;
 
+        private bool _needsLogon;
+        public bool needsLogon
+        {
+            get
+            {
+                return this._needsLogon;
+            }
+
+            set
+            {
+                this._needsLogon = value;
+
+                if (this._needsLogon)
+                {
+                    logonButton.Text = "LOGON";
+                    //requestButton.Enabled = false;
+                    //reportButton.Enabled = false;
+                }
+                else
+                {
+                    logonButton.Text = "LOGOFF";
+                    //requestButton.Enabled = true;
+                    //reportButton.Enabled = true;
+                }
+            }
+        }
+
         public RequestForm(MainForm parent)
         {
             InitializeComponent();
             this.parent = parent;
+
+            if (this.parent.currentATCUnit != null)
+            {
+                needsLogon = false;
+            }
+            else
+            {
+                needsLogon = true;
+            }
+
             userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
             controlFont = parent.controlFont;
             controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
 
+            InitialisePopupMenu();
+
+        }
+
+        private ToolStripMenuItem CreateMenuItem(string name)
+        {
+            ToolStripMenuItem _temp = new ToolStripMenuItem(name);
+            _temp.BackColor = Color.FromArgb(28, 28, 28);
+            _temp.ForeColor = controlFrontColor;
+            _temp.Font = controlFontBold;
+            //_temp.AutoSize = false;
+            //_temp.Size = new Size(104, 37);
+
+            return _temp;
+        }
+
+        private void InitialisePopupMenu()
+        {
+
+            popupMenu.BackColor = controlBackColor;
+            popupMenu.ForeColor = controlFrontColor;
+            popupMenu.Font = controlFontBold;
+            popupMenu.ShowImageMargin = false;
+
+            directRequestMenu = CreateMenuItem("DIRECT");
+            directRequestMenu.Click += DirectRequestClick;
+            levelRequestMenu = CreateMenuItem("LEVEL");
+            levelRequestMenu.Click += LevelRequestClick;
+            speedRequestMenu = CreateMenuItem("SPEED");
+            speedRequestMenu.Click += SpeedRequestClick;
+        }
+
+        private void DirectRequestClick(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
+            messageFormatPanel.Controls.Add(createTextBox("", 5));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
+
+        }
+
+        private void LevelRequestClick(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("REQUEST FL"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
+        }
+
+        private void SpeedRequestClick(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("REQUEST MACH"));
+            messageFormatPanel.Controls.Add(createTextBox("", 1, false, true));
+            messageFormatPanel.Controls.Add(createTemplate("."));
+            messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
         }
 
         private void pdcButton_Click(object sender, EventArgs e)
@@ -85,7 +199,7 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private UITextBox createTextBox(string _text, int _maxLength)
+        private UITextBox createTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
         {
             UITextBox _temp = new UITextBox(controlFrontColor);
 
@@ -100,7 +214,13 @@ namespace EasyCPDLC
             _temp.Padding = new Padding(3, 0, 3, -10);
             _temp.Margin = new Padding(3, 5, 3, -10);
             _temp.Height = 20;
+            _temp.ReadOnly = _readOnly;
             _temp.TextAlign = HorizontalAlignment.Center;
+            
+            if(_numsOnly)
+            {
+                _temp.KeyPress += NumsOnly;
+            }
 
             using (Graphics G = _temp.CreateGraphics())
             {
@@ -109,6 +229,41 @@ namespace EasyCPDLC
             }
 
             return _temp;
+        }
+
+        private void NumsOnly(object sender, KeyPressEventArgs e)
+        {
+            if(!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
+                e.Handled = true;
+            }
+        }
+
+        private CheckBox createCheckBox(string _text)
+        {
+            CheckBox _temp = new CheckBox();
+
+            _temp.BackColor = controlBackColor;
+            _temp.ForeColor = controlFrontColor;
+            _temp.Font = controlFont;
+            _temp.Text = _text;
+            _temp.Padding = new Padding(3, 10, 3, -30);
+            _temp.AutoSize = true;
+            _temp.Click += DeselectCheckBox;
+            return _temp;
+        }
+
+        private void DeselectCheckBox(object sender, EventArgs e)
+        {
+            CheckBox _sender = (CheckBox)sender;
+
+            foreach (CheckBox box in messageFormatPanel.Controls.OfType<CheckBox>())
+            {
+                if (box.Text != _sender.Text)
+                {
+                    box.Checked = false;
+                }
+            }
+
         }
 
         private UITextBox CreateMultiLineBox(string _text)
@@ -146,8 +301,11 @@ namespace EasyCPDLC
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            RadioButton radioBtn = this.Controls.OfType<RadioButton>()
+
+            RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
+
+            Console.WriteLine(radioBtn.Name);
             if (radioBtn != null)
             {
                 string _recipient = "";
@@ -157,6 +315,16 @@ namespace EasyCPDLC
                 {
                     
                     case "pdcRadioButton":
+
+                        for (int i = 0; i < messageFormatPanel.Controls.Count - 2; i++)
+                        {
+                            if (messageFormatPanel.Controls[i].Text.Length < 1)
+                            {
+                                Console.WriteLine(i);
+                                return;
+                            }
+                        }
+
                         _recipient = messageFormatPanel.Controls[1].Text;
 
                         for (int i = 2; i < messageFormatPanel.Controls.Count; i++)
@@ -167,15 +335,66 @@ namespace EasyCPDLC
                         break;
 
                     case "logonRadioButton":
+
+                        foreach (Control _control in messageFormatPanel.Controls)
+                        {
+                            if (_control.Text.Length < 1)
+                            {
+                                return;
+                            }
+                        }
+
                         _recipient = messageFormatPanel.Controls[1].Text;
-                        _formatMessage = String.Format("/data2/{0}//Y/REQUEST LOGON", parent.messageOutCounter);
+                        if (needsLogon)
+                        {
+                            _formatMessage = String.Format("/data2/{0}//Y/REQUEST LOGON", parent.messageOutCounter);
+                        }
+                        else
+                        {
+                            _formatMessage = String.Format("/data2/{0}//Y/LOGOFF", parent.messageOutCounter);
+
+                        }
+                        parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        parent.messageOutCounter += 1;
+
+                        break;
+
+                    case "requestRadioButton":
+
+                        foreach (Control _control in messageFormatPanel.Controls)
+                        {
+                            if (_control.Text.Length < 1)
+                            {
+                                return;
+                            }
+                        }
+
+                        _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
+                        _recipient = messageFormatPanel.Controls[1].Text;
+
+                        for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
+                        {
+                            _formatMessage += messageFormatPanel.Controls[i].Text + "";
+                        }
+
+                        CheckBox dueToBox = messageFormatPanel.Controls.OfType<CheckBox>()
+                                       .Where(x => x.Checked).FirstOrDefault();
+
+                        if (dueToBox != default(CheckBox))
+                        {
+                            _formatMessage += " " + dueToBox.Name;
+                        }
 
                         parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
+
                         break;
+
 
                     default:
                         break;
+
+                    
 
                 }
 
@@ -218,6 +437,19 @@ namespace EasyCPDLC
                 p.ScrollControlIntoView(c);
                 c.Parent = null;
             }
+        }
+
+        private void requestButton_Click(object sender, EventArgs e)
+        {
+            requestRadioButton.Checked = true;
+
+            popupMenu.Items.Clear();
+            popupMenu.Items.Add(directRequestMenu);
+            popupMenu.Items.Add(levelRequestMenu);
+            popupMenu.Items.Add(speedRequestMenu);
+            //popupMenu.AutoSize = false;
+            //popupMenu.Size = new Size(104, 114);
+            popupMenu.Show(requestButton, new Point(requestButton.Width, 0));
         }
     }
 }
