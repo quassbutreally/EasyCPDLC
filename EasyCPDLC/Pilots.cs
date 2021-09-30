@@ -7,7 +7,7 @@ namespace EasyCPDLC
         public IList<PilotData> pilots { get; set; }
     }
 
-    
+
     public class PilotData
     {
         public int cid { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace EasyCPDLC
 {
@@ -216,8 +216,8 @@ namespace EasyCPDLC
             _temp.Height = 20;
             _temp.ReadOnly = _readOnly;
             _temp.TextAlign = HorizontalAlignment.Center;
-            
-            if(_numsOnly)
+
+            if (_numsOnly)
             {
                 _temp.KeyPress += NumsOnly;
             }
@@ -233,7 +233,8 @@ namespace EasyCPDLC
 
         private void NumsOnly(object sender, KeyPressEventArgs e)
         {
-            if(!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
                 e.Handled = true;
             }
         }
@@ -299,7 +300,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Clear();
         }
 
-        private void sendButton_Click(object sender, EventArgs e)
+        private async void sendButton_Click(object sender, EventArgs e)
         {
 
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
@@ -313,7 +314,7 @@ namespace EasyCPDLC
 
                 switch (radioBtn.Name)
                 {
-                    
+
                     case "pdcRadioButton":
 
                         for (int i = 0; i < messageFormatPanel.Controls.Count - 2; i++)
@@ -331,7 +332,7 @@ namespace EasyCPDLC
                         {
                             _formatMessage += messageFormatPanel.Controls[i].Text + " ";
                         }
-                        parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+                        await parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
                         break;
 
                     case "logonRadioButton":
@@ -351,10 +352,10 @@ namespace EasyCPDLC
                         }
                         else
                         {
-                            _formatMessage = String.Format("/data2/{0}//Y/LOGOFF", parent.messageOutCounter);
+                            _formatMessage = String.Format("/data2/{0}//N/LOGOFF", parent.messageOutCounter);
 
                         }
-                        parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
 
                         break;
@@ -385,7 +386,7 @@ namespace EasyCPDLC
                             _formatMessage += " " + dueToBox.Name;
                         }
 
-                        parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
 
                         break;
@@ -394,7 +395,7 @@ namespace EasyCPDLC
                     default:
                         break;
 
-                    
+
 
                 }
 
@@ -403,7 +404,7 @@ namespace EasyCPDLC
             else
             {
 
-            }            
+            }
         }
 
         private void WindowDrag(object sender, MouseEventArgs e)

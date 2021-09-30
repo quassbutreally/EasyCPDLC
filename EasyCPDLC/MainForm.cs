@@ -31,19 +31,43 @@ namespace EasyCPDLC
         private RequestForm rForm;
         private TelexForm tForm;
         public int messageOutCounter = 0;
+        private bool _connected;
+        public bool connected
+        {
+            get
+            {
+                return _connected;
+            }
+            set
+            {
+                _connected = value;
+                if (_connected)
+                {
+                    retrieveButton.Text = "DISCONNECT";
+                    atcButton.Enabled = true;
+                    telexButton.Enabled = true;
+                }
+                else
+                {
+                    retrieveButton.Text = "CONNECT";
+                    atcButton.Enabled = false;
+                    telexButton.Enabled = false;
+                }
+            }
+        }
         private string _currentATCUnit;
         public string currentATCUnit
         {
             get
             {
-                return this._currentATCUnit;
+                return _currentATCUnit;
             }
             set
             {
-                this._currentATCUnit = value;
+                _currentATCUnit = value;
                 try
                 {
-                    if (this._currentATCUnit == null)
+                    if (_currentATCUnit is null)
                     {
                         rForm.needsLogon = true;
                     }
@@ -52,9 +76,9 @@ namespace EasyCPDLC
                         rForm.needsLogon = false;
                     }
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
-                    
+
                 }
             }
         }
@@ -81,8 +105,8 @@ namespace EasyCPDLC
         private static Regex cpdlcSenderParse = new Regex(@"[/ ]([a-zA-Z]{4})\s");
         private static Regex cpdlcUnitParse = new Regex(@"_@([\w]*)@_");
         private static readonly TimeSpan updateTimer = TimeSpan.FromSeconds(10);
-        private static readonly CancellationTokenSource requestCancellationTokenSource = new CancellationTokenSource();
-        private static readonly CancellationToken requestCancellationToken = requestCancellationTokenSource.Token;
+        private CancellationTokenSource requestCancellationTokenSource;
+        private CancellationToken requestCancellationToken;
 
         public MainForm()
         {
@@ -167,7 +191,7 @@ namespace EasyCPDLC
             tForm = new TelexForm(this, message.recipient);
             tForm.Show();
         }
-        private void RogerMessage(object sender, EventArgs e)
+        private async void RogerMessage(object sender, EventArgs e)
         {
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
@@ -175,59 +199,59 @@ namespace EasyCPDLC
             message.acknowledged = true;
             message.ForeColor = controlFrontColor;
             message.header.responseID = messageOutCounter;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/ROGER", messageOutCounter, message.header.messageID));
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/ROGER", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
         }
 
-        private void WilcoMessage(object sender, EventArgs e)
+        private async void WilcoMessage(object sender, EventArgs e)
         {
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
             message.ForeColor = controlFrontColor;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/WILCO", messageOutCounter, message.header.messageID));
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/WILCO", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
         }
 
-        private void StandbyMessage(object sender, EventArgs e)
+        private async void StandbyMessage(object sender, EventArgs e)
         {
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/STANDBY", messageOutCounter, message.header.messageID));
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/STANDBY", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
         }
 
-        private void UnableMessage(object sender, EventArgs e)
-        {
-            Control sourceControl = SenderToControl(sender);
-            CPDLCMessage message = (CPDLCMessage)sourceControl;
-
-            message.acknowledged = true;
-            message.ForeColor = controlFrontColor;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/UNABLE", messageOutCounter, message.header.messageID));
-            messageOutCounter += 1;
-        }
-
-        private void AffirmativeMessage(object sender, EventArgs e)
+        private async void UnableMessage(object sender, EventArgs e)
         {
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
             message.ForeColor = controlFrontColor;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/AFFIRMATIVE", messageOutCounter, message.header.messageID));
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/UNABLE", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
         }
 
-        private void NegativeMessage(object sender, EventArgs e)
+        private async void AffirmativeMessage(object sender, EventArgs e)
         {
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             message.acknowledged = true;
             message.ForeColor = controlFrontColor;
-            SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/NEGATIVE", messageOutCounter, message.header.messageID));
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/AFFIRMATIVE", messageOutCounter, message.header.messageID));
+            messageOutCounter += 1;
+        }
+
+        private async void NegativeMessage(object sender, EventArgs e)
+        {
+            Control sourceControl = SenderToControl(sender);
+            CPDLCMessage message = (CPDLCMessage)sourceControl;
+
+            message.acknowledged = true;
+            message.ForeColor = controlFrontColor;
+            await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/NEGATIVE", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
         }
 
@@ -282,7 +306,7 @@ namespace EasyCPDLC
                 await Task.Delay(interval, cancellationToken);
             }
         }
-        public async Task SendCPDLCMessage(string recipient, string messageType, string packetData, bool _outbound = true)
+        public async Task SendCPDLCMessage(string recipient, string messageType, string packetData, bool _outbound = true, bool _write = true)
         {
             var connectionValues = new Dictionary<string, string> {
                 {"logon", logonCode},
@@ -297,20 +321,22 @@ namespace EasyCPDLC
             var responseString = await response.Content.ReadAsStringAsync();
             string printString = responseString.ToString().ToUpper();
 
-            if (messageType == "CPDLC" && _outbound)
+            if (_write)
             {
-                WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
+                if (messageType == "CPDLC" && _outbound)
+                {
+                    WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
+                }
+                else if (messageType != "poll")
+                {
+                    WriteMessage(packetData, messageType, recipient, _outbound);
+                }
             }
-            else if (messageType != "poll")
-            {
-                WriteMessage(packetData, messageType, recipient, _outbound);
-            }
-            
 
             if (printString != "OK")
             {
-                TelexParser(printString);
-                
+                await TelexParser(printString);
+
             }
 
             Console.WriteLine(printString);
@@ -346,7 +372,7 @@ namespace EasyCPDLC
             _message.Width = 65;
             _message.AutoSize = true;
             _message.BackColor = controlBackColor;
-            _message.ForeColor = controlFrontColor;
+            _message.ForeColor = SystemColors.ControlDark;
             _message.Font = controlFont;
             _message.Text = _text;
             _message.BorderStyle = BorderStyle.None;
@@ -369,17 +395,17 @@ namespace EasyCPDLC
             MouseEventArgs me = (MouseEventArgs)e;
 
             CPDLCMessage _sender = (CPDLCMessage)sender;
-            
+
             if (_sender.type != "CPDLC" || _sender.outbound || _sender.header.responses == "NE")
             {
-                _sender.ForeColor = controlFrontColor;
+                _sender.ForeColor = SystemColors.ControlDark;
             }
             if (me.Button == MouseButtons.Right)
             {
                 popupMenu.Items.Clear();
                 popupMenu.Items.Add(deleteMenu);
                 deleteMenu.Enabled = true;
-                if(_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
+                if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
                 {
                     deleteMenu.Enabled = false;
                 }
@@ -387,7 +413,7 @@ namespace EasyCPDLC
                 {
                     popupMenu.Items.Add(replyMenu);
 
-                    switch(_sender.header.responses)
+                    switch (_sender.header.responses)
                     {
                         case "WU":
                             replyMenu.DropDownItems.Add(wilcoMenu);
@@ -434,7 +460,7 @@ namespace EasyCPDLC
                     {
                         if (_modify[1].StartsWith("/DATA2/"))
                         {
-                            CPDLCParser(_modify[1], sender);
+                            await CPDLCParser(_modify[1], sender);
                             break;
                         }
 
@@ -458,7 +484,7 @@ namespace EasyCPDLC
             }
 
             var responses = cpdlcHeaderParse.Matches(_response);
-            foreach(Match response in responses)
+            foreach (Match response in responses)
             {
                 Console.WriteLine(response.Value);
             }
@@ -470,18 +496,28 @@ namespace EasyCPDLC
 
             string[] messageContent = _response.Split(new string[] { header.responses + "/" }, StringSplitOptions.None);
             string messageString = "";
-            if(messageContent[1].Contains(callsign))
+            if (messageContent[1].Contains(callsign))
             {
-                messageString = messageContent[1].Split(new string[] {callsign}, StringSplitOptions.None)[1];
+                messageString = messageContent[1].Split(new string[] { callsign }, StringSplitOptions.None)[1];
             }
             else
             {
                 messageString = messageContent[1];
             }
-            string message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_","");
+            if (messageString.StartsWith("HANDOVER"))
+            {
+                string nextATCUnit = messageString.Split(' ').Last().Trim('@').Trim();
+                await SendCPDLCMessage(nextATCUnit, "CPDLC", String.Format("/data2/{0}//Y/REQUEST LOGON", messageOutCounter), true, false);
+                messageOutCounter += 1;
+            }
+            if (messageString.StartsWith("LOGON ACCEPTED"))
+            {
+                return;
+            }
+            string message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_", "");
             message = Regex.Replace(message, @"\s+", " ");
 
-            if(message == "LOGOFF")
+            if (message == "LOGOFF")
             {
                 currentATCUnit = null;
             }
@@ -492,7 +528,7 @@ namespace EasyCPDLC
 
             return;
         }
-        
+
         private void WriteMessage(string _response, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
         {
 
@@ -501,7 +537,7 @@ namespace EasyCPDLC
             {
                 message = CreateCPDLCMessage(callsign + ": " + _recipient + " " + _response + ".", _type, _recipient, _outbound, _header);
             }
-            else 
+            else
             {
                 message = CreateCPDLCMessage(_recipient + ": " + _response + ".", _type, _recipient, _outbound, _header);
             }
@@ -513,7 +549,12 @@ namespace EasyCPDLC
         }
         private void exitButton_Click(object sender, EventArgs e)
         {
-            requestCancellationTokenSource.Cancel();
+            try
+            {
+                requestCancellationTokenSource.Cancel();
+            }
+            catch (NullReferenceException) { }
+            this.Close();
             Application.Exit();
         }
         private void MoveWindow(object sender, MouseEventArgs e)
@@ -524,36 +565,61 @@ namespace EasyCPDLC
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
-        private void retrieveButton_Click(object sender, EventArgs e)
+        private async void retrieveButton_Click(object sender, EventArgs e)
         {
             string response = "";
 
-            using (WebClient wc = new WebClient())
+            if (!connected)
             {
-                var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                pilotList = JsonSerializer.Deserialize<Pilots>(json);
+                using (WebClient wc = new WebClient())
+                {
+                    var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
+                    pilotList = JsonSerializer.Deserialize<Pilots>(json);
+                }
+
+                try
+                {
+                    userVATSIMData = pilotList.pilots.Where(i => i.cid == cid).FirstOrDefault();
+                    response = "DETAILS RETRIEVED FOR " + userVATSIMData.callsign;
+                    callsign = userVATSIMData.callsign;
+
+                    connected = true;
+                    requestCancellationTokenSource = new CancellationTokenSource();
+                    requestCancellationToken = requestCancellationTokenSource.Token;
+                    await PeriodicCheckMessage(updateTimer, requestCancellationToken);
+                }
+                catch (Exception)
+                {
+                    response = "ERROR RETRIEVING DETAILS. ENSURE A FLIGHT PLAN HAS BEEN FILED AND TRY AGAIN";
+                    atcButton.Enabled = false;
+                    telexButton.Enabled = false;
+                    connected = false;
+                }
+
+                finally
+                {
+                    WriteMessage(response, "SYSTEM", "SYSTEM");
+                }
             }
 
-            try
+            else
             {
-                userVATSIMData = pilotList.pilots.Where(i => i.cid == cid).FirstOrDefault();
-                userVATSIMData = pilotList.pilots.Where(i => i.cid == cid).FirstOrDefault();
-                response = "DETAILS RETRIEVED FOR " + userVATSIMData.callsign;
-                callsign = userVATSIMData.callsign;
-                PeriodicCheckMessage(updateTimer, requestCancellationToken);
-                atcButton.Enabled = true;
-                telexButton.Enabled = true;
-            }
-            catch (Exception)
-            {
-                response = "ERROR RETRIEVING DETAILS. ENSURE A FLIGHT PLAN HAS BEEN FILED AND TRY AGAIN";
+                if (!(currentATCUnit is null))
+                {
+                    await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
+                }
+                requestCancellationTokenSource.Cancel();
+                callsign = "";
+                response = "DISCONNECTED CLIENT";
+                pilotList = new Pilots();
+                userVATSIMData = new PilotData();
+
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;
-            }
+                connected = false;
 
-            finally
-            {
                 WriteMessage(response, "SYSTEM", "SYSTEM");
+
             }
         }
         private void telexButton_Click(object sender, EventArgs e)
@@ -565,6 +631,15 @@ namespace EasyCPDLC
         {
             rForm = new RequestForm(this);
             rForm.Show();
+        }
+
+        private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!(currentATCUnit is null))
+            {
+                await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
+                requestCancellationTokenSource.Cancel();
+            }
         }
     }
     internal class NoHighlightRenderer : ToolStripProfessionalRenderer

@@ -84,9 +84,9 @@
             this.atcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.atcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.atcButton.Location = new System.Drawing.Point(232, 12);
+            this.atcButton.Location = new System.Drawing.Point(243, 12);
             this.atcButton.Name = "atcButton";
-            this.atcButton.Size = new System.Drawing.Size(104, 37);
+            this.atcButton.Size = new System.Drawing.Size(90, 37);
             this.atcButton.TabIndex = 4;
             this.atcButton.Text = "ATC";
             this.atcButton.UseVisualStyleBackColor = true;
@@ -99,9 +99,9 @@
             this.telexButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.telexButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.telexButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.telexButton.Location = new System.Drawing.Point(122, 12);
+            this.telexButton.Location = new System.Drawing.Point(147, 12);
             this.telexButton.Name = "telexButton";
-            this.telexButton.Size = new System.Drawing.Size(104, 37);
+            this.telexButton.Size = new System.Drawing.Size(90, 37);
             this.telexButton.TabIndex = 5;
             this.telexButton.Text = "TELEX";
             this.telexButton.UseVisualStyleBackColor = true;
@@ -116,9 +116,9 @@
             this.retrieveButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.retrieveButton.Location = new System.Drawing.Point(12, 12);
             this.retrieveButton.Name = "retrieveButton";
-            this.retrieveButton.Size = new System.Drawing.Size(104, 37);
+            this.retrieveButton.Size = new System.Drawing.Size(129, 37);
             this.retrieveButton.TabIndex = 6;
-            this.retrieveButton.Text = "LOGON";
+            this.retrieveButton.Text = "CONNECT";
             this.retrieveButton.UseVisualStyleBackColor = true;
             this.retrieveButton.Click += new System.EventHandler(this.retrieveButton_Click);
             // 
@@ -137,6 +137,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainForm";
             this.Text = "MainForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindow);
             this.ResumeLayout(false);
