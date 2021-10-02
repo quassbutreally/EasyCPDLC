@@ -36,14 +36,19 @@
             this.pdcButton = new System.Windows.Forms.Button();
             this.logonButton = new System.Windows.Forms.Button();
             this.requestButton = new System.Windows.Forms.Button();
-            this.reportButton = new System.Windows.Forms.Button();
             this.radioContainer = new System.Windows.Forms.Panel();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.reportRadioButton = new System.Windows.Forms.RadioButton();
             this.requestRadioButton = new System.Windows.Forms.RadioButton();
             this.logonRadioButton = new System.Windows.Forms.RadioButton();
             this.pdcRadioButton = new System.Windows.Forms.RadioButton();
+            this.reportButton = new System.Windows.Forms.Button();
+            this.requestContainer = new System.Windows.Forms.Panel();
+            this.wcwRadioButton = new System.Windows.Forms.RadioButton();
+            this.directRadioButton = new System.Windows.Forms.RadioButton();
+            this.speedRadioButton = new System.Windows.Forms.RadioButton();
+            this.levelRadioButton = new System.Windows.Forms.RadioButton();
             this.radioContainer.SuspendLayout();
+            this.requestContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -51,7 +56,7 @@
             this.titleLabel.AutoSize = true;
             this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.titleLabel.Location = new System.Drawing.Point(513, 8);
+            this.titleLabel.Location = new System.Drawing.Point(412, 8);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
             this.titleLabel.TabIndex = 1;
@@ -65,7 +70,7 @@
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.exitButton.Location = new System.Drawing.Point(689, 0);
+            this.exitButton.Location = new System.Drawing.Point(588, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(24, 24);
             this.exitButton.TabIndex = 2;
@@ -78,10 +83,10 @@
             this.messageFormatPanel.AutoScroll = true;
             this.messageFormatPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.messageFormatPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.messageFormatPanel.Location = new System.Drawing.Point(122, 53);
+            this.messageFormatPanel.Location = new System.Drawing.Point(12, 53);
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
-            this.messageFormatPanel.Size = new System.Drawing.Size(577, 166);
+            this.messageFormatPanel.Size = new System.Drawing.Size(586, 184);
             this.messageFormatPanel.TabIndex = 3;
             // 
             // sendButton
@@ -90,7 +95,7 @@
             this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.sendButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.sendButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.sendButton.Location = new System.Drawing.Point(595, 225);
+            this.sendButton.Location = new System.Drawing.Point(494, 243);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(104, 37);
             this.sendButton.TabIndex = 6;
@@ -104,7 +109,7 @@
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.clearButton.Location = new System.Drawing.Point(485, 225);
+            this.clearButton.Location = new System.Drawing.Point(384, 243);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
             this.clearButton.TabIndex = 7;
@@ -118,11 +123,11 @@
             this.pdcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.pdcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.pdcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.pdcButton.Location = new System.Drawing.Point(12, 53);
+            this.pdcButton.Location = new System.Drawing.Point(12, 8);
             this.pdcButton.Name = "pdcButton";
-            this.pdcButton.Size = new System.Drawing.Size(104, 37);
+            this.pdcButton.Size = new System.Drawing.Size(94, 37);
             this.pdcButton.TabIndex = 5;
-            this.pdcButton.Text = "PDC";
+            this.pdcButton.Text = "REQ PDC";
             this.pdcButton.UseVisualStyleBackColor = true;
             this.pdcButton.Click += new System.EventHandler(this.pdcButton_Click);
             // 
@@ -132,9 +137,9 @@
             this.logonButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.logonButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.logonButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.logonButton.Location = new System.Drawing.Point(12, 96);
+            this.logonButton.Location = new System.Drawing.Point(112, 8);
             this.logonButton.Name = "logonButton";
-            this.logonButton.Size = new System.Drawing.Size(104, 37);
+            this.logonButton.Size = new System.Drawing.Size(94, 37);
             this.logonButton.TabIndex = 8;
             this.logonButton.Text = "LOGON";
             this.logonButton.UseVisualStyleBackColor = true;
@@ -146,50 +151,25 @@
             this.requestButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.requestButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.requestButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.requestButton.Location = new System.Drawing.Point(12, 139);
+            this.requestButton.Location = new System.Drawing.Point(212, 8);
             this.requestButton.Name = "requestButton";
-            this.requestButton.Size = new System.Drawing.Size(104, 37);
+            this.requestButton.Size = new System.Drawing.Size(94, 37);
             this.requestButton.TabIndex = 9;
             this.requestButton.Text = "REQUEST";
             this.requestButton.UseVisualStyleBackColor = true;
             this.requestButton.Click += new System.EventHandler(this.requestButton_Click);
             // 
-            // reportButton
-            // 
-            this.reportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.reportButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
-            this.reportButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.reportButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.reportButton.Location = new System.Drawing.Point(12, 182);
-            this.reportButton.Name = "reportButton";
-            this.reportButton.Size = new System.Drawing.Size(104, 37);
-            this.reportButton.TabIndex = 10;
-            this.reportButton.Text = "REPORT";
-            this.reportButton.UseVisualStyleBackColor = true;
-            // 
             // radioContainer
             // 
-            this.radioContainer.Controls.Add(this.radioButton3);
             this.radioContainer.Controls.Add(this.reportRadioButton);
             this.radioContainer.Controls.Add(this.requestRadioButton);
             this.radioContainer.Controls.Add(this.logonRadioButton);
             this.radioContainer.Controls.Add(this.pdcRadioButton);
-            this.radioContainer.Location = new System.Drawing.Point(122, 8);
+            this.radioContainer.Location = new System.Drawing.Point(260, 236);
             this.radioContainer.Name = "radioContainer";
-            this.radioContainer.Size = new System.Drawing.Size(103, 26);
+            this.radioContainer.Size = new System.Drawing.Size(82, 26);
             this.radioContainer.TabIndex = 12;
             this.radioContainer.Visible = false;
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(84, 7);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(14, 13);
-            this.radioButton3.TabIndex = 4;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.Visible = false;
             // 
             // reportRadioButton
             // 
@@ -235,15 +215,85 @@
             this.pdcRadioButton.UseVisualStyleBackColor = true;
             this.pdcRadioButton.Visible = false;
             // 
+            // reportButton
+            // 
+            this.reportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.reportButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.reportButton.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.reportButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.reportButton.Location = new System.Drawing.Point(312, 8);
+            this.reportButton.Name = "reportButton";
+            this.reportButton.Size = new System.Drawing.Size(94, 37);
+            this.reportButton.TabIndex = 13;
+            this.reportButton.Text = "REPORT";
+            this.reportButton.UseVisualStyleBackColor = true;
+            // 
+            // requestContainer
+            // 
+            this.requestContainer.Controls.Add(this.wcwRadioButton);
+            this.requestContainer.Controls.Add(this.directRadioButton);
+            this.requestContainer.Controls.Add(this.speedRadioButton);
+            this.requestContainer.Controls.Add(this.levelRadioButton);
+            this.requestContainer.Location = new System.Drawing.Point(151, 236);
+            this.requestContainer.Name = "requestContainer";
+            this.requestContainer.Size = new System.Drawing.Size(82, 26);
+            this.requestContainer.TabIndex = 13;
+            this.requestContainer.Visible = false;
+            // 
+            // wcwRadioButton
+            // 
+            this.wcwRadioButton.AutoSize = true;
+            this.wcwRadioButton.Location = new System.Drawing.Point(64, 7);
+            this.wcwRadioButton.Name = "wcwRadioButton";
+            this.wcwRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.wcwRadioButton.TabIndex = 3;
+            this.wcwRadioButton.TabStop = true;
+            this.wcwRadioButton.UseVisualStyleBackColor = true;
+            this.wcwRadioButton.Visible = false;
+            // 
+            // directRadioButton
+            // 
+            this.directRadioButton.AutoSize = true;
+            this.directRadioButton.Location = new System.Drawing.Point(44, 7);
+            this.directRadioButton.Name = "directRadioButton";
+            this.directRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.directRadioButton.TabIndex = 2;
+            this.directRadioButton.TabStop = true;
+            this.directRadioButton.UseVisualStyleBackColor = true;
+            this.directRadioButton.Visible = false;
+            // 
+            // speedRadioButton
+            // 
+            this.speedRadioButton.AutoSize = true;
+            this.speedRadioButton.Location = new System.Drawing.Point(24, 7);
+            this.speedRadioButton.Name = "speedRadioButton";
+            this.speedRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.speedRadioButton.TabIndex = 1;
+            this.speedRadioButton.TabStop = true;
+            this.speedRadioButton.UseVisualStyleBackColor = true;
+            this.speedRadioButton.Visible = false;
+            // 
+            // levelRadioButton
+            // 
+            this.levelRadioButton.AutoSize = true;
+            this.levelRadioButton.Location = new System.Drawing.Point(4, 7);
+            this.levelRadioButton.Name = "levelRadioButton";
+            this.levelRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.levelRadioButton.TabIndex = 0;
+            this.levelRadioButton.TabStop = true;
+            this.levelRadioButton.UseVisualStyleBackColor = true;
+            this.levelRadioButton.Visible = false;
+            // 
             // RequestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(713, 270);
+            this.ClientSize = new System.Drawing.Size(615, 290);
+            this.Controls.Add(this.requestContainer);
+            this.Controls.Add(this.reportButton);
             this.Controls.Add(this.requestButton);
             this.Controls.Add(this.radioContainer);
-            this.Controls.Add(this.reportButton);
             this.Controls.Add(this.logonButton);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.sendButton);
@@ -257,6 +307,8 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             this.radioContainer.ResumeLayout(false);
             this.radioContainer.PerformLayout();
+            this.requestContainer.ResumeLayout(false);
+            this.requestContainer.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,12 +324,16 @@
         private System.Windows.Forms.Button pdcButton;
         private System.Windows.Forms.Button logonButton;
         private System.Windows.Forms.Button requestButton;
-        private System.Windows.Forms.Button reportButton;
         private System.Windows.Forms.Panel radioContainer;
         private System.Windows.Forms.RadioButton logonRadioButton;
         private System.Windows.Forms.RadioButton pdcRadioButton;
         private System.Windows.Forms.RadioButton requestRadioButton;
-        private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton reportRadioButton;
+        private System.Windows.Forms.Button reportButton;
+        private System.Windows.Forms.Panel requestContainer;
+        private System.Windows.Forms.RadioButton wcwRadioButton;
+        private System.Windows.Forms.RadioButton directRadioButton;
+        private System.Windows.Forms.RadioButton speedRadioButton;
+        private System.Windows.Forms.RadioButton levelRadioButton;
     }
 }

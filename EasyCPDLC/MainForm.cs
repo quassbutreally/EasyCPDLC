@@ -30,7 +30,7 @@ namespace EasyCPDLC
         private string callsign;
         private RequestForm rForm;
         private TelexForm tForm;
-        public int messageOutCounter = 0;
+        public int messageOutCounter = 1;
         private bool _connected;
         public bool connected
         {
@@ -84,6 +84,8 @@ namespace EasyCPDLC
         }
 
         public Font controlFont = new Font("Oxygen", 10.0f, FontStyle.Regular);
+        public Font textFont = new Font("B612 Mono", 10.0f, FontStyle.Regular);
+        public Font textFontBold = new Font("B612 Mono", 12.5f, FontStyle.Bold);
         public Font controlFontBold = new Font("Oxygen", 10.0f, FontStyle.Bold);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
@@ -111,7 +113,7 @@ namespace EasyCPDLC
         public MainForm()
         {
             InitializeComponent();
-            currentATCUnit = null;
+            currentATCUnit = "LFXX";
 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -348,13 +350,13 @@ namespace EasyCPDLC
         {
             CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _outbound, _header);
             Size maxSize = new Size();
-            maxSize.Width = 450;
+            maxSize.Width = 420;
             _message.MaximumSize = maxSize;
-            _message.Width = 450;
+            _message.Width = 420;
             _message.AutoSize = true;
             _message.BackColor = controlBackColor;
             _message.ForeColor = Color.Orange;
-            _message.Font = controlFont;
+            _message.Font = textFont;
             _message.Text = _text;
             _message.BorderStyle = BorderStyle.None;
             _message.MouseDown += MessageClicked;
@@ -373,7 +375,7 @@ namespace EasyCPDLC
             _message.AutoSize = true;
             _message.BackColor = controlBackColor;
             _message.ForeColor = SystemColors.ControlDark;
-            _message.Font = controlFont;
+            _message.Font = textFont;
             _message.Text = _text;
             _message.BorderStyle = BorderStyle.None;
             _message.Margin = new Padding(5, 3, 0, 0);
@@ -464,7 +466,7 @@ namespace EasyCPDLC
                             break;
                         }
 
-                        format_response += sender + ": " + _modify[1];
+                        format_response += _modify[1];
                         WriteMessage(format_response, type, sender);
                         player.Play();
                     }
@@ -579,23 +581,24 @@ namespace EasyCPDLC
 
                 try
                 {
+
                     userVATSIMData = pilotList.pilots.Where(i => i.cid == cid).FirstOrDefault();
                     response = "DETAILS RETRIEVED FOR " + userVATSIMData.callsign;
                     callsign = userVATSIMData.callsign;
 
                     connected = true;
+
                     requestCancellationTokenSource = new CancellationTokenSource();
                     requestCancellationToken = requestCancellationTokenSource.Token;
-                    await PeriodicCheckMessage(updateTimer, requestCancellationToken);
+                    _ = PeriodicCheckMessage(updateTimer, requestCancellationToken);
                 }
-                catch (Exception)
+                catch (NullReferenceException)
                 {
                     response = "ERROR RETRIEVING DETAILS. ENSURE A FLIGHT PLAN HAS BEEN FILED AND TRY AGAIN";
                     atcButton.Enabled = false;
                     telexButton.Enabled = false;
                     connected = false;
                 }
-
                 finally
                 {
                     WriteMessage(response, "SYSTEM", "SYSTEM");

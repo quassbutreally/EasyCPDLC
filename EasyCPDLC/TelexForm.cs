@@ -22,16 +22,20 @@ namespace EasyCPDLC
         private Color controlFrontColor;
         private Font controlFont;
         private Font controlFontBold;
+        private Font textFont;
+        private Font textFontBold;
         private string recipient;
         public TelexForm(MainForm _parent, string _recipient = null)
         {
             InitializeComponent();
-            this.parent = _parent;
+            parent = _parent;
             userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
             controlFont = parent.controlFont;
             controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
+            textFont = parent.textFont;
+            textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
         }
 
@@ -40,7 +44,7 @@ namespace EasyCPDLC
             Label _temp = new Label();
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFont;
+            _temp.Font = textFont;
             _temp.AutoSize = true;
             _temp.Text = _text;
             _temp.Top = 10;
@@ -58,7 +62,7 @@ namespace EasyCPDLC
 
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFontBold;
+            _temp.Font = textFontBold;
             _temp.MaxLength = _maxLength;
             _temp.BorderStyle = BorderStyle.None;
             _temp.Text = _text;
@@ -83,7 +87,7 @@ namespace EasyCPDLC
             UITextBox _temp = new UITextBox(controlFrontColor);
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFontBold;
+            _temp.Font = textFontBold;
             _temp.BorderStyle = BorderStyle.None;
             _temp.Width = messageFormatPanel.Width - 50;
             _temp.Multiline = true;
@@ -148,12 +152,12 @@ namespace EasyCPDLC
             }
         }
 
-        private void sendButton_Click(object sender, EventArgs e)
+        private async void sendButton_Click(object sender, EventArgs e)
         {
             string _formatMessage = messageFormatPanel.Controls[3].Text;
             string _recipient = messageFormatPanel.Controls[1].Text;
 
-            this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+            await this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
             Console.WriteLine(_formatMessage.Trim());
             this.Close();
         }

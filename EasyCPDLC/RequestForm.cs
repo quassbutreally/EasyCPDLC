@@ -19,13 +19,18 @@ namespace EasyCPDLC
         private ToolStripMenuItem directRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem levelRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem speedRequestMenu;// = new ToolStripMenuItem();
+        private ToolStripMenuItem whenCanWeRequestMenu;// = new ToolStripMenuItem();
+        private Label dummyLabel;
 
         private MainForm parent;
         private PilotData userVATSIMData;
         private Color controlBackColor;
         private Color controlFrontColor;
+
         private Font controlFont;
         private Font controlFontBold;
+        private Font textFont;
+        private Font textFontBold;
 
         private bool _needsLogon;
         public bool needsLogon
@@ -73,6 +78,13 @@ namespace EasyCPDLC
             controlFrontColor = parent.controlFrontColor;
             controlFont = parent.controlFont;
             controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
+            textFont = parent.textFont;
+            textFontBold = parent.textFontBold;
+
+            dummyLabel = new Label();
+            dummyLabel.Width = 0;
+            dummyLabel.Height = 0;
+            dummyLabel.Margin = new Padding(0, 0, 0, 0);
 
             InitialisePopupMenu();
 
@@ -104,51 +116,105 @@ namespace EasyCPDLC
             levelRequestMenu.Click += LevelRequestClick;
             speedRequestMenu = CreateMenuItem("SPEED");
             speedRequestMenu.Click += SpeedRequestClick;
+            whenCanWeRequestMenu = CreateMenuItem("WHEN CAN WE?");
+            whenCanWeRequestMenu.Click += WhenCanWeRequestClick;
         }
 
         private void DirectRequestClick(object sender, EventArgs e)
         {
+            directRadioButton.Checked = true;
+
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
             messageFormatPanel.Controls.Add(createTextBox("", 5));
+            messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
+            
 
         }
 
         private void LevelRequestClick(object sender, EventArgs e)
         {
+            levelRadioButton.Checked = true;
+
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("REQUEST FL"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3));
+            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
         private void SpeedRequestClick(object sender, EventArgs e)
         {
+            speedRadioButton.Checked = true;
+
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("REQUEST MACH"));
-            messageFormatPanel.Controls.Add(createTextBox("", 1, false, true));
-            messageFormatPanel.Controls.Add(createTemplate("."));
+            messageFormatPanel.Controls.Add(createTemplate("REQUEST"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], false);
+            messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "unitParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "unitParam"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(createTemplate("KTS"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE"));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
-        private void pdcButton_Click(object sender, EventArgs e)
+        private void WhenCanWeRequestClick(object sender, EventArgs e)
+        {
+            wcwRadioButton.Checked = true;
+
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            //messageFormatPanel.Controls.Add(dummyLabel);
+            messageFormatPanel.Controls.Add(createTemplate("WHEN CAN WE EXPECT:"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            //messageFormatPanel.Controls.Add(dummyLabel);
+            messageFormatPanel.Controls.Add(createCheckBox("HIGHER LEVEL?", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("LOWER LEVEL?", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("BACK ON ROUTE?", "wcwParam"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            //messageFormatPanel.Controls.Add(dummyLabel);
+            messageFormatPanel.Controls.Add(createCheckBox("CLIMB TO: FL", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("DESCENT TO: FL", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            //messageFormatPanel.Controls.Add(dummyLabel);
+            messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(createTemplate("KTS"));
+            messageFormatPanel.Controls.Add(createTemplate("   "));
+            messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "wcwParam"));
+            messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            //messageFormatPanel.Controls.Add(dummyLabel);
+        }
+
+            private void pdcButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
@@ -187,7 +253,7 @@ namespace EasyCPDLC
             Label _temp = new Label();
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFont;
+            _temp.Font = textFont;
             _temp.AutoSize = true;
             _temp.Text = _text;
             _temp.Top = 10;
@@ -205,14 +271,14 @@ namespace EasyCPDLC
 
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFontBold;
+            _temp.Font = textFontBold;
             _temp.MaxLength = _maxLength;
             _temp.BorderStyle = BorderStyle.None;
             _temp.Text = _text;
             _temp.CharacterCasing = CharacterCasing.Upper;
             _temp.Top = 10;
             _temp.Padding = new Padding(3, 0, 3, -10);
-            _temp.Margin = new Padding(3, 5, 3, -10);
+            //_temp.Margin = new Padding(3, 5, 3, -10);
             _temp.Height = 20;
             _temp.ReadOnly = _readOnly;
             _temp.TextAlign = HorizontalAlignment.Center;
@@ -239,13 +305,13 @@ namespace EasyCPDLC
             }
         }
 
-        private CheckBox createCheckBox(string _text)
+        private UICheckBox createCheckBox(string _text, string _group)
         {
-            CheckBox _temp = new CheckBox();
+            UICheckBox _temp = new UICheckBox(_group);
 
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFont;
+            _temp.Font = textFont;
             _temp.Text = _text;
             _temp.Padding = new Padding(3, 10, 3, -30);
             _temp.AutoSize = true;
@@ -255,11 +321,11 @@ namespace EasyCPDLC
 
         private void DeselectCheckBox(object sender, EventArgs e)
         {
-            CheckBox _sender = (CheckBox)sender;
+            UICheckBox _sender = (UICheckBox)sender;
 
-            foreach (CheckBox box in messageFormatPanel.Controls.OfType<CheckBox>())
+            foreach (UICheckBox box in messageFormatPanel.Controls.OfType<UICheckBox>())
             {
-                if (box.Text != _sender.Text)
+                if (box.Text != _sender.Text && box.group == _sender.group)
                 {
                     box.Checked = false;
                 }
@@ -272,7 +338,7 @@ namespace EasyCPDLC
             UITextBox _temp = new UITextBox(controlFrontColor);
             _temp.BackColor = controlBackColor;
             _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFontBold;
+            _temp.Font = textFontBold;
             _temp.BorderStyle = BorderStyle.None;
             _temp.Width = messageFormatPanel.Width - 50;
             _temp.Multiline = true;
@@ -362,29 +428,20 @@ namespace EasyCPDLC
 
                     case "requestRadioButton":
 
-                        foreach (Control _control in messageFormatPanel.Controls)
+                        /*foreach (Control _control in messageFormatPanel.Controls)
                         {
                             if (_control.Text.Length < 1)
                             {
                                 return;
                             }
-                        }
+                        }*/
 
                         _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
 
-                        for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
-                        {
-                            _formatMessage += messageFormatPanel.Controls[i].Text + "";
-                        }
+                        _formatMessage += ParseRequest();
 
-                        CheckBox dueToBox = messageFormatPanel.Controls.OfType<CheckBox>()
-                                       .Where(x => x.Checked).FirstOrDefault();
 
-                        if (dueToBox != default(CheckBox))
-                        {
-                            _formatMessage += " " + dueToBox.Name;
-                        }
 
                         await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
@@ -405,6 +462,119 @@ namespace EasyCPDLC
             {
 
             }
+        }
+
+        private string ParseRequest()
+        {
+            RadioButton radioBtn = requestContainer.Controls.OfType<RadioButton>()
+                                      .Where(x => x.Checked).FirstOrDefault();
+
+            UICheckBox dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
+
+            UICheckBox unitBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "unitParam").FirstOrDefault();
+
+            UICheckBox wcwBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "wcwParam").FirstOrDefault();
+
+            string _request = "";
+
+            switch (radioBtn.Name)
+            {
+                case "levelRadioButton":
+
+                    for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
+                    {
+                        _request += messageFormatPanel.Controls[i].Text + "";
+                    }
+
+                    dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
+
+                    if (dueToBox != default(UICheckBox))
+                    {
+                        _request += " " + dueToBox.Name;
+                    }
+                    break;
+
+                case "directRadioButton":
+
+                    for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
+                    {
+                        _request += messageFormatPanel.Controls[i].Text + "";
+                    }
+
+                    dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
+
+                    if (dueToBox != default(UICheckBox))
+                    {
+                        _request += " " + dueToBox.Name;
+                    }
+                    break;
+
+                case "speedRadioButton":
+
+                    _request += "REQUEST ";
+                    if (unitBox != default(UICheckBox))
+                    {
+                        if(unitBox.Text == "MACH: M0.")
+                        {
+                            _request += "M" + messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text;
+                        }
+                        else
+                        {
+                            _request += messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text + "K";
+                        }
+                    }
+                    break;
+
+                case "wcwRadioButton":
+
+                    _request += "WHEN CAN WE EXPECT ";
+
+                    switch (wcwBox.Text)
+                    {
+                        case "HIGHER LEVEL?":
+                            _request += "HIGHER LEVEL";
+                            break;
+
+                        case "LOWER LEVEL?":
+                            _request += "LOWER LEVEL";
+                            break;
+
+                        case "BACK ON ROUTE?":
+                            _request += "BACK ON ROUTE";
+                            break;
+
+                        case "CLIMB TO: FL":
+                            _request += "CLIMB TO FL" + messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(wcwBox) + 1];
+                            break;
+
+                        case "DESCENT TO: FL":
+                            _request += "DESCENT TO FL" + messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(wcwBox) + 1];
+                            break;
+
+                        case "MACH: M0.":
+                            _request += "M" + messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(wcwBox) + 1];
+                            break;
+
+                        case "SPEED: ":
+                            _request += messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(wcwBox) + 1] + "K";
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+
+            return _request;
         }
 
         private void WindowDrag(object sender, MouseEventArgs e)
@@ -448,9 +618,10 @@ namespace EasyCPDLC
             popupMenu.Items.Add(directRequestMenu);
             popupMenu.Items.Add(levelRequestMenu);
             popupMenu.Items.Add(speedRequestMenu);
+            popupMenu.Items.Add(whenCanWeRequestMenu);
             //popupMenu.AutoSize = false;
             //popupMenu.Size = new Size(104, 114);
-            popupMenu.Show(requestButton, new Point(requestButton.Width, 0));
+            popupMenu.Show(requestButton, new Point(0, requestButton.Height));
         }
     }
 }
