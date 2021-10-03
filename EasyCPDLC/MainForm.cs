@@ -113,7 +113,7 @@ namespace EasyCPDLC
         public MainForm()
         {
             InitializeComponent();
-            currentATCUnit = "LFXX";
+            currentATCUnit = null;
 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;

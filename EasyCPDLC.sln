@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCPDLC", "EasyCPDLC\EasyCPDLC.csproj", "{B9CA396A-4CB3-4D9A-B985-946443322AB9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0FC0D1C-127C-4DC1-B043-F51B8A699CA5}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Documents\initIcon.png = ..\..\..\Documents\initIcon.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

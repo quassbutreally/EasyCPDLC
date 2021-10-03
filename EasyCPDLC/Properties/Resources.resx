@@ -117,12 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Quack" xml:space="preserve">
+    <value />
+  </data>
   <data name="honk" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAEScAABEnAAAAAEAAQoPAgAAAEScAAACUklGRjycAABXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAARJwAAEScAABEnAAAAAEAAQoPAgAAAEScAAACUklGRjycAABXQVZFZm10IBAAAAAB
         AAIAgLsAAADuAgAEABAAZGF0YRicAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB
         AAEAAQABAAEAAQABAAEAAQABAAEAAQACAAIAAwADAAMAAwADAAMABAAEAAUABQAGAAYABgAGAAUABQAD
@@ -792,7 +795,23 @@
         AAAAAAAAAP////////////////////8L
 </value>
   </data>
-  <data name="Quack" xml:space="preserve">
-    <value />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="B612Mono_Bold" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612Mono-Bold.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B612Mono_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612Mono-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B612Mono_Italic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612Mono-Italic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B612_Bold" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612-Bold.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B612_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="B612_Italic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612-Italic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
