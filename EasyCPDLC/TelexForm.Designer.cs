@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TelexForm));
             this.messageFormatPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.clearButton = new System.Windows.Forms.Button();
             this.sendButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.titleLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // messageFormatPanel
@@ -53,7 +55,7 @@
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.clearButton.Location = new System.Drawing.Point(327, 192);
+            this.clearButton.Location = new System.Drawing.Point(327, 190);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
             this.clearButton.TabIndex = 8;
@@ -102,6 +104,17 @@
             this.titleLabel.Text = "EasyCPDLC";
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(110, 41);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "TELEX";
+            // 
             // TelexForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -109,12 +122,14 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(555, 241);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.sendButton);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.messageFormatPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TelexForm";
             this.Text = "TelexForm";
             this.Load += new System.EventHandler(this.ReloadPanel);
@@ -130,5 +145,6 @@
         private System.Windows.Forms.Button sendButton;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Label titleLabel;
+        private System.Windows.Forms.Label label1;
     }
 }
