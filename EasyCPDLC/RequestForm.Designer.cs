@@ -218,6 +218,7 @@
             // 
             // reportButton
             // 
+            this.reportButton.Enabled = false;
             this.reportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.reportButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.reportButton.ForeColor = System.Drawing.SystemColors.ControlLight;
@@ -290,7 +291,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(615, 290);
+            this.ClientSize = new System.Drawing.Size(612, 290);
             this.Controls.Add(this.requestContainer);
             this.Controls.Add(this.reportButton);
             this.Controls.Add(this.requestButton);

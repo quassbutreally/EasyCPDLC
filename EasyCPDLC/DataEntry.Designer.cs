@@ -93,23 +93,24 @@
             // 
             this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.hoppieCodeTextBox.Font = new System.Drawing.Font("B612 Mono", 11F);
+            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.hoppieCodeTextBox.Location = new System.Drawing.Point(33, 206);
             this.hoppieCodeTextBox.MaxLength = 14;
             this.hoppieCodeTextBox.Name = "hoppieCodeTextBox";
-            this.hoppieCodeTextBox.Size = new System.Drawing.Size(143, 27);
+            this.hoppieCodeTextBox.Size = new System.Drawing.Size(143, 24);
             this.hoppieCodeTextBox.TabIndex = 5;
             this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
             // 
             // rememberCheckBox
             // 
             this.rememberCheckBox.AutoSize = true;
+            this.rememberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.rememberCheckBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rememberCheckBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.rememberCheckBox.Location = new System.Drawing.Point(38, 289);
+            this.rememberCheckBox.Location = new System.Drawing.Point(39, 289);
             this.rememberCheckBox.Name = "rememberCheckBox";
-            this.rememberCheckBox.Size = new System.Drawing.Size(133, 23);
+            this.rememberCheckBox.Size = new System.Drawing.Size(130, 23);
             this.rememberCheckBox.TabIndex = 7;
             this.rememberCheckBox.Text = "Remember Me?";
             this.rememberCheckBox.UseVisualStyleBackColor = true;
@@ -130,7 +131,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Image = global::EasyCPDLC.Properties.Resources.Stretchboard;
             this.pictureBox1.Location = new System.Drawing.Point(13, -19);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(197, 150);
@@ -142,12 +143,12 @@
             // 
             this.vatsimCIDTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.vatsimCIDTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.vatsimCIDTextBox.Font = new System.Drawing.Font("B612 Mono", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.vatsimCIDTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.vatsimCIDTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.vatsimCIDTextBox.Location = new System.Drawing.Point(33, 255);
             this.vatsimCIDTextBox.MaxLength = 7;
             this.vatsimCIDTextBox.Name = "vatsimCIDTextBox";
-            this.vatsimCIDTextBox.Size = new System.Drawing.Size(143, 28);
+            this.vatsimCIDTextBox.Size = new System.Drawing.Size(143, 24);
             this.vatsimCIDTextBox.TabIndex = 6;
             this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.vatsimCIDTextBox_TextChanged);
             // 

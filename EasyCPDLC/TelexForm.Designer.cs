@@ -34,7 +34,6 @@
             this.sendButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.titleLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // messageFormatPanel
@@ -104,17 +103,6 @@
             this.titleLabel.Text = "EasyCPDLC";
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 41);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "TELEX";
-            // 
             // TelexForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -122,7 +110,6 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(555, 241);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.sendButton);
@@ -145,6 +132,5 @@
         private System.Windows.Forms.Button sendButton;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Label titleLabel;
-        private System.Windows.Forms.Label label1;
     }
 }

@@ -47,13 +47,13 @@ namespace EasyCPDLC
                 if (this._needsLogon)
                 {
                     logonButton.Text = "LOGON";
-                    //requestButton.Enabled = false;
+                    requestButton.Enabled = false;
                     //reportButton.Enabled = false;
                 }
                 else
                 {
                     logonButton.Text = "LOGOFF";
-                    //requestButton.Enabled = true;
+                    requestButton.Enabled = true;
                     //reportButton.Enabled = true;
                 }
             }

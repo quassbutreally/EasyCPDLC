@@ -1,8 +1,10 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Media;
 using System.Net;
@@ -83,10 +85,12 @@ namespace EasyCPDLC
             }
         }
 
-        public Font controlFont = new Font("Oxygen", 10.0f, FontStyle.Regular);
-        public Font textFont = new Font("B612 Mono", 10.0f, FontStyle.Regular);
-        public Font textFontBold = new Font("B612 Mono", 12.5f, FontStyle.Bold);
-        public Font controlFontBold = new Font("Oxygen", 10.0f, FontStyle.Bold);
+        public PrivateFontCollection privateFonts = new PrivateFontCollection();
+        public Font controlFont;// = new Font("Oxygen", 10.0f, FontStyle.Regular);
+        public Font textFont;
+        public Font textFontBold;
+        public Font dataEntryFont;
+        public Font controlFontBold;// = new Font("Oxygen", 10.0f, FontStyle.Bold);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
         private ContextMenuStrip popupMenu = new ContextMenuStrip();
@@ -117,6 +121,14 @@ namespace EasyCPDLC
 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "Resources", "B612Mono-Regular.ttf"));
+            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "Resources", "Oxygen-Regular.ttf"));
+            textFont = new Font(privateFonts.Families[0], 10F);
+            dataEntryFont = new Font(privateFonts.Families[0], 11F);
+            textFontBold = new Font(privateFonts.Families[0], 12.5F, FontStyle.Bold);
+            controlFont = new Font(privateFonts.Families[1], 10F);
+            controlFontBold = new Font(privateFonts.Families[1], 10F, FontStyle.Bold);
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -260,7 +272,7 @@ namespace EasyCPDLC
         private void ShowSetupForm()
         {
 
-            DataEntry dataEntry = new DataEntry(regKey.GetValue("hoppieCode"), regKey.GetValue("vatsimCID"));
+            DataEntry dataEntry = new DataEntry(this, regKey.GetValue("hoppieCode"), regKey.GetValue("vatsimCID"));
 
             if (dataEntry.ShowDialog(this) == DialogResult.OK)
             {

@@ -63,59 +63,9 @@ namespace EasyCPDLC.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] B612_Bold {
+        internal static byte[] B612Mono_Regular {
             get {
-                object obj = ResourceManager.GetObject("B612_Bold", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] B612_BoldItalic {
-            get {
-                object obj = ResourceManager.GetObject("B612_BoldItalic", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] B612_Italic {
-            get {
-                object obj = ResourceManager.GetObject("B612_Italic", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] B612Mono_Bold {
-            get {
-                object obj = ResourceManager.GetObject("B612Mono_Bold", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] B612Mono_BoldItalic {
-            get {
-                object obj = ResourceManager.GetObject("B612Mono_BoldItalic", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] B612Mono_Italic {
-            get {
-                object obj = ResourceManager.GetObject("B612Mono_Italic", resourceCulture);
+                object obj = ResourceManager.GetObject("B612Mono_Regular", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -130,11 +80,22 @@ namespace EasyCPDLC.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string Quack {
+        internal static byte[] Oxygen_Regular {
             get {
-                return ResourceManager.GetString("Quack", resourceCulture);
+                object obj = ResourceManager.GetObject("Oxygen_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stretchboard {
+            get {
+                object obj = ResourceManager.GetObject("Stretchboard", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
