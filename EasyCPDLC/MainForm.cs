@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
+using System.Reflection;
 using System.Linq;
 using System.Media;
 using System.Net;
@@ -85,12 +85,11 @@ namespace EasyCPDLC
             }
         }
 
-        public PrivateFontCollection privateFonts = new PrivateFontCollection();
-        public Font controlFont;// = new Font("Oxygen", 10.0f, FontStyle.Regular);
-        public Font textFont;
-        public Font textFontBold;
-        public Font dataEntryFont;
-        public Font controlFontBold;// = new Font("Oxygen", 10.0f, FontStyle.Bold);
+        public Font controlFont = new Font("Oxygen", 10.0f, FontStyle.Regular);
+        public Font controlFontBold = new Font("Oxygen", 10.0f, FontStyle.Bold);
+        public Font textFont = new Font("B612 Mono", 10.0f, FontStyle.Regular);
+        public Font textFontBold = new Font("B612 Mono", 12.5f, FontStyle.Bold);
+        public Font dataEntryFont = new Font("B612 Mono", 11.0f, FontStyle.Regular);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
         private ContextMenuStrip popupMenu = new ContextMenuStrip();
@@ -116,19 +115,22 @@ namespace EasyCPDLC
 
         public MainForm()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
             InitializeComponent();
             currentATCUnit = null;
 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 
-            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "Resources", "B612Mono-Regular.ttf"));
-            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "Resources", "Oxygen-Regular.ttf"));
-            textFont = new Font(privateFonts.Families[0], 10F);
-            dataEntryFont = new Font(privateFonts.Families[0], 11F);
-            textFontBold = new Font(privateFonts.Families[0], 12.5F, FontStyle.Bold);
-            controlFont = new Font(privateFonts.Families[1], 10F);
-            controlFontBold = new Font(privateFonts.Families[1], 10F, FontStyle.Bold);
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            if (new AssemblyName(args.Name).Name == "System.Runtime.CompilerServices.Unsafe")
+                return Assembly.LoadFrom(
+                    Path.Combine(Application.StartupPath, "System.Runtime.CompilerServices.Unsafe.dll"));
+            throw new Exception();
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
