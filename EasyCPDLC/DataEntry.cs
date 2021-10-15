@@ -22,9 +22,6 @@ namespace EasyCPDLC
 
             try
             {
-                Font textBoxFont = _parent.dataEntryFont;
-                hoppieCodeTextBox.Font = textBoxFont;
-                vatsimCIDTextBox.Font = textBoxFont;
 
                 if (!(_hoppieLogonCode is null))
                 {
@@ -75,6 +72,25 @@ namespace EasyCPDLC
 
         }
 
+        private void hoppieCodeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1)
+                {
+                    throw new FormatException();
+                }
+
+                Convert.ToInt32(vatsimCIDTextBox.Text);
+                connectButton.Enabled = true;
+
+            }
+            catch (FormatException)
+            {
+                connectButton.Enabled = false;
+            }
+        }
+
         private void vatsimCIDTextBox_TextChanged(object sender, EventArgs e)
         {
             try
@@ -86,25 +102,7 @@ namespace EasyCPDLC
 
                 Convert.ToInt32(vatsimCIDTextBox.Text);
                 connectButton.Enabled = true;
-            }
-            catch (FormatException)
-            {
-                connectButton.Enabled = false;
-            }
-        }
 
-        private void hoppieCodeTextBox_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1)
-                {
-                    throw new FormatException();
-                }
-                else
-                {
-                    connectButton.Enabled = true;
-                }
             }
             catch (FormatException)
             {
@@ -118,6 +116,14 @@ namespace EasyCPDLC
             {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        private void NumsOnly(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
             }
         }
     }

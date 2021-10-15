@@ -243,7 +243,7 @@ namespace EasyCPDLC
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("ATC UNIT:"));
-            messageFormatPanel.Controls.Add(createTextBox("", 4));
+            messageFormatPanel.Controls.Add(createTextBox(needsLogon ? "" : parent.currentATCUnit, 4));
 
             logonRadioButton.Checked = true;
         }
@@ -484,7 +484,7 @@ namespace EasyCPDLC
             {
                 case "levelRadioButton":
 
-                    for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
+                    for (int i = 2; i < messageFormatPanel.Controls.Count - 4; i++)
                     {
                         _request += messageFormatPanel.Controls[i].Text + "";
                     }
@@ -500,7 +500,7 @@ namespace EasyCPDLC
 
                 case "directRadioButton":
 
-                    for (int i = 2; i < messageFormatPanel.Controls.Count - 2; i++)
+                    for (int i = 2; i < messageFormatPanel.Controls.Count - 4; i++)
                     {
                         _request += messageFormatPanel.Controls[i].Text + "";
                     }

@@ -33,12 +33,16 @@
             this.exitButton = new System.Windows.Forms.Button();
             this.hoppieLogonLabel = new System.Windows.Forms.Label();
             this.vatsimCIDLabel = new System.Windows.Forms.Label();
-            this.hoppieCodeTextBox = new System.Windows.Forms.TextBox();
             this.rememberCheckBox = new System.Windows.Forms.CheckBox();
             this.connectButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.roundPanel2 = new EasyCPDLC.RoundPanel();
             this.vatsimCIDTextBox = new System.Windows.Forms.TextBox();
+            this.roundPanel1 = new EasyCPDLC.RoundPanel();
+            this.hoppieCodeTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.roundPanel2.SuspendLayout();
+            this.roundPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -83,24 +87,11 @@
             this.vatsimCIDLabel.AutoSize = true;
             this.vatsimCIDLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.vatsimCIDLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.vatsimCIDLabel.Location = new System.Drawing.Point(59, 237);
+            this.vatsimCIDLabel.Location = new System.Drawing.Point(59, 242);
             this.vatsimCIDLabel.Name = "vatsimCIDLabel";
             this.vatsimCIDLabel.Size = new System.Drawing.Size(90, 19);
             this.vatsimCIDLabel.TabIndex = 4;
             this.vatsimCIDLabel.Text = "VATSIM CID";
-            // 
-            // hoppieCodeTextBox
-            // 
-            this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.hoppieCodeTextBox.Location = new System.Drawing.Point(33, 206);
-            this.hoppieCodeTextBox.MaxLength = 14;
-            this.hoppieCodeTextBox.Name = "hoppieCodeTextBox";
-            this.hoppieCodeTextBox.Size = new System.Drawing.Size(143, 24);
-            this.hoppieCodeTextBox.TabIndex = 5;
-            this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
             // 
             // rememberCheckBox
             // 
@@ -108,7 +99,7 @@
             this.rememberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.rememberCheckBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rememberCheckBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.rememberCheckBox.Location = new System.Drawing.Point(39, 289);
+            this.rememberCheckBox.Location = new System.Drawing.Point(39, 300);
             this.rememberCheckBox.Name = "rememberCheckBox";
             this.rememberCheckBox.Size = new System.Drawing.Size(130, 23);
             this.rememberCheckBox.TabIndex = 7;
@@ -121,7 +112,7 @@
             this.connectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.connectButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.connectButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.connectButton.Location = new System.Drawing.Point(34, 318);
+            this.connectButton.Location = new System.Drawing.Point(34, 329);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(140, 29);
             this.connectButton.TabIndex = 8;
@@ -139,29 +130,63 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataEntry_MouseDown);
             // 
+            // roundPanel2
+            // 
+            this.roundPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
+            this.roundPanel2.Controls.Add(this.vatsimCIDTextBox);
+            this.roundPanel2.Location = new System.Drawing.Point(34, 262);
+            this.roundPanel2.Name = "roundPanel2";
+            this.roundPanel2.Size = new System.Drawing.Size(140, 30);
+            this.roundPanel2.TabIndex = 11;
+            // 
             // vatsimCIDTextBox
             // 
             this.vatsimCIDTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.vatsimCIDTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.vatsimCIDTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.vatsimCIDTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.vatsimCIDTextBox.Font = new System.Drawing.Font("B612 Mono", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.vatsimCIDTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.vatsimCIDTextBox.Location = new System.Drawing.Point(33, 255);
+            this.vatsimCIDTextBox.Location = new System.Drawing.Point(-1, 6);
             this.vatsimCIDTextBox.MaxLength = 7;
             this.vatsimCIDTextBox.Name = "vatsimCIDTextBox";
-            this.vatsimCIDTextBox.Size = new System.Drawing.Size(143, 24);
-            this.vatsimCIDTextBox.TabIndex = 6;
+            this.vatsimCIDTextBox.Size = new System.Drawing.Size(140, 21);
+            this.vatsimCIDTextBox.TabIndex = 1;
+            this.vatsimCIDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.vatsimCIDTextBox_TextChanged);
+            this.vatsimCIDTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumsOnly);
+            // 
+            // roundPanel1
+            // 
+            this.roundPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
+            this.roundPanel1.Controls.Add(this.hoppieCodeTextBox);
+            this.roundPanel1.Location = new System.Drawing.Point(35, 207);
+            this.roundPanel1.Name = "roundPanel1";
+            this.roundPanel1.Size = new System.Drawing.Size(140, 30);
+            this.roundPanel1.TabIndex = 10;
+            // 
+            // hoppieCodeTextBox
+            // 
+            this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
+            this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.hoppieCodeTextBox.Font = new System.Drawing.Font("B612 Mono", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.hoppieCodeTextBox.Location = new System.Drawing.Point(-1, 6);
+            this.hoppieCodeTextBox.MaxLength = 10;
+            this.hoppieCodeTextBox.Name = "hoppieCodeTextBox";
+            this.hoppieCodeTextBox.Size = new System.Drawing.Size(140, 21);
+            this.hoppieCodeTextBox.TabIndex = 0;
+            this.hoppieCodeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
             // 
             // DataEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(209, 365);
+            this.ClientSize = new System.Drawing.Size(209, 375);
+            this.Controls.Add(this.roundPanel2);
+            this.Controls.Add(this.roundPanel1);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.rememberCheckBox);
-            this.Controls.Add(this.vatsimCIDTextBox);
-            this.Controls.Add(this.hoppieCodeTextBox);
             this.Controls.Add(this.vatsimCIDLabel);
             this.Controls.Add(this.hoppieLogonLabel);
             this.Controls.Add(this.exitButton);
@@ -169,10 +194,15 @@
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "DataEntry";
             this.Text = "DataEntry";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataEntry_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.roundPanel2.ResumeLayout(false);
+            this.roundPanel2.PerformLayout();
+            this.roundPanel1.ResumeLayout(false);
+            this.roundPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -184,10 +214,12 @@
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Label hoppieLogonLabel;
         private System.Windows.Forms.Label vatsimCIDLabel;
-        private System.Windows.Forms.TextBox hoppieCodeTextBox;
         private System.Windows.Forms.CheckBox rememberCheckBox;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private RoundPanel roundPanel1;
+        private System.Windows.Forms.TextBox hoppieCodeTextBox;
+        private RoundPanel roundPanel2;
         private System.Windows.Forms.TextBox vatsimCIDTextBox;
     }
 }
