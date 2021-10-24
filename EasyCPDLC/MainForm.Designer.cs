@@ -35,6 +35,8 @@
             this.atcButton = new System.Windows.Forms.Button();
             this.telexButton = new System.Windows.Forms.Button();
             this.retrieveButton = new System.Windows.Forms.Button();
+            this.atcUnitLabel = new System.Windows.Forms.Label();
+            this.atcUnitDisplay = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -42,7 +44,7 @@
             this.titleLabel.AutoSize = true;
             this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.titleLabel.Location = new System.Drawing.Point(339, 8);
+            this.titleLabel.Location = new System.Drawing.Point(339, 3);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
             this.titleLabel.TabIndex = 0;
@@ -71,11 +73,11 @@
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 433F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.outputTable.Location = new System.Drawing.Point(12, 55);
+            this.outputTable.Location = new System.Drawing.Point(12, 66);
             this.outputTable.Name = "outputTable";
             this.outputTable.RowCount = 1;
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputTable.Size = new System.Drawing.Size(513, 125);
+            this.outputTable.Size = new System.Drawing.Size(513, 112);
             this.outputTable.TabIndex = 3;
             this.outputTable.Click += new System.EventHandler(this.outputTable_Click);
             // 
@@ -88,7 +90,7 @@
             this.atcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.atcButton.Location = new System.Drawing.Point(243, 12);
             this.atcButton.Name = "atcButton";
-            this.atcButton.Size = new System.Drawing.Size(90, 37);
+            this.atcButton.Size = new System.Drawing.Size(90, 48);
             this.atcButton.TabIndex = 4;
             this.atcButton.Text = "ATC";
             this.atcButton.UseVisualStyleBackColor = true;
@@ -103,7 +105,7 @@
             this.telexButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.telexButton.Location = new System.Drawing.Point(147, 12);
             this.telexButton.Name = "telexButton";
-            this.telexButton.Size = new System.Drawing.Size(90, 37);
+            this.telexButton.Size = new System.Drawing.Size(90, 48);
             this.telexButton.TabIndex = 5;
             this.telexButton.Text = "TELEX";
             this.telexButton.UseVisualStyleBackColor = true;
@@ -118,18 +120,42 @@
             this.retrieveButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.retrieveButton.Location = new System.Drawing.Point(12, 12);
             this.retrieveButton.Name = "retrieveButton";
-            this.retrieveButton.Size = new System.Drawing.Size(129, 37);
+            this.retrieveButton.Size = new System.Drawing.Size(129, 48);
             this.retrieveButton.TabIndex = 6;
             this.retrieveButton.Text = "CONNECT";
             this.retrieveButton.UseVisualStyleBackColor = true;
             this.retrieveButton.Click += new System.EventHandler(this.retrieveButton_Click);
+            // 
+            // atcUnitLabel
+            // 
+            this.atcUnitLabel.AutoSize = true;
+            this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.atcUnitLabel.Location = new System.Drawing.Point(343, 44);
+            this.atcUnitLabel.Name = "atcUnitLabel";
+            this.atcUnitLabel.Size = new System.Drawing.Size(135, 19);
+            this.atcUnitLabel.TabIndex = 7;
+            this.atcUnitLabel.Text = "Current ATC Unit: ";
+            // 
+            // atcUnitDisplay
+            // 
+            this.atcUnitDisplay.AutoSize = true;
+            this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.atcUnitDisplay.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.atcUnitDisplay.Location = new System.Drawing.Point(471, 44);
+            this.atcUnitDisplay.Name = "atcUnitDisplay";
+            this.atcUnitDisplay.Size = new System.Drawing.Size(51, 19);
+            this.atcUnitDisplay.TabIndex = 8;
+            this.atcUnitDisplay.Text = "NONE";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(537, 192);
+            this.ClientSize = new System.Drawing.Size(537, 187);
+            this.Controls.Add(this.atcUnitDisplay);
+            this.Controls.Add(this.atcUnitLabel);
             this.Controls.Add(this.retrieveButton);
             this.Controls.Add(this.telexButton);
             this.Controls.Add(this.atcButton);
@@ -156,6 +182,8 @@
         private System.Windows.Forms.Button atcButton;
         private System.Windows.Forms.Button telexButton;
         private System.Windows.Forms.Button retrieveButton;
+        private System.Windows.Forms.Label atcUnitLabel;
+        private System.Windows.Forms.Label atcUnitDisplay;
     }
 }
 

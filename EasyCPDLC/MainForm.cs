@@ -88,11 +88,15 @@ namespace EasyCPDLC
                 {
                     if (_currentATCUnit is null)
                     {
+                        atcUnitDisplay.Text = "NONE";
                         rForm.needsLogon = true;
+                        
                     }
                     else
                     {
+                        atcUnitDisplay.Text = _currentATCUnit;
                         rForm.needsLogon = false;
+                        
                     }
                 }
                 catch (NullReferenceException)
@@ -161,6 +165,8 @@ namespace EasyCPDLC
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
+
+            currentATCUnit = "LFXX";
         }
         private ToolStripMenuItem CreateMenuItem(string name)
         {
