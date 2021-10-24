@@ -159,6 +159,8 @@ namespace EasyCPDLC
             outputTable.VerticalScroll.Visible = false;
             outputTable.AutoScroll = true;
 
+            currentATCUnit = "LFXX";
+
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
@@ -564,7 +566,7 @@ namespace EasyCPDLC
             return;
         }
 
-        private void WriteMessage(string _response, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
+        public void WriteMessage(string _response, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
         {
 
             CPDLCMessage message;

@@ -20,6 +20,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace EasyCPDLC
 {
@@ -44,6 +45,8 @@ namespace EasyCPDLC
         private PilotData userVATSIMData;
         private Color controlBackColor;
         private Color controlFrontColor;
+
+        private Dictionary<string, string> rsnConversion = new Dictionary<string, string>();
 
         private Font controlFont;
         private Font controlFontBold;
@@ -104,6 +107,9 @@ namespace EasyCPDLC
             dummyLabel.Height = 0;
             dummyLabel.Margin = new Padding(0, 0, 0, 0);
 
+            rsnConversion.Add("DUE TO WX", "DUE TO WEATHER");
+            rsnConversion.Add("DUE TO A/C PERFORMANCE", "DUE TO PERFORMANCE");
+
             InitialisePopupMenu();
 
         }
@@ -145,7 +151,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
-            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
             messageFormatPanel.Controls.Add(createTextBox("", 5));
@@ -204,24 +209,20 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.Controls.Add(createTemplate("WHEN CAN WE EXPECT:"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.Controls.Add(createCheckBox("HIGHER LEVEL?", "wcwParam"));
             messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("LOWER LEVEL?", "wcwParam"));
             messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("BACK ON ROUTE?", "wcwParam"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.Controls.Add(createCheckBox("CLIMB TO: FL", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DESCENT TO: FL", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            //messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.Controls.Add(createTemplate("KTS"));
@@ -229,7 +230,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            //messageFormatPanel.Controls.Add(dummyLabel);
         }
 
             private void pdcButton_Click(object sender, EventArgs e)
@@ -456,10 +456,15 @@ namespace EasyCPDLC
 
                         _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
+                        string parsedMessage = ParseRequest();
 
-                        _formatMessage += ParseRequest();
+                        if (parsedMessage == "")
+                        {
+                            parent.WriteMessage("ERROR PARSING CPDLC MESSAGE. NO MESSAGE SENT", "SYSTEM", "SYSTEM");
+                            break;
+                        }
 
-
+                        _formatMessage += parsedMessage;
 
                         await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
@@ -502,37 +507,47 @@ namespace EasyCPDLC
             {
                 case "levelRadioButton":
 
-                    for (int i = 2; i < messageFormatPanel.Controls.Count - 4; i++)
+                    if (messageFormatPanel.Controls[3].Text == "")
                     {
-                        _request += messageFormatPanel.Controls[i].Text + "";
+                        return string.Empty;
                     }
+                    _request = "REQUEST FL";
+                    _request += messageFormatPanel.Controls[3].Text;                    
 
                     dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
                                    .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
-
+                   
                     if (dueToBox != default(UICheckBox))
                     {
-                        _request += " " + dueToBox.Name;
+                        _request += " " + rsnConversion[dueToBox.Text];
                     }
                     break;
 
                 case "directRadioButton":
 
-                    for (int i = 2; i < messageFormatPanel.Controls.Count - 4; i++)
+                    if (messageFormatPanel.Controls[3].Text == "")
                     {
-                        _request += messageFormatPanel.Controls[i].Text + "";
+                        return string.Empty;
                     }
+
+                    _request = "REQUEST DIRECT TO ";
+                    _request += messageFormatPanel.Controls[3].Text;
 
                     dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
                                    .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
 
                     if (dueToBox != default(UICheckBox))
                     {
-                        _request += " " + dueToBox.Name;
+                        _request += " " + rsnConversion[dueToBox.Text];
                     }
                     break;
 
                 case "speedRadioButton":
+
+                    if(messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text == "")
+                    {
+                        return string.Empty;
+                    }
 
                     _request += "REQUEST ";
                     if (unitBox != default(UICheckBox))
@@ -546,11 +561,28 @@ namespace EasyCPDLC
                             _request += messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text + "K";
                         }
                     }
+                    else
+                    {
+                        return string.Empty;
+                    }
+
+                    dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
+                                   .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
+
+                    if (dueToBox != default(UICheckBox))
+                    {
+                        _request += " " + rsnConversion[dueToBox.Text];
+                    }
                     break;
 
                 case "wcwRadioButton":
 
-                    _request += "WHEN CAN WE EXPECT ";
+                    if(wcwBox is null)
+                    {
+                        return string.Empty;
+                    }
+
+                    _request = "WHEN CAN WE EXPECT ";
 
                     switch (wcwBox.Text)
                     {
