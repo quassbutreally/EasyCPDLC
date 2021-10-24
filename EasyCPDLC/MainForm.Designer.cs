@@ -77,6 +77,7 @@
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputTable.Size = new System.Drawing.Size(513, 125);
             this.outputTable.TabIndex = 3;
+            this.outputTable.Click += new System.EventHandler(this.outputTable_Click);
             // 
             // atcButton
             // 

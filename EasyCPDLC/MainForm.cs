@@ -120,6 +120,7 @@ namespace EasyCPDLC
         ToolStripMenuItem standbyMenu;
         ToolStripMenuItem unableMenu;
         ToolStripMenuItem deleteMenu;
+        ToolStripMenuItem deleteAllMenu;
         ToolStripMenuItem freeTextMenu;
         private SoundPlayer player = new SoundPlayer(Properties.Resources.honk);
         private RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
@@ -203,9 +204,11 @@ namespace EasyCPDLC
             freeTextMenu = CreateMenuItem("FREE TEXT");
             freeTextMenu.Click += freeTextMessage;
 
-
             deleteMenu = CreateMenuItem("DELETE");
             deleteMenu.Click += DeleteElement;
+
+            deleteAllMenu = CreateMenuItem("DELETE ALL");
+            deleteAllMenu.Click += DeleteAllElement;
         }
 
         private Control SenderToControl(object sender)
@@ -425,6 +428,11 @@ namespace EasyCPDLC
 
             TableLayoutHelper.RemoveArbitraryRow(outputTable, outputTable.GetPositionFromControl(sourceControl).Row);
         }
+
+        private void DeleteAllElement(object sender, EventArgs e)
+        {
+            outputTable.Controls.Clear();
+        }
         private void MessageClicked(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
@@ -439,6 +447,7 @@ namespace EasyCPDLC
             {
                 popupMenu.Items.Clear();
                 popupMenu.Items.Add(deleteMenu);
+                popupMenu.Items.Add(deleteAllMenu);
                 deleteMenu.Enabled = true;
                 if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
                 {
@@ -675,6 +684,21 @@ namespace EasyCPDLC
             {
                 await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
                 requestCancellationTokenSource.Cancel();
+            }
+        }
+
+        private void outputTable_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            TableLayoutPanel _sender = (TableLayoutPanel)sender;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                popupMenu.Items.Clear();
+                popupMenu.Items.Add(deleteAllMenu);
+
+                popupMenu.Show(_sender, _sender.PointToClient(Cursor.Position));
             }
         }
     }
