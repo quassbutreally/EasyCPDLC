@@ -7,6 +7,9 @@ EasyCPDLC is a third-party CPDLC client designed for use with the Hoppie ACARS n
 # How does it work?
 The program requires only your VATSIM CID and Hoppie logon code. It uses this information to query the network and confirm your flight details, which it then stores and prefills into the relevant sections. From there, you can proceed to logon to a CPDLC unit, request a datalink clearance, or pursue any of the hundreds of other uses of CPDLC
 
+# Is there a tutorial?
+It's in development. The [wiki](https://github.com/josh-seagrave/EasyCPDLC/wiki) will contain full background information and user guides.
+
 # How do I get it?
 You can download the latest release [here.](https://github.com/josh-seagrave/EasyCPDLC/releases)
 
