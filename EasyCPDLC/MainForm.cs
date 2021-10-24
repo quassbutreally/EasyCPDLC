@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -224,8 +222,6 @@ namespace EasyCPDLC
             Control sourceControl = SenderToControl(sender);
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
-            //message.acknowledged = true;
-            //message.ForeColor = controlFrontColor;
             tForm = new TelexForm(this, message.recipient);
             tForm.Show();
         }
@@ -327,14 +323,8 @@ namespace EasyCPDLC
         }
         private void Setup()
         {
-            /* using (WebClient wc = new WebClient())
-            {
-                var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                pilotList = JsonSerializer.Deserialize<Pilots>(json);
-            } */
-
-            this.Invoke(new Action(() => this.retrieveButton.Enabled = true));
-
+            retrieveButton.Enabled = true;
+            
         }
         private async Task PeriodicCheckMessage(TimeSpan interval, CancellationToken cancellationToken)
         {
@@ -573,6 +563,7 @@ namespace EasyCPDLC
             WriteMessage(message, "CPDLC", _sender, false, header);
 
             player.Play();
+            FlashWindow.Flash(this);
 
             return;
         }
