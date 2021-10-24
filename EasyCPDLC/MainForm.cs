@@ -159,8 +159,6 @@ namespace EasyCPDLC
             outputTable.VerticalScroll.Visible = false;
             outputTable.AutoScroll = true;
 
-            currentATCUnit = "LFXX";
-
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
