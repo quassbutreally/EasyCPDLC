@@ -456,28 +456,31 @@ namespace EasyCPDLC
                 if (_sender.type != "SYSTEM" && !_sender.acknowledged && !_sender.outbound)
                 {
                     popupMenu.Items.Add(replyMenu);
-
-                    switch (_sender.header.responses)
+                    
+                    if(_sender.type != "TELEX")
                     {
-                        case "WU":
-                            replyMenu.DropDownItems.Add(wilcoMenu);
-                            replyMenu.DropDownItems.Add(unableMenu);
-                            replyMenu.DropDownItems.Add(standbyMenu);
-                            break;
+                        switch (_sender.header.responses)
+                        {
+                            case "WU":
+                                replyMenu.DropDownItems.Add(wilcoMenu);
+                                replyMenu.DropDownItems.Add(unableMenu);
+                                replyMenu.DropDownItems.Add(standbyMenu);
+                                break;
 
-                        case "AN":
-                            replyMenu.DropDownItems.Add(affirmativeMenu);
-                            replyMenu.DropDownItems.Add(negativeMenu);
-                            replyMenu.DropDownItems.Add(standbyMenu);
-                            break;
+                            case "AN":
+                                replyMenu.DropDownItems.Add(affirmativeMenu);
+                                replyMenu.DropDownItems.Add(negativeMenu);
+                                replyMenu.DropDownItems.Add(standbyMenu);
+                                break;
 
-                        case "R":
-                            replyMenu.DropDownItems.Add(rogerMenu);
-                            break;
+                            case "R":
+                                replyMenu.DropDownItems.Add(rogerMenu);
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
 
+                        }
                     }
 
                     replyMenu.DropDownItems.Add(freeTextMenu);
@@ -511,6 +514,7 @@ namespace EasyCPDLC
                         format_response += _modify[1];
                         WriteMessage(format_response, type, sender);
                         player.Play();
+                        FlashWindow.Flash(this);
                     }
                 }
 
