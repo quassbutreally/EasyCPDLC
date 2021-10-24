@@ -165,8 +165,6 @@ namespace EasyCPDLC
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
-
-            currentATCUnit = "LFXX";
         }
         private ToolStripMenuItem CreateMenuItem(string name)
         {
