@@ -95,7 +95,7 @@ namespace EasyCPDLC
             this.hoppieLogonLabel.AutoSize = true;
             this.hoppieLogonLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hoppieLogonLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.hoppieLogonLabel.Location = new System.Drawing.Point(31, 184);
+            this.hoppieLogonLabel.Location = new System.Drawing.Point(28, 184);
             this.hoppieLogonLabel.Name = "hoppieLogonLabel";
             this.hoppieLogonLabel.Size = new System.Drawing.Size(147, 19);
             this.hoppieLogonLabel.TabIndex = 3;
@@ -106,7 +106,7 @@ namespace EasyCPDLC
             this.vatsimCIDLabel.AutoSize = true;
             this.vatsimCIDLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.vatsimCIDLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.vatsimCIDLabel.Location = new System.Drawing.Point(59, 242);
+            this.vatsimCIDLabel.Location = new System.Drawing.Point(56, 242);
             this.vatsimCIDLabel.Name = "vatsimCIDLabel";
             this.vatsimCIDLabel.Size = new System.Drawing.Size(90, 19);
             this.vatsimCIDLabel.TabIndex = 4;
@@ -154,9 +154,9 @@ namespace EasyCPDLC
             this.roundPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.roundPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roundPanel2.Controls.Add(this.vatsimCIDTextBox);
-            this.roundPanel2.Location = new System.Drawing.Point(34, 262);
+            this.roundPanel2.Location = new System.Drawing.Point(15, 262);
             this.roundPanel2.Name = "roundPanel2";
-            this.roundPanel2.Size = new System.Drawing.Size(140, 30);
+            this.roundPanel2.Size = new System.Drawing.Size(179, 30);
             this.roundPanel2.TabIndex = 11;
             // 
             // vatsimCIDTextBox
@@ -168,7 +168,7 @@ namespace EasyCPDLC
             this.vatsimCIDTextBox.Location = new System.Drawing.Point(-1, 6);
             this.vatsimCIDTextBox.MaxLength = 7;
             this.vatsimCIDTextBox.Name = "vatsimCIDTextBox";
-            this.vatsimCIDTextBox.Size = new System.Drawing.Size(140, 19);
+            this.vatsimCIDTextBox.Size = new System.Drawing.Size(179, 19);
             this.vatsimCIDTextBox.TabIndex = 1;
             this.vatsimCIDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.vatsimCIDTextBox_TextChanged);
@@ -179,21 +179,21 @@ namespace EasyCPDLC
             this.roundPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.roundPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roundPanel1.Controls.Add(this.hoppieCodeTextBox);
-            this.roundPanel1.Location = new System.Drawing.Point(35, 207);
+            this.roundPanel1.Location = new System.Drawing.Point(15, 207);
             this.roundPanel1.Name = "roundPanel1";
-            this.roundPanel1.Size = new System.Drawing.Size(140, 30);
+            this.roundPanel1.Size = new System.Drawing.Size(179, 30);
             this.roundPanel1.TabIndex = 10;
             // 
             // hoppieCodeTextBox
             // 
             this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F);
             this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.hoppieCodeTextBox.Location = new System.Drawing.Point(-1, 6);
-            this.hoppieCodeTextBox.MaxLength = 10;
+            this.hoppieCodeTextBox.Location = new System.Drawing.Point(-1, 5);
+            this.hoppieCodeTextBox.MaxLength = 18;
             this.hoppieCodeTextBox.Name = "hoppieCodeTextBox";
-            this.hoppieCodeTextBox.Size = new System.Drawing.Size(140, 19);
+            this.hoppieCodeTextBox.Size = new System.Drawing.Size(179, 19);
             this.hoppieCodeTextBox.TabIndex = 0;
             this.hoppieCodeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
