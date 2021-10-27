@@ -217,6 +217,7 @@ namespace EasyCPDLC
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "DataEntry";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DataEntry";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataEntry_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

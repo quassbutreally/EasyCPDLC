@@ -31,6 +31,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NLog;
 
 namespace EasyCPDLC
 {
@@ -38,17 +39,26 @@ namespace EasyCPDLC
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
+        private const int cGrip = 16;
+        private const int cCaption = 32;
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
         public PilotData userVATSIMData;
+        private Pilots pilotList;
+
         private static readonly HttpClient webclient = new HttpClient();
         private string logonCode;
         private int cid;
         private string callsign;
+        
         private RequestForm rForm;
         private TelexForm tForm;
+
         public int messageOutCounter = 1;
         private bool _connected;
         public bool connected
@@ -88,7 +98,7 @@ namespace EasyCPDLC
                 {
                     if (_currentATCUnit is null)
                     {
-                        atcUnitDisplay.Text = "NONE";
+                        atcUnitDisplay.Text = "----";
                         rForm.needsLogon = true;
                         
                     }
@@ -113,6 +123,7 @@ namespace EasyCPDLC
         public Font dataEntryFont = new Font("B612 Mono", 11.0f, FontStyle.Regular);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
+       
         private ContextMenuStrip popupMenu = new ContextMenuStrip();
         private ToolStripMenuItem replyMenu;
         ToolStripMenuItem wilcoMenu;
@@ -124,27 +135,37 @@ namespace EasyCPDLC
         ToolStripMenuItem deleteMenu;
         ToolStripMenuItem deleteAllMenu;
         ToolStripMenuItem freeTextMenu;
+        
         private SoundPlayer player = new SoundPlayer(Properties.Resources.honk);
         private RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
-        private Pilots pilotList;
+
         private static Regex hoppieParse = new Regex(@"{(.*?)}");
         private static Regex cpdlcHeaderParse = new Regex(@"(\/\s*)\w*");
         private static Regex cpdlcSenderParse = new Regex(@"[/ ]([a-zA-Z]{4})\s");
         private static Regex cpdlcUnitParse = new Regex(@"_@([\w]*)@_");
+
         private static readonly TimeSpan updateTimer = TimeSpan.FromSeconds(10);
         private CancellationTokenSource requestCancellationTokenSource;
         private CancellationToken requestCancellationToken;
 
         public MainForm()
         {
+            var config = new NLog.Config.LoggingConfiguration();
+            var logFile = new NLog.Targets.FileTarget("logfile") { FileName ="EasyCPDLCLog.txt" };
+            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logFile);
+            LogManager.Configuration = config;
+
+            Logger.Info("Logging initialised, beginning setup");
+
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
             currentATCUnit = null;
-
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -165,6 +186,8 @@ namespace EasyCPDLC
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
+
+            Logger.Info("Setup completed successfully");
         }
         private ToolStripMenuItem CreateMenuItem(string name)
         {
@@ -211,6 +234,8 @@ namespace EasyCPDLC
 
             deleteAllMenu = CreateMenuItem("DELETE ALL");
             deleteAllMenu.Click += DeleteAllElement;
+
+            Logger.Info("Login menu initialised");
         }
 
         private Control SenderToControl(object sender)
@@ -296,6 +321,8 @@ namespace EasyCPDLC
         private void ShowSetupForm()
         {
 
+            Logger.Info("Login Form Displayed");
+
             DataEntry dataEntry = new DataEntry(this, regKey.GetValue("hoppieCode"), regKey.GetValue("vatsimCID"));
 
             if (dataEntry.ShowDialog(this) == DialogResult.OK)
@@ -304,11 +331,13 @@ namespace EasyCPDLC
                 cid = dataEntry.vatsimCID;
                 if (dataEntry.remember)
                 {
+                    Logger.Info("REMEMBER ME: TRUE. REGISTRY SET.");
                     regKey.SetValue("hoppieCode", logonCode);
                     regKey.SetValue("vatsimCID", cid);
                 }
                 else
                 {
+                    Logger.Info("REMEMBER ME: FALSE. REGISTRY CLEARED.");
                     if (!(regKey.GetValue("hoppieCode") is null))
                     {
                         regKey.DeleteValue("hoppieCode");
@@ -322,18 +351,22 @@ namespace EasyCPDLC
             }
             else
             {
+                Logger.Info("Goodbye");
+                LogManager.Shutdown();
                 Application.Exit();
             }
         }
         private void Setup()
         {
             retrieveButton.Enabled = true;
-            
+            Logger.Info("Setup Complete.");
         }
         private async Task PeriodicCheckMessage(TimeSpan interval, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Attempting to poll Hoppie for new messages");
+
                 await SendCPDLCMessage("NONE", "poll", "");
                 await Task.Delay(interval, cancellationToken);
             }
@@ -350,8 +383,11 @@ namespace EasyCPDLC
 
             var content = new FormUrlEncodedContent(connectionValues);
             var response = await webclient.PostAsync("http://www.hoppie.nl/acars/system/connect.html", content);
+            Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, _outbound, _write));
             var responseString = await response.Content.ReadAsStringAsync();
             string printString = responseString.ToString().ToUpper();
+
+            Logger.Debug("RECEIVED: " + responseString);
 
             if (_write)
             {
@@ -370,19 +406,16 @@ namespace EasyCPDLC
                 await TelexParser(printString);
 
             }
-
-            Console.WriteLine(printString);
-
             return;
 
         }
         private CPDLCMessage CreateCPDLCMessage(string _text, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
         {
             CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _outbound, _header);
-            Size maxSize = new Size();
-            maxSize.Width = 420;
-            _message.MaximumSize = maxSize;
-            _message.Width = 420;
+            // Size maxSize = new Size();
+            //maxSize.Width = 420;
+            //_message.MaximumSize = maxSize;
+            //_message.Width = 420;
             _message.AutoSize = true;
             _message.BackColor = controlBackColor;
             _message.ForeColor = Color.Orange;
@@ -501,6 +534,7 @@ namespace EasyCPDLC
                     {
                         if (_modify[1].StartsWith("/DATA2/"))
                         {
+                            Logger.Debug("CPDLC Message identified, attempting to parse");
                             await CPDLCParser(_modify[1], sender);
                             break;
                         }
@@ -518,7 +552,6 @@ namespace EasyCPDLC
 
         private async Task CPDLCParser(string _response, string _sender)
         {
-            Console.WriteLine(_response);
             var unit = cpdlcUnitParse.Match(_response);
             if (unit.Success)
             {
@@ -526,10 +559,6 @@ namespace EasyCPDLC
             }
 
             var responses = cpdlcHeaderParse.Matches(_response);
-            foreach (Match response in responses)
-            {
-                Console.WriteLine(response.Value);
-            }
             CPDLCResponse header = new CPDLCResponse();
             header.dataType = responses[0].Value.Trim('/');
             header.messageID = Convert.ToInt32(responses[1].Value.Trim('/'));
@@ -584,6 +613,9 @@ namespace EasyCPDLC
             {
                 message = CreateCPDLCMessage(_recipient + ": " + _response + ".", _type, _recipient, _outbound, _header);
             }
+
+            Logger.Debug("Writing message: " + _response);
+
             outputTable.Invoke(new Action(() => outputTable.Controls.Add(CreateLabel(DateTime.Now.ToString("HH:mm")), 0, outputTable.RowCount - 1)));
             outputTable.Invoke(new Action(() => outputTable.Controls.Add(message, 1, outputTable.RowCount - 1)));
             outputTable.Invoke(new Action(() => outputTable.RowCount += 1));
@@ -598,6 +630,8 @@ namespace EasyCPDLC
             }
             catch (NullReferenceException) { }
             this.Close();
+
+            LogManager.Shutdown();
             Application.Exit();
         }
         private void MoveWindow(object sender, MouseEventArgs e)
@@ -618,6 +652,9 @@ namespace EasyCPDLC
                 {
                     var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
                     pilotList = JsonSerializer.Deserialize<Pilots>(json);
+
+                    Logger.Debug("VATSIM Data Retrieved and Parsed");
+                    Logger.Debug("VATSIM Data Retrieved and Parsed");
                 }
 
                 try
@@ -700,6 +737,26 @@ namespace EasyCPDLC
                 popupMenu.Show(_sender, _sender.PointToClient(Cursor.Position));
             }
         }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x84)
+            {  // Trap WM_NCHITTEST
+                Point pos = new Point(m.LParam.ToInt32());
+                pos = this.PointToClient(pos);
+                if (pos.Y < cCaption)
+                {
+                    m.Result = (IntPtr)2;  // HTCAPTION
+                    return;
+                }
+                if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
+                {
+                    m.Result = (IntPtr)17; // HTBOTTOMRIGHT
+                    return;
+                }
+            }
+            base.WndProc(ref m);
+        }
     }
     internal class NoHighlightRenderer : ToolStripProfessionalRenderer
     {
@@ -746,6 +803,9 @@ namespace EasyCPDLC
                 panel.RowStyles.RemoveAt(removeStyle);
 
             panel.RowCount--;
+
+            panel.AutoScroll = false;
+            panel.AutoScroll = true;
         }
     }
 }
