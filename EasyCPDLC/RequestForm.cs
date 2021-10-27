@@ -28,6 +28,8 @@ namespace EasyCPDLC
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
+        private const int cGrip = 16;
+        private const int cCaption = 32;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -437,6 +439,7 @@ namespace EasyCPDLC
                         else
                         {
                             _formatMessage = String.Format("/data2/{0}//N/LOGOFF", parent.messageOutCounter);
+                            parent.currentATCUnit = null;
 
                         }
                         await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
@@ -672,6 +675,26 @@ namespace EasyCPDLC
             //popupMenu.AutoSize = false;
             //popupMenu.Size = new Size(104, 114);
             popupMenu.Show(requestButton, new Point(0, requestButton.Height));
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x84)
+            {  // Trap WM_NCHITTEST
+                Point pos = new Point(m.LParam.ToInt32());
+                pos = this.PointToClient(pos);
+                if (pos.Y < cCaption)
+                {
+                    m.Result = (IntPtr)2;  // HTCAPTION
+                    return;
+                }
+                if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
+                {
+                    m.Result = (IntPtr)17; // HTBOTTOMRIGHT
+                    return;
+                }
+            }
+            base.WndProc(ref m);
         }
     }
 }

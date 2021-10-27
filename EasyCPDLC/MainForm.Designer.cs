@@ -41,6 +41,7 @@
             // 
             // titleLabel
             // 
+            this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleLabel.AutoSize = true;
             this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
@@ -53,6 +54,7 @@
             // 
             // exitButton
             // 
+            this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -68,6 +70,9 @@
             // 
             // outputTable
             // 
+            this.outputTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.outputTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.ColumnCount = 2;
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
@@ -128,6 +133,7 @@
             // 
             // atcUnitLabel
             // 
+            this.atcUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitLabel.AutoSize = true;
             this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
             this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
@@ -139,19 +145,21 @@
             // 
             // atcUnitDisplay
             // 
+            this.atcUnitDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitDisplay.AutoSize = true;
             this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
             this.atcUnitDisplay.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.atcUnitDisplay.Location = new System.Drawing.Point(471, 44);
+            this.atcUnitDisplay.Location = new System.Drawing.Point(478, 44);
             this.atcUnitDisplay.Name = "atcUnitDisplay";
-            this.atcUnitDisplay.Size = new System.Drawing.Size(51, 19);
+            this.atcUnitDisplay.Size = new System.Drawing.Size(29, 19);
             this.atcUnitDisplay.TabIndex = 8;
-            this.atcUnitDisplay.Text = "NONE";
+            this.atcUnitDisplay.Text = "----";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(537, 187);
             this.Controls.Add(this.atcUnitDisplay);
@@ -164,6 +172,7 @@
             this.Controls.Add(this.titleLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(537, 187);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
