@@ -382,30 +382,40 @@ namespace EasyCPDLC
             };
 
             var content = new FormUrlEncodedContent(connectionValues);
-            var response = await webclient.PostAsync("http://www.hoppie.nl/acars/system/connect.html", content);
-            Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, _outbound, _write));
-            var responseString = await response.Content.ReadAsStringAsync();
-            string printString = responseString.ToString().ToUpper();
-
-            Logger.Debug("RECEIVED: " + responseString);
-
-            if (_write)
+            try
             {
-                if (messageType == "CPDLC" && _outbound)
+                var response = await webclient.PostAsync("http://www.hoppie.nl/acars/system/connect.html", content);
+                Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, _outbound, _write));
+                var responseString = await response.Content.ReadAsStringAsync();
+                string printString = responseString.ToString().ToUpper();
+
+                Logger.Debug("RECEIVED: " + responseString);
+
+                if (_write)
                 {
-                    WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
+                    if (messageType == "CPDLC" && _outbound)
+                    {
+                        WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
+                    }
+                    else if (messageType != "poll")
+                    {
+                        WriteMessage(packetData, messageType, recipient, _outbound);
+                    }
                 }
-                else if (messageType != "poll")
+
+                if (printString != "OK")
                 {
-                    WriteMessage(packetData, messageType, recipient, _outbound);
+                    await TelexParser(printString);
+
                 }
             }
 
-            if (printString != "OK")
+            catch (Exception e)
             {
-                await TelexParser(printString);
-
+                Logger.Error(String.Format("{0}: {1}", e.GetType().FullName, e.Message));
+                WriteMessage("ERROR CHECKING FOR NEW MESSAGES. RETRYING...", "SYSTEM", "SYSTEM");
             }
+
             return;
 
         }
@@ -569,7 +579,7 @@ namespace EasyCPDLC
             string messageString = "";
             if (messageContent[1].Contains(callsign))
             {
-                messageString = messageContent[1].Split(new string[] { callsign }, StringSplitOptions.None)[1];
+                messageString = messageContent[1].Split(new string[] { callsign }, StringSplitOptions.None).Last();
             }
             else
             {
@@ -653,7 +663,6 @@ namespace EasyCPDLC
                     var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
                     pilotList = JsonSerializer.Deserialize<Pilots>(json);
 
-                    Logger.Debug("VATSIM Data Retrieved and Parsed");
                     Logger.Debug("VATSIM Data Retrieved and Parsed");
                 }
 
