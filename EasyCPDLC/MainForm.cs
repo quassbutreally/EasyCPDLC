@@ -535,7 +535,7 @@ namespace EasyCPDLC
             {
                 string format_response = "";
                 string[] _modify = _response.Groups[1].Value.Replace("}", "").Split('{');
-                string sender = _modify[0].Split(' ')[0];
+                string sender = _modify[0].Split(' ')[0];aca
                 string type = _modify[0].Split(' ')[1];
 
                 for (int i = 0; i < _modify.Length; i++)
