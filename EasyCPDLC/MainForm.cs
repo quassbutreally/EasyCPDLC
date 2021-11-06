@@ -31,6 +31,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Octokit;
 using NLog;
 
 namespace EasyCPDLC
@@ -172,7 +173,7 @@ namespace EasyCPDLC
         {
             if (new AssemblyName(args.Name).Name == "System.Runtime.CompilerServices.Unsafe")
                 return Assembly.LoadFrom(
-                    Path.Combine(Application.StartupPath, "System.Runtime.CompilerServices.Unsafe.dll"));
+                    Path.Combine(System.Windows.Forms.Application.StartupPath, "System.Runtime.CompilerServices.Unsafe.dll"));
             throw new Exception();
         }
         private void MainForm_Load(object sender, EventArgs e)
@@ -183,12 +184,31 @@ namespace EasyCPDLC
             outputTable.VerticalScroll.Visible = false;
             outputTable.AutoScroll = true;
 
+            CheckNewVersion();
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
 
             Logger.Info("Setup completed successfully");
         }
+
+        private async void CheckNewVersion()
+        {
+            var client = new GitHubClient(new ProductHeaderValue("EasyCPDLC"));
+            var releases = await client.Repository.Release.GetAll("josh-seagrave", "EasyCPDLC");
+            var latest = releases[0];
+            string latestVersion = latest.TagName.Replace("cpdlc", "");
+            if(latestVersion != System.Windows.Forms.Application.ProductVersion)
+            {
+                DialogResult updateBox = MessageBox.Show(String.Format("New Version {0} Available to download from Github. This application will now exit. Would you like me to take you to the Github page for the latest release?", latestVersion), "New Version Available", MessageBoxButtons.YesNo);
+                if(updateBox == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(latest.HtmlUrl);
+                }
+                System.Windows.Forms.Application.Exit();
+            }
+        }
+
         private ToolStripMenuItem CreateMenuItem(string name)
         {
             ToolStripMenuItem _temp = new ToolStripMenuItem(name);
@@ -353,7 +373,7 @@ namespace EasyCPDLC
             {
                 Logger.Info("Goodbye");
                 LogManager.Shutdown();
-                Application.Exit();
+                System.Windows.Forms.Application.Exit();
             }
         }
         private void Setup()
@@ -438,9 +458,9 @@ namespace EasyCPDLC
             return _message;
         }
 
-        private Label CreateLabel(string _text)
+        private System.Windows.Forms.Label CreateLabel(string _text)
         {
-            Label _message = new Label();
+            System.Windows.Forms.Label _message = new System.Windows.Forms.Label();
             Size maxSize = new Size();
             maxSize.Width = 65;
             _message.MaximumSize = maxSize;
@@ -535,7 +555,7 @@ namespace EasyCPDLC
             {
                 string format_response = "";
                 string[] _modify = _response.Groups[1].Value.Replace("}", "").Split('{');
-                string sender = _modify[0].Split(' ')[0];aca
+                string sender = _modify[0].Split(' ')[0];
                 string type = _modify[0].Split(' ')[1];
 
                 for (int i = 0; i < _modify.Length; i++)
@@ -642,7 +662,7 @@ namespace EasyCPDLC
             this.Close();
 
             LogManager.Shutdown();
-            Application.Exit();
+            System.Windows.Forms.Application.Exit();
         }
         private void MoveWindow(object sender, MouseEventArgs e)
         {
