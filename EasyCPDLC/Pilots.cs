@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-
 using System.Collections.Generic;
 
 namespace EasyCPDLC
@@ -24,6 +22,11 @@ namespace EasyCPDLC
     public class Pilots
     {
         public IList<PilotData> pilots { get; set; }
+    }
+
+    public class Atis
+    {
+        public IList<AtisData> atis { get; set; }
     }
 
 
@@ -64,5 +67,26 @@ namespace EasyCPDLC
         public string route { get; set; }
         public int revision_id { get; set; }
         public string assigned_transponder { get; set; }
+    }
+
+    public class Metar
+    {
+        public string sanitized { get; set; }
+    }
+
+    public class AtisData
+    {
+        public int cid { get; set; }
+        public string name { get; set; }
+        public string callsign { get; set; }
+        public string frequency { get; set; }
+        public int facility { get; set; }
+        public int rating { get; set; }
+        public string server { get; set; }
+        public int visual_range { get; set; }
+        public string atis_code { get; set; }
+        public string[] text_atis { get; set; }
+        public string last_updated { get; set; }
+        public string logon_time { get; set; }
     }
 }

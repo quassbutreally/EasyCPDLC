@@ -18,6 +18,10 @@
 
 
 using System;
+using System.Text.Json;
+using System.Net;
+using System.IO;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -31,6 +35,8 @@ namespace EasyCPDLC
         public const int HT_CAPTION = 0x2;
         private const int cGrip = 16;
         private const int cCaption = 32;
+
+        private Atis atisList;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -143,13 +149,7 @@ namespace EasyCPDLC
         }
         private void ReloadPanel(object sender, EventArgs e)
         {
-            messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(CreateTextBox(recipient is null ? "" : recipient, 7));
-            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(CreateTemplate("MSG:"));
-            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
+            freeTextButton.PerformClick();
         }
 
         private void ExpandMultiLineBox(object sender, EventArgs e)
@@ -177,12 +177,87 @@ namespace EasyCPDLC
 
         private async void sendButton_Click(object sender, EventArgs e)
         {
-            string _formatMessage = messageFormatPanel.Controls[3].Text;
-            string _recipient = messageFormatPanel.Controls[1].Text;
+            RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
+                                       .Where(x => x.Checked).FirstOrDefault();
 
-            await this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
-            Console.WriteLine(_formatMessage.Trim());
-            this.Close();
+            if (radioBtn != null || messageFormatPanel.Controls[1].Text.Length < 4) 
+            { 
+
+                string _recipient = messageFormatPanel.Controls[1].Text;
+                
+                switch (radioBtn.Name)
+                {
+                    case "freeTextRadioButton":
+                        string _formatMessage = messageFormatPanel.Controls[3].Text;
+                        await this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+                        break;
+
+                    case "metarRadioButton":
+
+                        try
+                        {
+                            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(String.Format("https://avwx.rest/api/metar/{0}", _recipient));
+                            request.Method = "GET";
+                            request.Headers["Authorization"] = "OE1u2m0EZie5oFrAwSb-GYPGqV-9ASDNfuZhrBexzjM";
+                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                            {
+                                Stream dataStream = response.GetResponseStream();
+                                StreamReader reader = new StreamReader(dataStream);
+                                Metar metar = JsonSerializer.Deserialize<Metar>(reader.ReadToEnd());
+                                this.parent.WriteMessage(metar.sanitized, "TELEX", "METAR");
+                            }
+                        }
+
+                        catch
+                        {
+                            this.parent.WriteMessage(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "TELEX", "METAR");
+                        }
+                       
+                        break;
+
+                    case "atisRadioButton":
+                        
+                        try
+                        {
+                            using (WebClient wc = new WebClient())
+                            {
+                                var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
+                                atisList = JsonSerializer.Deserialize<Atis>(json);
+                            }
+
+                            AtisData atisStation = atisList.atis.Where(i => i.callsign == String.Format("{0}_ATIS", _recipient)).FirstOrDefault();
+                            if (atisStation != default(AtisData))
+                            {
+                                string atisData = String.Join(" ", atisStation.text_atis);
+                                this.parent.WriteMessage(atisData, "TELEX", "ATIS");
+                            }
+                            else
+                            {
+                                this.parent.WriteMessage(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "TELEX", "ATIS");
+                            }
+                        }
+
+                        catch
+                        {
+                            this.parent.WriteMessage(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "TELEX", "ATIS");
+                        }                      
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.Close();
+
+
+            }
+            else
+            {
+
+            }
+
+            
         }
 
         protected override void WndProc(ref Message m)
@@ -203,6 +278,37 @@ namespace EasyCPDLC
                 }
             }
             base.WndProc(ref m);
+        }
+
+        private void freeTextButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(recipient is null ? "" : recipient, 7));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(CreateTemplate("MSG:"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
+
+            freeTextRadioButton.Checked = true;
+        }
+
+        private void metarButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+
+            metarRadioButton.Checked = true;
+        }
+
+        private void atisButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+
+            atisRadioButton.Checked = true;
         }
     }
 }

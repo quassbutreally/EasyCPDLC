@@ -421,7 +421,6 @@ namespace EasyCPDLC
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
 
-            Console.WriteLine(radioBtn.Name);
             if (radioBtn != null)
             {
                 string _recipient = "";

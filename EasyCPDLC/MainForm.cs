@@ -610,7 +610,6 @@ namespace EasyCPDLC
 
                         format_response += _modify[1];
                         WriteMessage(format_response, type, sender);
-                        if (playSound) { player.Play(); }
                         FlashWindow.Flash(this);
                     }
                 }
@@ -684,6 +683,7 @@ namespace EasyCPDLC
             else
             {
                 message = CreateCPDLCMessage(_recipient + ": " + _response + ".", _type, _recipient, _outbound, _header);
+                if (playSound && _recipient != "SYSTEM") { player.Play(); }
             }
 
             Logger.Debug("Writing message: " + _response);
