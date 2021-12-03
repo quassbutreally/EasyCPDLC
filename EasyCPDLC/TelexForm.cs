@@ -58,6 +58,8 @@ namespace EasyCPDLC
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
+
+            this.TopMost = parent.TopMost;
         }
 
         private Label CreateTemplate(string _text)

@@ -71,13 +71,13 @@ namespace EasyCPDLC
                 {
                     logonButton.Text = "LOGON";
                     requestButton.Enabled = false;
-                    //reportButton.Enabled = false;
+                    reportButton.Enabled = false;
                 }
                 else
                 {
                     logonButton.Text = "LOGOFF";
                     requestButton.Enabled = true;
-                    //reportButton.Enabled = true;
+                    reportButton.Enabled = true;
                 }
             }
         }
@@ -86,6 +86,7 @@ namespace EasyCPDLC
         {
             InitializeComponent();
             this.parent = parent;
+            this.TopMost = parent.TopMost;
 
             if (this.parent.currentATCUnit != null)
             {
@@ -257,6 +258,34 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
 
             pdcRadioButton.Checked = true;
+        }
+
+        private void reportButton_Click(object sender, EventArgs e)
+        {
+            reportRadioButton.Checked = true;
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("POSITION REPORT"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("OVERHEAD"));
+            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(createTemplate("AT"));
+            messageFormatPanel.Controls.Add(createTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
+            messageFormatPanel.Controls.Add(createTemplate("Z"));
+            messageFormatPanel.Controls.Add(createTemplate("FL"));
+            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("NEXT"));
+            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(createTemplate("AT"));
+            messageFormatPanel.Controls.Add(createTextBox("", 4));
+            messageFormatPanel.Controls.Add(createTemplate("Z"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("THEN"));
+            messageFormatPanel.Controls.Add(createTextBox("", 7));
+
         }
 
         private void logonButton_Click(object sender, EventArgs e)
@@ -435,6 +464,7 @@ namespace EasyCPDLC
                         if (needsLogon)
                         {
                             _formatMessage = String.Format("/data2/{0}//Y/REQUEST LOGON", parent.messageOutCounter);
+                            parent.pendingLogon = _recipient;
                         }
                         else
                         {
@@ -473,6 +503,24 @@ namespace EasyCPDLC
                         parent.messageOutCounter += 1;
 
                         break;
+
+                    case "reportRadioButton":
+
+                        _formatMessage = String.Format("/data2/{0}//N/", parent.messageOutCounter);
+                        _recipient = messageFormatPanel.Controls[1].Text;
+                        string _messageContent = String.Format("POSITION REPORT PPOS {0} AT {1}Z FL{2} TO {3} AT {4}Z NEXT {5}",
+                            messageFormatPanel.Controls[4].Text,
+                            messageFormatPanel.Controls[6].Text,
+                            messageFormatPanel.Controls[9].Text,
+                            messageFormatPanel.Controls[11].Text,
+                            messageFormatPanel.Controls[13].Text,
+                            messageFormatPanel.Controls[16].Text);
+                        _formatMessage += _messageContent;
+
+                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        parent.messageOutCounter += 1;
+                        break;
+
 
 
                     default:
@@ -696,5 +744,7 @@ namespace EasyCPDLC
             }
             base.WndProc(ref m);
         }
+
+        
     }
 }

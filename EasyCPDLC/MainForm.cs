@@ -38,6 +38,7 @@ namespace EasyCPDLC
 {
     public partial class MainForm : Form
     {
+        
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         private const int cGrip = 16;
@@ -59,6 +60,32 @@ namespace EasyCPDLC
         
         private RequestForm rForm;
         private TelexForm tForm;
+        private SettingsForm sForm;
+
+        public bool stayOnTop
+        {
+            get
+            {
+                return Properties.Settings.Default.StayOnTop;
+            }
+            set
+            {
+                Properties.Settings.Default.StayOnTop = value;
+                this.TopMost = value;
+            }
+        }
+
+        public bool playSound
+        {
+            get
+            {
+                return Properties.Settings.Default.PlayAudibleAlert;
+            }
+            set
+            {
+                Properties.Settings.Default.PlayAudibleAlert = value;
+            }
+        }
 
         public int messageOutCounter = 1;
         private bool _connected;
@@ -85,6 +112,8 @@ namespace EasyCPDLC
                 }
             }
         }
+
+        public string pendingLogon = null;
         private string _currentATCUnit;
         public string currentATCUnit
         {
@@ -137,7 +166,7 @@ namespace EasyCPDLC
         ToolStripMenuItem deleteAllMenu;
         ToolStripMenuItem freeTextMenu;
         
-        private SoundPlayer player = new SoundPlayer(Properties.Resources.honk);
+        private SoundPlayer player = new SoundPlayer(Properties.Resources.notification);
         private RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
 
         private static Regex hoppieParse = new Regex(@"{(.*?)}");
@@ -161,6 +190,7 @@ namespace EasyCPDLC
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             InitializeComponent();
+            this.TopMost = stayOnTop;
             this.FormBorderStyle = FormBorderStyle.None;
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -194,18 +224,26 @@ namespace EasyCPDLC
 
         private async void CheckNewVersion()
         {
-            var client = new GitHubClient(new ProductHeaderValue("EasyCPDLC"));
-            var releases = await client.Repository.Release.GetAll("josh-seagrave", "EasyCPDLC");
-            var latest = releases[0];
-            string latestVersion = latest.TagName.Replace("cpdlc", "");
-            if(latestVersion != System.Windows.Forms.Application.ProductVersion)
+            try
             {
-                DialogResult updateBox = MessageBox.Show(String.Format("New Version {0} Available to download from Github. This application will now exit. Would you like me to take you to the Github page for the latest release?", latestVersion), "New Version Available", MessageBoxButtons.YesNo);
-                if(updateBox == DialogResult.Yes)
+                var client = new GitHubClient(new ProductHeaderValue("EasyCPDLC"));
+                var releases = await client.Repository.Release.GetAll("josh-seagrave", "EasyCPDLC");
+                var latest = releases[0];
+                string latestVersion = latest.TagName.Replace("cpdlc", "");
+                if (latestVersion != System.Windows.Forms.Application.ProductVersion)
                 {
-                    System.Diagnostics.Process.Start(latest.HtmlUrl);
+                    DialogResult updateBox = MessageBox.Show(String.Format("New Version {0} Available to download from Github. This application will now exit. Would you like me to take you to the Github page for the latest release?", latestVersion), "New Version Available", MessageBoxButtons.YesNo);
+                    if (updateBox == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(latest.HtmlUrl);
+                    }
+                    System.Windows.Forms.Application.Exit();
                 }
-                System.Windows.Forms.Application.Exit();
+            }
+            
+            catch
+            {
+
             }
         }
 
@@ -272,6 +310,7 @@ namespace EasyCPDLC
             CPDLCMessage message = (CPDLCMessage)sourceControl;
 
             tForm = new TelexForm(this, message.recipient);
+            tForm.TopMost = stayOnTop;
             tForm.Show();
         }
         private async void RogerMessage(object sender, EventArgs e)
@@ -571,7 +610,7 @@ namespace EasyCPDLC
 
                         format_response += _modify[1];
                         WriteMessage(format_response, type, sender);
-                        player.Play();
+                        if (playSound) { player.Play(); }
                         FlashWindow.Flash(this);
                     }
                 }
@@ -613,14 +652,17 @@ namespace EasyCPDLC
             }
             if (messageString.StartsWith("LOGON ACCEPTED"))
             {
-                return;
+                currentATCUnit = pendingLogon;
             }
             string message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_", "");
             message = Regex.Replace(message, @"\s+", " ");
 
-            if (message == "LOGOFF")
+            Logger.Debug(message);
+
+            if (message.Contains("LOGOFF"))
             {
                 currentATCUnit = null;
+                pendingLogon = null;
             }
 
             WriteMessage(message, "CPDLC", _sender, false, header);
@@ -740,6 +782,7 @@ namespace EasyCPDLC
         private void requestButton_Click(object sender, EventArgs e)
         {
             rForm = new RequestForm(this);
+            rForm.TopMost = stayOnTop;
             rForm.Show();
         }
 
@@ -785,6 +828,20 @@ namespace EasyCPDLC
                 }
             }
             base.WndProc(ref m);
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            bool[] settings = new bool[] { stayOnTop, playSound };
+            sForm = new SettingsForm(this, settings);
+            sForm.TopMost = stayOnTop;
+            if (sForm.ShowDialog(this) == DialogResult.OK)
+            {
+                settings = sForm.settings;
+                stayOnTop = settings[0];
+                playSound = settings[1];
+                Properties.Settings.Default.Save();
+            }
         }
     }
     internal class NoHighlightRenderer : ToolStripProfessionalRenderer

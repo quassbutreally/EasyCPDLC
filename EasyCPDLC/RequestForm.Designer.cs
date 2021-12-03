@@ -236,6 +236,7 @@
             this.reportButton.TabIndex = 13;
             this.reportButton.Text = "REPORT";
             this.reportButton.UseVisualStyleBackColor = true;
+            this.reportButton.Click += new System.EventHandler(this.reportButton_Click);
             // 
             // requestContainer
             // 
