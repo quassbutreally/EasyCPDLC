@@ -37,6 +37,8 @@
             this.retrieveButton = new System.Windows.Forms.Button();
             this.atcUnitLabel = new System.Windows.Forms.Label();
             this.atcUnitDisplay = new System.Windows.Forms.Label();
+            this.settingsButton = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).BeginInit();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -45,7 +47,7 @@
             this.titleLabel.AutoSize = true;
             this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.titleLabel.Location = new System.Drawing.Point(340, 3);
+            this.titleLabel.Location = new System.Drawing.Point(334, 3);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
             this.titleLabel.TabIndex = 0;
@@ -60,7 +62,7 @@
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.exitButton.Location = new System.Drawing.Point(515, 0);
+            this.exitButton.Location = new System.Drawing.Point(531, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(24, 24);
             this.exitButton.TabIndex = 1;
@@ -75,14 +77,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.ColumnCount = 2;
-            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 433F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.5F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.Location = new System.Drawing.Point(12, 66);
             this.outputTable.Name = "outputTable";
             this.outputTable.RowCount = 1;
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputTable.Size = new System.Drawing.Size(513, 112);
+            this.outputTable.Size = new System.Drawing.Size(528, 127);
             this.outputTable.TabIndex = 3;
             this.outputTable.Click += new System.EventHandler(this.outputTable_Click);
             // 
@@ -137,7 +139,7 @@
             this.atcUnitLabel.AutoSize = true;
             this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
             this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.atcUnitLabel.Location = new System.Drawing.Point(343, 44);
+            this.atcUnitLabel.Location = new System.Drawing.Point(337, 44);
             this.atcUnitLabel.Name = "atcUnitLabel";
             this.atcUnitLabel.Size = new System.Drawing.Size(135, 19);
             this.atcUnitLabel.TabIndex = 7;
@@ -149,11 +151,23 @@
             this.atcUnitDisplay.AutoSize = true;
             this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
             this.atcUnitDisplay.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.atcUnitDisplay.Location = new System.Drawing.Point(478, 44);
+            this.atcUnitDisplay.Location = new System.Drawing.Point(472, 44);
             this.atcUnitDisplay.Name = "atcUnitDisplay";
             this.atcUnitDisplay.Size = new System.Drawing.Size(29, 19);
             this.atcUnitDisplay.TabIndex = 8;
             this.atcUnitDisplay.Text = "----";
+            // 
+            // settingsButton
+            // 
+            this.settingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.settingsButton.Image = global::EasyCPDLC.Properties.Resources.cog_wheel_gear_setting;
+            this.settingsButton.Location = new System.Drawing.Point(516, 3);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(18, 18);
+            this.settingsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.settingsButton.TabIndex = 9;
+            this.settingsButton.TabStop = false;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
             // MainForm
             // 
@@ -161,7 +175,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(537, 187);
+            this.ClientSize = new System.Drawing.Size(552, 202);
+            this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.atcUnitDisplay);
             this.Controls.Add(this.atcUnitLabel);
             this.Controls.Add(this.retrieveButton);
@@ -172,12 +187,13 @@
             this.Controls.Add(this.titleLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(537, 187);
+            this.MinimumSize = new System.Drawing.Size(552, 202);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindow);
+            ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -193,6 +209,7 @@
         private System.Windows.Forms.Button retrieveButton;
         private System.Windows.Forms.Label atcUnitLabel;
         private System.Windows.Forms.Label atcUnitDisplay;
+        private System.Windows.Forms.PictureBox settingsButton;
     }
 }
 

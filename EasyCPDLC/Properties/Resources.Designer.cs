@@ -71,11 +71,31 @@ namespace EasyCPDLC.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cog_wheel_gear_setting {
+            get {
+                object obj = ResourceManager.GetObject("cog_wheel_gear_setting", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream honk {
+        internal static System.IO.UnmanagedMemoryStream notification {
             get {
-                return ResourceManager.GetStream("honk", resourceCulture);
+                return ResourceManager.GetStream("notification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Oxygen_Bold {
+            get {
+                object obj = ResourceManager.GetObject("Oxygen_Bold", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
