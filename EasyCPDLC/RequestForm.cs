@@ -43,8 +43,12 @@ namespace EasyCPDLC
         private ToolStripMenuItem whenCanWeRequestMenu;// = new ToolStripMenuItem();
         private Label dummyLabel;
 
+        UITextBox fix1;
+        UITextBox fix2;
+        UITextBox fix3;
+
         private MainForm parent;
-        private PilotData userVATSIMData;
+        private Pilot userVATSIMData;
         private Color controlBackColor;
         private Color controlFrontColor;
 
@@ -71,7 +75,7 @@ namespace EasyCPDLC
                 {
                     logonButton.Text = "LOGON";
                     requestButton.Enabled = false;
-                    reportButton.Enabled = false;
+                    reportButton.Enabled = true;
                 }
                 else
                 {
@@ -87,7 +91,6 @@ namespace EasyCPDLC
             InitializeComponent();
             this.parent = parent;
             this.TopMost = parent.TopMost;
-
             if (this.parent.currentATCUnit != null)
             {
                 needsLogon = false;
@@ -262,6 +265,13 @@ namespace EasyCPDLC
 
         private void reportButton_Click(object sender, EventArgs e)
         {
+            fix1 = createAutoFillTextBox("", 7, parent.reportFixes);
+            fix1.TextChanged += PreFill;
+            fix2 = createTextBox("", 7);
+            fix3 = createTextBox("", 7);
+
+            fix1.Text = parent.nextFix == null ? "" : parent.nextFix;
+
             reportRadioButton.Checked = true;
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
@@ -270,7 +280,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTemplate("POSITION REPORT"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("OVERHEAD"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix1);
             messageFormatPanel.Controls.Add(createTemplate("AT"));
             messageFormatPanel.Controls.Add(createTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
             messageFormatPanel.Controls.Add(createTemplate("Z"));
@@ -278,14 +288,44 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("NEXT"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix2);
             messageFormatPanel.Controls.Add(createTemplate("AT"));
             messageFormatPanel.Controls.Add(createTextBox("", 4));
             messageFormatPanel.Controls.Add(createTemplate("Z"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("THEN"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix3);
 
+        }
+
+        private void PreFill(object sender, EventArgs e)
+        {
+            if(parent.reportFixes.Contains(fix1.Text))
+            {
+                int refIndex = Array.IndexOf(parent.reportFixes, fix1.Text);
+                try
+                {
+                    fix3.Text = parent.reportFixes[refIndex + 2];
+                }
+                catch
+                {
+                    fix3.Clear();
+                }
+                try
+                {
+                    fix2.Text = parent.reportFixes[refIndex + 1];
+                }
+                catch
+                {
+                    fix2.Clear();
+                }
+            }
+            else
+            {
+                fix2.Clear();
+                fix3.Clear();
+            }
+            
         }
 
         private void logonButton_Click(object sender, EventArgs e)
@@ -295,6 +335,19 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(needsLogon ? "" : parent.currentATCUnit, 4));
 
             logonRadioButton.Checked = true;
+        }
+
+        private UITextBox createAutoFillTextBox(string _text, int _maxLength, string[] _source)
+        {
+            UITextBox _temp = createTextBox(_text, _maxLength);
+            _temp.AutoCompleteMode = AutoCompleteMode.Append;
+            _temp.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            var autoComplete = new AutoCompleteStringCollection();
+            autoComplete.AddRange(_source);
+            _temp.AutoCompleteCustomSource = autoComplete;
+            _temp.TextAlign = HorizontalAlignment.Center;
+
+            return _temp;
         }
 
         private Label createTemplate(string _text)
@@ -344,7 +397,7 @@ namespace EasyCPDLC
             }
 
             return _temp;
-        }
+        } 
 
         private void NumsOnly(object sender, KeyPressEventArgs e)
         {
@@ -508,16 +561,17 @@ namespace EasyCPDLC
                         _formatMessage = String.Format("/data2/{0}//N/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string _messageContent = String.Format("POSITION REPORT PPOS {0} AT {1}Z FL{2} TO {3} AT {4}Z NEXT {5}",
-                            messageFormatPanel.Controls[4].Text,
+                            fix1.Text,
                             messageFormatPanel.Controls[6].Text,
                             messageFormatPanel.Controls[9].Text,
-                            messageFormatPanel.Controls[11].Text,
+                            fix2.Text,
                             messageFormatPanel.Controls[13].Text,
-                            messageFormatPanel.Controls[16].Text);
+                            fix3.Text);
                         _formatMessage += _messageContent;
 
                         await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
+                        parent.nextFix = fix2.Text;
                         break;
 
 

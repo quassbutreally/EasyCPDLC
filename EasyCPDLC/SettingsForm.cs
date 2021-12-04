@@ -30,8 +30,12 @@ namespace EasyCPDLC
 
     public partial class SettingsForm : Form
     {
+
+        UICheckBox stayOnTopBox;
+        UICheckBox audiblePingBox;
+        UITextBox simbriefTextBox;
+
         private MainForm parent;
-        public bool[] settings;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -42,10 +46,9 @@ namespace EasyCPDLC
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        public SettingsForm(MainForm _parent, bool[] _settings)
+        public SettingsForm(MainForm _parent)
         {
             parent = _parent;
-            settings = _settings;
             InitializeComponent();
             InitialiseSettings();
         }
@@ -53,22 +56,20 @@ namespace EasyCPDLC
         private void InitialiseSettings()
         {
             settingsFormatPanel.Controls.Clear();
-            UICheckBox stayOnTopBox = createCheckBox("Keep Window On Top", "0");
-            stayOnTopBox.Checked = settings[0];
-            UICheckBox audiblePingBox = createCheckBox("Play Sound on Message Receive", "1");
-            audiblePingBox.Checked = settings[1];
+            stayOnTopBox = createCheckBox("Keep Window On Top", "0");
+            stayOnTopBox.Checked = parent.stayOnTop;
+            audiblePingBox = createCheckBox("Play Sound on Message Receive", "1");
+            audiblePingBox.Checked = parent.playSound;
+            simbriefTextBox = CreateTextBox(parent.simbriefID, 7, false, true);
 
             settingsFormatPanel.Controls.Add(stayOnTopBox);
             settingsFormatPanel.SetFlowBreak(stayOnTopBox, true);
             settingsFormatPanel.Controls.Add(audiblePingBox);
+            settingsFormatPanel.SetFlowBreak(audiblePingBox, true);
+            settingsFormatPanel.Controls.Add(CreateTemplate("SIMBRIEF PILOT ID: "));
+            settingsFormatPanel.Controls.Add(simbriefTextBox);
         }
 
-        private void ModifySettings(object sender, EventArgs e)
-        {
-            UICheckBox box = (UICheckBox)sender;
-            settings[Convert.ToInt32(box.group)] = box.Checked;
-            Console.WriteLine(settings[Convert.ToInt32(box.group)]);
-        }
         private UICheckBox createCheckBox(string _text, string _group)
         {
             UICheckBox _temp = new UICheckBox(_group);
@@ -79,23 +80,83 @@ namespace EasyCPDLC
             _temp.Text = _text;
             _temp.Padding = new Padding(3, 10, 3, -30);
             _temp.AutoSize = true;
-            _temp.Click += ModifySettings;
             return _temp;
+        }
+
+        private Label CreateTemplate(string _text)
+        {
+            Label _temp = new Label();
+            _temp.BackColor = parent.controlBackColor;
+            _temp.ForeColor = parent.controlFrontColor;
+            _temp.Font = parent.textFont;
+            _temp.AutoSize = true;
+            _temp.Text = _text;
+            _temp.Top = 10;
+            _temp.Height = 20;
+            _temp.TextAlign = ContentAlignment.MiddleLeft;
+            _temp.Padding = new Padding(0, 10, 0, 0);
+            _temp.Margin = new Padding(0, 0, 0, 0);
+
+            return _temp;
+        }
+
+        private UITextBox CreateTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
+        {
+            UITextBox _temp = new UITextBox(parent.controlFrontColor);
+
+            _temp.BackColor = parent.controlBackColor;
+            _temp.ForeColor = parent.controlFrontColor;
+            _temp.Font = parent.textFontBold;
+            _temp.MaxLength = _maxLength;
+            _temp.BorderStyle = BorderStyle.None;
+            _temp.Text = _text;
+            _temp.CharacterCasing = CharacterCasing.Upper;
+            _temp.Top = 10;
+            _temp.Padding = new Padding(3, 0, 3, -10);
+            _temp.Height = 20;
+            _temp.ReadOnly = _readOnly;
+            _temp.TextAlign = HorizontalAlignment.Center;
+
+            if (_numsOnly)
+            {
+                _temp.KeyPress += NumsOnly;
+            }
+
+            using (Graphics G = _temp.CreateGraphics())
+            {
+                _temp.Width = (int)(_temp.MaxLength *
+                              G.MeasureString("x", _temp.Font).Width);
+            }
+
+            return _temp;
+        }
+
+        private void NumsOnly(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;   
+            parent.stayOnTop = stayOnTopBox.Checked;
+            parent.playSound = audiblePingBox.Checked;
+            parent.simbriefID = simbriefTextBox.Text;
+
+            Properties.Settings.Default.Save();
+            this.Close();
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void WindowDrag(object sender, MouseEventArgs e)

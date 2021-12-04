@@ -50,8 +50,14 @@ namespace EasyCPDLC
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public PilotData userVATSIMData;
-        private Pilots pilotList;
+        public Pilot userVATSIMData;
+        private VATSIMRootobject vatsimData;
+        private SimbriefRootobject simbriefData;
+        public Navlog fixes;
+        public string[] reportFixes;
+        public string nextFix = null;
+
+        public Random random;
 
         private static readonly HttpClient webclient = new HttpClient();
         private string logonCode;
@@ -84,6 +90,18 @@ namespace EasyCPDLC
             set
             {
                 Properties.Settings.Default.PlayAudibleAlert = value;
+            }
+        }
+
+        public string simbriefID
+        {
+            get
+            {
+                return Properties.Settings.Default.SimbriefUsername;
+            }
+            set
+            {
+                Properties.Settings.Default.SimbriefUsername = value;
             }
         }
 
@@ -696,10 +714,11 @@ namespace EasyCPDLC
             outputTable.Invoke(new Action(() => outputTable.ScrollControlIntoView(message)));
         }
 
-        public async Task ArtificialDelay(string _message, string _type, string _sender, int _minDelay = 5, int _maxDelay = 15)
+        public Task ArtificialDelay(string _message, string _type, string _sender, int _minDelay = 5, int _maxDelay = 15)
         {
-            Thread.Sleep(new Random().Next(_minDelay, _maxDelay) * 1000);
+            Thread.Sleep(random.Next(_minDelay, _maxDelay) * 1000);
             WriteMessage(_message, _type, _sender);
+            return Task.CompletedTask;
         }
         private void exitButton_Click(object sender, EventArgs e)
         {
@@ -727,40 +746,70 @@ namespace EasyCPDLC
 
             if (!connected)
             {
-                using (WebClient wc = new WebClient())
-                {
-                    var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                    pilotList = JsonSerializer.Deserialize<Pilots>(json);
-
-                    Logger.Debug("VATSIM Data Retrieved and Parsed");
-                }
-
                 try
                 {
 
-                    userVATSIMData = pilotList.pilots.Where(i => i.cid == cid).FirstOrDefault();
-                    response = "DETAILS RETRIEVED FOR " + userVATSIMData.callsign;
+                    using (WebClient wc = new WebClient())
+                    {
+                        var vatsimjson = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
+                        vatsimData = JsonSerializer.Deserialize<VATSIMRootobject>(vatsimjson);
+
+                        Logger.Debug("VATSIM Data Retrieved and Parsed");
+
+                    }
+
+                    userVATSIMData = vatsimData.pilots.Where(i => i.cid == cid).FirstOrDefault();
+                    response = "VATSIM DATA RETRIEVED FOR " + userVATSIMData.callsign;
                     callsign = userVATSIMData.callsign;
+
+                    WriteMessage(response, "SYSTEM", "SYSTEM");
 
                     connected = true;
 
                     requestCancellationTokenSource = new CancellationTokenSource();
                     requestCancellationToken = requestCancellationTokenSource.Token;
                     _ = PeriodicCheckMessage(updateTimer, requestCancellationToken);
+
+
                 }
-                catch (NullReferenceException)
+
+                catch
                 {
-                    response = "ERROR RETRIEVING DETAILS. ENSURE A FLIGHT PLAN HAS BEEN FILED AND TRY AGAIN";
+                    response = "ERROR RETRIEVING VATSIM DATA. ENSURE YOU ARE CONNECTED TO THE NETWORK AND A FLIGHT PLAN HAS BEEN FILED";
                     atcButton.Enabled = false;
                     telexButton.Enabled = false;
                     connected = false;
+
+                    WriteMessage(response, "SYSTEM", "SYSTEM");
+
+                    return;
+                }
+
+                try
+                {
+
+                    using (WebClient wc = new WebClient())
+                    {
+                        var simbriefjson = wc.DownloadString(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", simbriefID));
+                        simbriefData = JsonSerializer.Deserialize<SimbriefRootobject>(simbriefjson);
+
+                        Logger.Debug("Simbrief Data Retrieved and Parsed");
+
+                        fixes = simbriefData.navlog;
+                        reportFixes = fixes.fix.Where(x => x.is_sid_star == "0" && !new string[] { "ltlg", "apt" }.Contains(x.type)).Select(x=>x.ident).ToArray();
+                        response = "SIMBRIEF DATA RETRIEVED FOR " + simbriefData.atc.callsign;
+                    }
+                }
+
+                catch
+                {
+                    response = "ERROR RETRIEVING SIMBRIEF DATA. POSITION REPORTING WILL REVERT TO BASIC FUNCTIONALITY";
                 }
                 finally
                 {
                     WriteMessage(response, "SYSTEM", "SYSTEM");
                 }
             }
-
             else
             {
                 if (!(currentATCUnit is null))
@@ -770,8 +819,10 @@ namespace EasyCPDLC
                 requestCancellationTokenSource.Cancel();
                 callsign = "";
                 response = "DISCONNECTED CLIENT";
-                pilotList = new Pilots();
-                userVATSIMData = new PilotData();
+                vatsimData = new VATSIMRootobject();
+                userVATSIMData = new Pilot();
+                simbriefData = new SimbriefRootobject();
+                fixes = new Navlog();
 
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;
@@ -840,15 +891,9 @@ namespace EasyCPDLC
         private void settingsButton_Click(object sender, EventArgs e)
         {
             bool[] settings = new bool[] { stayOnTop, playSound };
-            sForm = new SettingsForm(this, settings);
+            sForm = new SettingsForm(this);
             sForm.TopMost = stayOnTop;
-            if (sForm.ShowDialog(this) == DialogResult.OK)
-            {
-                settings = sForm.settings;
-                stayOnTop = settings[0];
-                playSound = settings[1];
-                Properties.Settings.Default.Save();
-            }
+            sForm.Show();
         }
     }
     internal class NoHighlightRenderer : ToolStripProfessionalRenderer

@@ -37,7 +37,7 @@ namespace EasyCPDLC
         private const int cGrip = 16;
         private const int cCaption = 32;
 
-        private Atis atisList;
+        private VATSIMRootobject atisList;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -45,7 +45,7 @@ namespace EasyCPDLC
         public static extern bool ReleaseCapture();
 
         private MainForm parent;
-        private PilotData userVATSIMData;
+        private Pilot userVATSIMData;
         private Color controlBackColor;
         private Color controlFrontColor;
         private Font controlFont;
@@ -111,6 +111,7 @@ namespace EasyCPDLC
 
             return _temp;
         }
+
 
         private UITextBox CreateMultiLineBox(string _text)
         {
@@ -227,11 +228,11 @@ namespace EasyCPDLC
                             using (WebClient wc = new WebClient())
                             {
                                 var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                                atisList = JsonSerializer.Deserialize<Atis>(json);
+                                atisList = JsonSerializer.Deserialize<VATSIMRootobject>(json);
                             }
 
-                            AtisData atisStation = atisList.atis.Where(i => i.callsign == String.Format("{0}_ATIS", _recipient)).FirstOrDefault();
-                            if (atisStation != default(AtisData))
+                            Atis atisStation = atisList.atis.Where(i => i.callsign == String.Format("{0}_ATIS", _recipient)).FirstOrDefault();
+                            if (atisStation != default(Atis))
                             {
                                 string atisData = String.Join(" ", atisStation.text_atis);
                                 Task.Run(() => this.parent.ArtificialDelay(atisData, "SYSTEM", "ATIS"));

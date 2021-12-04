@@ -136,6 +136,7 @@
     <Compile Include="CPDLCMessage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomUI.cs" />
     <Compile Include="DataEntry.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,7 +150,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="FlashWindow.cs" />
-    <Compile Include="Pilots.cs" />
+    <Compile Include="SimbriefJSON.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -178,6 +179,7 @@
     <Compile Include="UITextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="VATSIMJSON.cs" />
     <EmbeddedResource Include="DataEntry.resx">
       <DependentUpon>DataEntry.cs</DependentUpon>
     </EmbeddedResource>
