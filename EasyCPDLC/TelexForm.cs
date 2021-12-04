@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace EasyCPDLC
 {
@@ -189,10 +190,12 @@ namespace EasyCPDLC
                 {
                     case "freeTextRadioButton":
                         string _formatMessage = messageFormatPanel.Controls[3].Text;
-                        await this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+                        Task.Run(() => this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim()));
                         break;
 
                     case "metarRadioButton":
+
+                        this.parent.WriteMessage(String.Format("METAR REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
 
                         try
                         {
@@ -204,19 +207,21 @@ namespace EasyCPDLC
                                 Stream dataStream = response.GetResponseStream();
                                 StreamReader reader = new StreamReader(dataStream);
                                 Metar metar = JsonSerializer.Deserialize<Metar>(reader.ReadToEnd());
-                                this.parent.WriteMessage(metar.sanitized, "TELEX", "METAR");
+                                Task.Run(() => this.parent.ArtificialDelay(metar.sanitized, "SYSTEM", "SYSTEM"));
                             }
                         }
 
                         catch
                         {
-                            this.parent.WriteMessage(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "TELEX", "METAR");
+                            Task.Run(() => this.parent.ArtificialDelay(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "SYSTEM", "METAR"));
                         }
                        
                         break;
 
                     case "atisRadioButton":
-                        
+
+                        this.parent.WriteMessage(String.Format("ATIS REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
+
                         try
                         {
                             using (WebClient wc = new WebClient())
@@ -229,17 +234,17 @@ namespace EasyCPDLC
                             if (atisStation != default(AtisData))
                             {
                                 string atisData = String.Join(" ", atisStation.text_atis);
-                                this.parent.WriteMessage(atisData, "TELEX", "ATIS");
+                                Task.Run(() => this.parent.ArtificialDelay(atisData, "SYSTEM", "ATIS"));
                             }
                             else
                             {
-                                this.parent.WriteMessage(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "TELEX", "ATIS");
+                                throw new NullReferenceException();
                             }
                         }
 
                         catch
                         {
-                            this.parent.WriteMessage(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "TELEX", "ATIS");
+                            Task.Run(() => this.parent.ArtificialDelay(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "SYSTEM", "ATIS"));
                         }                      
 
                         break;

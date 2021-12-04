@@ -549,6 +549,7 @@ namespace EasyCPDLC
                 {
                     deleteMenu.Enabled = false;
                 }
+                Console.WriteLine(_sender.type);
                 if (_sender.type != "SYSTEM" && !_sender.acknowledged && !_sender.outbound)
                 {
                     popupMenu.Items.Add(replyMenu);
@@ -693,6 +694,12 @@ namespace EasyCPDLC
             outputTable.Invoke(new Action(() => outputTable.RowCount += 1));
             outputTable.Invoke(new Action(() => outputTable.RowStyles.Add(new RowStyle(SizeType.AutoSize))));
             outputTable.Invoke(new Action(() => outputTable.ScrollControlIntoView(message)));
+        }
+
+        public async Task ArtificialDelay(string _message, string _type, string _sender, int _minDelay = 5, int _maxDelay = 15)
+        {
+            Thread.Sleep(new Random().Next(_minDelay, _maxDelay) * 1000);
+            WriteMessage(_message, _type, _sender);
         }
         private void exitButton_Click(object sender, EventArgs e)
         {
