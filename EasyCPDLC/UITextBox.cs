@@ -17,9 +17,9 @@
 
 
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System;
 
 namespace EasyCPDLC
 {
@@ -33,13 +33,6 @@ namespace EasyCPDLC
             Margin = new Padding(0, 5, 0, -5);
             Controls.Add(new Label()
             { Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(0, -10, 0, 0) });
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.ResumeLayout(false);
-
         }
     }
 
@@ -95,8 +88,6 @@ namespace EasyCPDLC
                     pevent.Graphics.FillEllipse(brush, pt.X + 4, pt.Y + 4, 8, 8);
             }
             pevent.Graphics.DrawRectangle(SystemPens.ControlLight, rect);
-
-            Rectangle fRect = ClientRectangle;
         }
     }
 }

@@ -16,13 +16,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -35,7 +29,7 @@ namespace EasyCPDLC
         UICheckBox audiblePingBox;
         UITextBox simbriefTextBox;
 
-        private MainForm parent;
+        private readonly MainForm parent;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -72,50 +66,54 @@ namespace EasyCPDLC
 
         private UICheckBox createCheckBox(string _text, string _group)
         {
-            UICheckBox _temp = new UICheckBox(_group);
-
-            _temp.BackColor = parent.controlBackColor;
-            _temp.ForeColor = parent.controlFrontColor;
-            _temp.Font = parent.textFont;
-            _temp.Text = _text;
-            _temp.Padding = new Padding(3, 10, 3, -30);
-            _temp.AutoSize = true;
+            UICheckBox _temp = new UICheckBox(_group)
+            {
+                BackColor = parent.controlBackColor,
+                ForeColor = parent.controlFrontColor,
+                Font = parent.textFont,
+                Text = _text,
+                Padding = new Padding(3, 10, 3, -30),
+                AutoSize = true
+            };
             return _temp;
         }
 
         private Label CreateTemplate(string _text)
         {
-            Label _temp = new Label();
-            _temp.BackColor = parent.controlBackColor;
-            _temp.ForeColor = parent.controlFrontColor;
-            _temp.Font = parent.textFont;
-            _temp.AutoSize = true;
-            _temp.Text = _text;
-            _temp.Top = 10;
-            _temp.Height = 20;
-            _temp.TextAlign = ContentAlignment.MiddleLeft;
-            _temp.Padding = new Padding(0, 10, 0, 0);
-            _temp.Margin = new Padding(0, 0, 0, 0);
+            Label _temp = new Label
+            {
+                BackColor = parent.controlBackColor,
+                ForeColor = parent.controlFrontColor,
+                Font = parent.textFont,
+                AutoSize = true,
+                Text = _text,
+                Top = 10,
+                Height = 20,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(0, 10, 0, 0),
+                Margin = new Padding(0, 0, 0, 0)
+            };
 
             return _temp;
         }
 
         private UITextBox CreateTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
         {
-            UITextBox _temp = new UITextBox(parent.controlFrontColor);
-
-            _temp.BackColor = parent.controlBackColor;
-            _temp.ForeColor = parent.controlFrontColor;
-            _temp.Font = parent.textFontBold;
-            _temp.MaxLength = _maxLength;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Text = _text;
-            _temp.CharacterCasing = CharacterCasing.Upper;
-            _temp.Top = 10;
-            _temp.Padding = new Padding(3, 0, 3, -10);
-            _temp.Height = 20;
-            _temp.ReadOnly = _readOnly;
-            _temp.TextAlign = HorizontalAlignment.Center;
+            UITextBox _temp = new UITextBox(parent.controlFrontColor)
+            {
+                BackColor = parent.controlBackColor,
+                ForeColor = parent.controlFrontColor,
+                Font = parent.textFontBold,
+                MaxLength = _maxLength,
+                BorderStyle = BorderStyle.None,
+                Text = _text,
+                CharacterCasing = CharacterCasing.Upper,
+                Top = 10,
+                Padding = new Padding(3, 0, 3, -10),
+                Height = 20,
+                ReadOnly = _readOnly,
+                TextAlign = HorizontalAlignment.Center
+            };
 
             if (_numsOnly)
             {

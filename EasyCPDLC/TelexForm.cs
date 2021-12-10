@@ -18,13 +18,13 @@
 
 
 using System;
-using System.Text.Json;
-using System.Net;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Drawing;
-using System.Windows.Forms;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EasyCPDLC
 {
@@ -44,24 +44,18 @@ namespace EasyCPDLC
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        private MainForm parent;
-        private Pilot userVATSIMData;
-        private Color controlBackColor;
-        private Color controlFrontColor;
-        private Font controlFont;
-        private Font controlFontBold;
-        private Font textFont;
-        private Font textFontBold;
-        private string recipient;
+        private readonly MainForm parent;
+        private readonly Color controlBackColor;
+        private readonly Color controlFrontColor;
+        private readonly Font textFont;
+        private readonly Font textFontBold;
+        private readonly string recipient;
         public TelexForm(MainForm _parent, string _recipient = null)
         {
             InitializeComponent();
             parent = _parent;
-            userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
-            controlFont = parent.controlFont;
-            controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
@@ -71,37 +65,40 @@ namespace EasyCPDLC
 
         private Label CreateTemplate(string _text)
         {
-            Label _temp = new Label();
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFont;
-            _temp.AutoSize = true;
-            _temp.Text = _text;
-            _temp.Top = 10;
-            _temp.Height = 20;
-            _temp.TextAlign = ContentAlignment.MiddleLeft;
-            _temp.Padding = new Padding(0, 10, 0, 0);
-            _temp.Margin = new Padding(0, 0, 0, 0);
+            Label _temp = new Label
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFont,
+                AutoSize = true,
+                Text = _text,
+                Top = 10,
+                Height = 20,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(0, 10, 0, 0),
+                Margin = new Padding(0, 0, 0, 0)
+            };
 
             return _temp;
         }
 
         private UITextBox CreateTextBox(string _text, int _maxLength)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.MaxLength = _maxLength;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Text = _text;
-            _temp.CharacterCasing = CharacterCasing.Upper;
-            _temp.Top = 10;
-            _temp.Padding = new Padding(3, 0, 3, -10);
-            _temp.Margin = new Padding(3, 5, 3, -10);
-            _temp.Height = 20;
-            _temp.TextAlign = HorizontalAlignment.Center;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                MaxLength = _maxLength,
+                BorderStyle = BorderStyle.None,
+                Text = _text,
+                CharacterCasing = CharacterCasing.Upper,
+                Top = 10,
+                Padding = new Padding(3, 0, 3, -10),
+                Margin = new Padding(3, 5, 3, -10),
+                Height = 20,
+                TextAlign = HorizontalAlignment.Center
+            };
 
             using (Graphics G = _temp.CreateGraphics())
             {
@@ -115,17 +112,19 @@ namespace EasyCPDLC
 
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Width = messageFormatPanel.Width - 50;
-            _temp.Multiline = true;
-            _temp.WordWrap = true;
-            _temp.Text = _text;
-            _temp.MaxLength = 255;
-            _temp.Height = 20;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                BorderStyle = BorderStyle.None,
+                Width = messageFormatPanel.Width - 50,
+                Multiline = true,
+                WordWrap = true,
+                Text = _text,
+                MaxLength = 255,
+                Height = 20
+            };
             _temp.TextChanged += ExpandMultiLineBox;
 
             _temp.CharacterCasing = CharacterCasing.Upper;
@@ -182,11 +181,11 @@ namespace EasyCPDLC
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
 
-            if (radioBtn != null || messageFormatPanel.Controls[1].Text.Length < 4) 
-            { 
+            if (radioBtn != null || messageFormatPanel.Controls[1].Text.Length < 4)
+            {
 
                 string _recipient = messageFormatPanel.Controls[1].Text;
-                
+
                 switch (radioBtn.Name)
                 {
                     case "freeTextRadioButton":
@@ -216,7 +215,7 @@ namespace EasyCPDLC
                         {
                             Task.Run(() => this.parent.ArtificialDelay(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "SYSTEM", "METAR"));
                         }
-                       
+
                         break;
 
                     case "atisRadioButton":
@@ -246,7 +245,7 @@ namespace EasyCPDLC
                         catch
                         {
                             Task.Run(() => this.parent.ArtificialDelay(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "SYSTEM", "ATIS"));
-                        }                      
+                        }
 
                         break;
 
@@ -263,7 +262,7 @@ namespace EasyCPDLC
 
             }
 
-            
+
         }
 
         protected override void WndProc(ref Message m)
