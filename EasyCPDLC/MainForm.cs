@@ -477,6 +477,10 @@ namespace EasyCPDLC
                     {
                         WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
                     }
+                    else if (messageType == "ADS-C")
+                    {
+
+                    }
                     else if (messageType != "poll")
                     {
                         WriteMessage(packetData, messageType, recipient, _outbound);
@@ -672,6 +676,7 @@ namespace EasyCPDLC
             if (messageString.StartsWith("HANDOVER"))
             {
                 string nextATCUnit = messageString.Split(' ').Last().Trim('@').Trim();
+                currentATCUnit = null;
                 await SendCPDLCMessage(nextATCUnit, "CPDLC", String.Format("/data2/{0}//Y/REQUEST LOGON", messageOutCounter), true, false);
                 pendingLogon = nextATCUnit;
                 messageOutCounter += 1;

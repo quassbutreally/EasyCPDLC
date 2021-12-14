@@ -539,14 +539,6 @@ namespace EasyCPDLC
 
                     case "requestRadioButton":
 
-                        /*foreach (Control _control in messageFormatPanel.Controls)
-                        {
-                            if (_control.Text.Length < 1)
-                            {
-                                return;
-                            }
-                        }*/
-
                         _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string parsedMessage = ParseRequest();
