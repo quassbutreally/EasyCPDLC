@@ -28,7 +28,8 @@ using System.Media;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,8 +53,7 @@ namespace EasyCPDLC
 
         public Pilot userVATSIMData;
         private VATSIMRootobject vatsimData;
-        private SimbriefRootobject simbriefData;
-        public Navlog fixes;
+        private Navlog simbriefData;
         public string[] reportFixes;
         public string nextFix = null;
 
@@ -579,7 +579,7 @@ namespace EasyCPDLC
                 {
                     popupMenu.Items.Add(replyMenu);
 
-                    if (_sender.type != "TELEX" && _sender.recipient == currentATCUnit)
+                    if (_sender.type != "TELEX")
                     {
                         switch (_sender.header.responses)
                         {
@@ -589,7 +589,7 @@ namespace EasyCPDLC
                                 replyMenu.DropDownItems.Add(standbyMenu);
                                 break;
 
-                            case "AN":
+                            case "AN":  
                                 replyMenu.DropDownItems.Add(affirmativeMenu);
                                 replyMenu.DropDownItems.Add(negativeMenu);
                                 replyMenu.DropDownItems.Add(standbyMenu);
@@ -707,9 +707,6 @@ namespace EasyCPDLC
                 WriteMessage(message, "CPDLC", _sender, false, header);
 
                 player.Play();
-                FlashWindow.Flash(this); WriteMessage(message, "CPDLC", _sender, false, header);
-
-                player.Play();
                 FlashWindow.Flash(this);
             }
 
@@ -775,8 +772,7 @@ namespace EasyCPDLC
 
                     using (WebClient wc = new WebClient())
                     {
-                        var vatsimjson = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                        vatsimData = JsonSerializer.Deserialize<VATSIMRootobject>(vatsimjson);
+                        vatsimData = JsonConvert.DeserializeObject<VATSIMRootobject>(wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json"));
 
                         Logger.Debug("VATSIM Data Retrieved and Parsed");
 
@@ -815,13 +811,14 @@ namespace EasyCPDLC
                     using (WebClient wc = new WebClient())
                     {
                         var simbriefjson = wc.DownloadString(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", simbriefID));
-                        simbriefData = JsonSerializer.Deserialize<SimbriefRootobject>(simbriefjson);
+                        var simbriefNavlog = JObject.Parse(simbriefjson)["navlog"].ToString();
+                        Console.WriteLine(simbriefjson);
+                        simbriefData = JsonConvert.DeserializeObject<Navlog>(simbriefNavlog);
 
                         Logger.Debug("Simbrief Data Retrieved and Parsed");
 
-                        fixes = simbriefData.navlog;
-                        reportFixes = fixes.fix.Where(x => x.is_sid_star == "0" && !new string[] { "ltlg", "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
-                        response = "SIMBRIEF DATA RETRIEVED FOR " + simbriefData.atc.callsign;
+                        reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "ltlg", "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
+                        response = "SIMBRIEF DATA RETRIEVED FOR " + JObject.Parse(simbriefjson)["atc"]["callsign"].ToString();
                     }
                 }
 
@@ -845,8 +842,7 @@ namespace EasyCPDLC
                 response = "DISCONNECTED CLIENT";
                 vatsimData = new VATSIMRootobject();
                 userVATSIMData = new Pilot();
-                simbriefData = new SimbriefRootobject();
-                fixes = new Navlog();
+                simbriefData = new Navlog();
 
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;
