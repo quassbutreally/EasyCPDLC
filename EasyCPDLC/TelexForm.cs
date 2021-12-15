@@ -19,6 +19,11 @@
 
 using System;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -32,29 +37,25 @@ namespace EasyCPDLC
         private const int cGrip = 16;
         private const int cCaption = 32;
 
+        private VATSIMRootobject atisList;
+
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        private MainForm parent;
-        private PilotData userVATSIMData;
-        private Color controlBackColor;
-        private Color controlFrontColor;
-        private Font controlFont;
-        private Font controlFontBold;
-        private Font textFont;
-        private Font textFontBold;
-        private string recipient;
+        private readonly MainForm parent;
+        private readonly Color controlBackColor;
+        private readonly Color controlFrontColor;
+        private readonly Font textFont;
+        private readonly Font textFontBold;
+        private readonly string recipient;
         public TelexForm(MainForm _parent, string _recipient = null)
         {
             InitializeComponent();
             parent = _parent;
-            userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
-            controlFont = parent.controlFont;
-            controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
@@ -64,37 +65,40 @@ namespace EasyCPDLC
 
         private Label CreateTemplate(string _text)
         {
-            Label _temp = new Label();
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFont;
-            _temp.AutoSize = true;
-            _temp.Text = _text;
-            _temp.Top = 10;
-            _temp.Height = 20;
-            _temp.TextAlign = ContentAlignment.MiddleLeft;
-            _temp.Padding = new Padding(0, 10, 0, 0);
-            _temp.Margin = new Padding(0, 0, 0, 0);
+            Label _temp = new Label
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFont,
+                AutoSize = true,
+                Text = _text,
+                Top = 10,
+                Height = 20,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(0, 10, 0, 0),
+                Margin = new Padding(0, 0, 0, 0)
+            };
 
             return _temp;
         }
 
         private UITextBox CreateTextBox(string _text, int _maxLength)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.MaxLength = _maxLength;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Text = _text;
-            _temp.CharacterCasing = CharacterCasing.Upper;
-            _temp.Top = 10;
-            _temp.Padding = new Padding(3, 0, 3, -10);
-            _temp.Margin = new Padding(3, 5, 3, -10);
-            _temp.Height = 20;
-            _temp.TextAlign = HorizontalAlignment.Center;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                MaxLength = _maxLength,
+                BorderStyle = BorderStyle.None,
+                Text = _text,
+                CharacterCasing = CharacterCasing.Upper,
+                Top = 10,
+                Padding = new Padding(3, 0, 3, -10),
+                Margin = new Padding(3, 5, 3, -10),
+                Height = 20,
+                TextAlign = HorizontalAlignment.Center
+            };
 
             using (Graphics G = _temp.CreateGraphics())
             {
@@ -105,19 +109,22 @@ namespace EasyCPDLC
             return _temp;
         }
 
+
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Width = messageFormatPanel.Width - 50;
-            _temp.Multiline = true;
-            _temp.WordWrap = true;
-            _temp.Text = _text;
-            _temp.MaxLength = 255;
-            _temp.Height = 20;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                BorderStyle = BorderStyle.None,
+                Width = messageFormatPanel.Width - 50,
+                Multiline = true,
+                WordWrap = true,
+                Text = _text,
+                MaxLength = 255,
+                Height = 20
+            };
             _temp.TextChanged += ExpandMultiLineBox;
 
             _temp.CharacterCasing = CharacterCasing.Upper;
@@ -143,13 +150,7 @@ namespace EasyCPDLC
         }
         private void ReloadPanel(object sender, EventArgs e)
         {
-            messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(CreateTextBox(recipient is null ? "" : recipient, 7));
-            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(CreateTemplate("MSG:"));
-            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
+            freeTextButton.PerformClick();
         }
 
         private void ExpandMultiLineBox(object sender, EventArgs e)
@@ -177,12 +178,91 @@ namespace EasyCPDLC
 
         private async void sendButton_Click(object sender, EventArgs e)
         {
-            string _formatMessage = messageFormatPanel.Controls[3].Text;
-            string _recipient = messageFormatPanel.Controls[1].Text;
+            RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
+                                       .Where(x => x.Checked).FirstOrDefault();
 
-            await this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
-            Console.WriteLine(_formatMessage.Trim());
-            this.Close();
+            if (radioBtn != null || messageFormatPanel.Controls[1].Text.Length < 4)
+            {
+
+                string _recipient = messageFormatPanel.Controls[1].Text;
+
+                switch (radioBtn.Name)
+                {
+                    case "freeTextRadioButton":
+                        string _formatMessage = messageFormatPanel.Controls[3].Text;
+                        Task.Run(() => this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim()));
+                        break;
+
+                    case "metarRadioButton":
+
+                        this.parent.WriteMessage(String.Format("METAR REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
+
+                        try
+                        {
+                            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(String.Format("https://avwx.rest/api/metar/{0}", _recipient));
+                            request.Method = "GET";
+                            request.Headers["Authorization"] = "OE1u2m0EZie5oFrAwSb-GYPGqV-9ASDNfuZhrBexzjM";
+                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                            {
+                                Stream dataStream = response.GetResponseStream();
+                                StreamReader reader = new StreamReader(dataStream);
+                                Metar metar = JsonSerializer.Deserialize<Metar>(reader.ReadToEnd());
+                                Task.Run(() => this.parent.ArtificialDelay(metar.sanitized, "SYSTEM", "SYSTEM"));
+                            }
+                        }
+
+                        catch
+                        {
+                            Task.Run(() => this.parent.ArtificialDelay(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "SYSTEM", "METAR"));
+                        }
+
+                        break;
+
+                    case "atisRadioButton":
+
+                        this.parent.WriteMessage(String.Format("ATIS REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
+
+                        try
+                        {
+                            using (WebClient wc = new WebClient())
+                            {
+                                var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
+                                atisList = JsonSerializer.Deserialize<VATSIMRootobject>(json);
+                            }
+
+                            Atis atisStation = atisList.atis.Where(i => i.callsign == String.Format("{0}_ATIS", _recipient)).FirstOrDefault();
+                            if (atisStation != default(Atis))
+                            {
+                                string atisData = String.Join(" ", atisStation.text_atis);
+                                Task.Run(() => this.parent.ArtificialDelay(atisData, "SYSTEM", "ATIS"));
+                            }
+                            else
+                            {
+                                throw new NullReferenceException();
+                            }
+                        }
+
+                        catch
+                        {
+                            Task.Run(() => this.parent.ArtificialDelay(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "SYSTEM", "ATIS"));
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.Close();
+
+
+            }
+            else
+            {
+
+            }
+
+
         }
 
         protected override void WndProc(ref Message m)
@@ -203,6 +283,37 @@ namespace EasyCPDLC
                 }
             }
             base.WndProc(ref m);
+        }
+
+        private void freeTextButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(recipient is null ? "" : recipient, 7));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(CreateTemplate("MSG:"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
+
+            freeTextRadioButton.Checked = true;
+        }
+
+        private void metarButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+
+            metarRadioButton.Checked = true;
+        }
+
+        private void atisButton_Click(object sender, EventArgs e)
+        {
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+
+            atisRadioButton.Checked = true;
         }
     }
 }

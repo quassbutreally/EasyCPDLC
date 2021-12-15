@@ -17,10 +17,10 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace EasyCPDLC
 {
@@ -36,24 +36,27 @@ namespace EasyCPDLC
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        private ContextMenuStrip popupMenu = new ContextMenuStrip();
+        private readonly ContextMenuStrip popupMenu = new ContextMenuStrip();
         private ToolStripMenuItem directRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem levelRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem speedRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem whenCanWeRequestMenu;// = new ToolStripMenuItem();
-        private Label dummyLabel;
+        private readonly Label dummyLabel;
 
-        private MainForm parent;
-        private PilotData userVATSIMData;
-        private Color controlBackColor;
-        private Color controlFrontColor;
+        UITextBox fix1;
+        UITextBox fix2;
+        UITextBox fix3;
 
-        private Dictionary<string, string> rsnConversion = new Dictionary<string, string>();
+        private readonly MainForm parent;
+        private readonly Pilot userVATSIMData;
+        private readonly Color controlBackColor;
+        private readonly Color controlFrontColor;
 
-        private Font controlFont;
-        private Font controlFontBold;
-        private Font textFont;
-        private Font textFontBold;
+        private readonly Dictionary<string, string> rsnConversion = new Dictionary<string, string>();
+
+        private readonly Font controlFontBold;
+        private readonly Font textFont;
+        private readonly Font textFontBold;
 
         private bool _needsLogon;
         public bool needsLogon
@@ -71,7 +74,7 @@ namespace EasyCPDLC
                 {
                     logonButton.Text = "LOGON";
                     requestButton.Enabled = false;
-                    reportButton.Enabled = false;
+                    reportButton.Enabled = true;
                 }
                 else
                 {
@@ -87,7 +90,6 @@ namespace EasyCPDLC
             InitializeComponent();
             this.parent = parent;
             this.TopMost = parent.TopMost;
-
             if (this.parent.currentATCUnit != null)
             {
                 needsLogon = false;
@@ -100,15 +102,16 @@ namespace EasyCPDLC
             userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
-            controlFont = parent.controlFont;
             controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
 
-            dummyLabel = new Label();
-            dummyLabel.Width = 0;
-            dummyLabel.Height = 0;
-            dummyLabel.Margin = new Padding(0, 0, 0, 0);
+            dummyLabel = new Label
+            {
+                Width = 0,
+                Height = 0,
+                Margin = new Padding(0, 0, 0, 0)
+            };
 
             rsnConversion.Add("DUE TO WX", "DUE TO WEATHER");
             rsnConversion.Add("DUE TO A/C PERFORMANCE", "DUE TO PERFORMANCE");
@@ -119,10 +122,12 @@ namespace EasyCPDLC
 
         private ToolStripMenuItem CreateMenuItem(string name)
         {
-            ToolStripMenuItem _temp = new ToolStripMenuItem(name);
-            _temp.BackColor = Color.FromArgb(28, 28, 28);
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = controlFontBold;
+            ToolStripMenuItem _temp = new ToolStripMenuItem(name)
+            {
+                BackColor = Color.FromArgb(28, 28, 28),
+                ForeColor = controlFrontColor,
+                Font = controlFontBold
+            };
             //_temp.AutoSize = false;
             //_temp.Size = new Size(104, 37);
 
@@ -162,7 +167,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
             messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
-            
+
 
         }
 
@@ -235,7 +240,7 @@ namespace EasyCPDLC
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
         }
 
-            private void pdcButton_Click(object sender, EventArgs e)
+        private void pdcButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
@@ -262,6 +267,13 @@ namespace EasyCPDLC
 
         private void reportButton_Click(object sender, EventArgs e)
         {
+            fix1 = createAutoFillTextBox("", 7, parent.reportFixes);
+            fix1.TextChanged += PreFill;
+            fix2 = createTextBox("", 7);
+            fix3 = createTextBox("", 7);
+
+            fix1.Text = parent.nextFix ?? "";
+
             reportRadioButton.Checked = true;
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
@@ -270,7 +282,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTemplate("POSITION REPORT"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("OVERHEAD"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix1);
             messageFormatPanel.Controls.Add(createTemplate("AT"));
             messageFormatPanel.Controls.Add(createTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
             messageFormatPanel.Controls.Add(createTemplate("Z"));
@@ -278,13 +290,43 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("NEXT"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix2);
             messageFormatPanel.Controls.Add(createTemplate("AT"));
             messageFormatPanel.Controls.Add(createTextBox("", 4));
             messageFormatPanel.Controls.Add(createTemplate("Z"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("THEN"));
-            messageFormatPanel.Controls.Add(createTextBox("", 7));
+            messageFormatPanel.Controls.Add(fix3);
+
+        }
+
+        private void PreFill(object sender, EventArgs e)
+        {
+            if (parent.reportFixes.Contains(fix1.Text))
+            {
+                int refIndex = Array.IndexOf(parent.reportFixes, fix1.Text);
+                try
+                {
+                    fix3.Text = parent.reportFixes[refIndex + 2];
+                }
+                catch
+                {
+                    fix3.Clear();
+                }
+                try
+                {
+                    fix2.Text = parent.reportFixes[refIndex + 1];
+                }
+                catch
+                {
+                    fix2.Clear();
+                }
+            }
+            else
+            {
+                fix2.Clear();
+                fix3.Clear();
+            }
 
         }
 
@@ -297,40 +339,56 @@ namespace EasyCPDLC
             logonRadioButton.Checked = true;
         }
 
+        private UITextBox createAutoFillTextBox(string _text, int _maxLength, string[] _source)
+        {
+            UITextBox _temp = createTextBox(_text, _maxLength);
+            _temp.AutoCompleteMode = AutoCompleteMode.Append;
+            _temp.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            var autoComplete = new AutoCompleteStringCollection();
+            autoComplete.AddRange(_source);
+            _temp.AutoCompleteCustomSource = autoComplete;
+            _temp.TextAlign = HorizontalAlignment.Center;
+
+            return _temp;
+        }
+
         private Label createTemplate(string _text)
         {
-            Label _temp = new Label();
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFont;
-            _temp.AutoSize = true;
-            _temp.Text = _text;
-            _temp.Top = 10;
-            _temp.Height = 20;
-            _temp.TextAlign = ContentAlignment.MiddleLeft;
-            _temp.Padding = new Padding(0, 10, 0, 0);
-            _temp.Margin = new Padding(0, 0, 0, 0);
+            Label _temp = new Label
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFont,
+                AutoSize = true,
+                Text = _text,
+                Top = 10,
+                Height = 20,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(0, 10, 0, 0),
+                Margin = new Padding(0, 0, 0, 0)
+            };
 
             return _temp;
         }
 
         private UITextBox createTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.MaxLength = _maxLength;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Text = _text;
-            _temp.CharacterCasing = CharacterCasing.Upper;
-            _temp.Top = 10;
-            _temp.Padding = new Padding(3, 0, 3, -10);
-            //_temp.Margin = new Padding(3, 5, 3, -10);
-            _temp.Height = 20;
-            _temp.ReadOnly = _readOnly;
-            _temp.TextAlign = HorizontalAlignment.Center;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                MaxLength = _maxLength,
+                BorderStyle = BorderStyle.None,
+                Text = _text,
+                CharacterCasing = CharacterCasing.Upper,
+                Top = 10,
+                Padding = new Padding(3, 0, 3, -10),
+                //_temp.Margin = new Padding(3, 5, 3, -10);
+                Height = 20,
+                ReadOnly = _readOnly,
+                TextAlign = HorizontalAlignment.Center
+            };
 
             if (_numsOnly)
             {
@@ -356,14 +414,15 @@ namespace EasyCPDLC
 
         private UICheckBox createCheckBox(string _text, string _group)
         {
-            UICheckBox _temp = new UICheckBox(_group);
-
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFont;
-            _temp.Text = _text;
-            _temp.Padding = new Padding(3, 10, 3, -30);
-            _temp.AutoSize = true;
+            UICheckBox _temp = new UICheckBox(_group)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFont,
+                Text = _text,
+                Padding = new Padding(3, 10, 3, -30),
+                AutoSize = true
+            };
             _temp.Click += DeselectCheckBox;
             return _temp;
         }
@@ -384,17 +443,19 @@ namespace EasyCPDLC
 
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor);
-            _temp.BackColor = controlBackColor;
-            _temp.ForeColor = controlFrontColor;
-            _temp.Font = textFontBold;
-            _temp.BorderStyle = BorderStyle.None;
-            _temp.Width = messageFormatPanel.Width - 50;
-            _temp.Multiline = true;
-            _temp.WordWrap = true;
-            _temp.Text = _text;
-            _temp.MaxLength = 255;
-            _temp.Height = 20;
+            UITextBox _temp = new UITextBox(controlFrontColor)
+            {
+                BackColor = controlBackColor,
+                ForeColor = controlFrontColor,
+                Font = textFontBold,
+                BorderStyle = BorderStyle.None,
+                Width = messageFormatPanel.Width - 50,
+                Multiline = true,
+                WordWrap = true,
+                Text = _text,
+                MaxLength = 255,
+                Height = 20
+            };
             _temp.TextChanged += ExpandMultiLineBox;
 
             _temp.CharacterCasing = CharacterCasing.Upper;
@@ -421,7 +482,6 @@ namespace EasyCPDLC
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
 
-            Console.WriteLine(radioBtn.Name);
             if (radioBtn != null)
             {
                 string _recipient = "";
@@ -479,14 +539,6 @@ namespace EasyCPDLC
 
                     case "requestRadioButton":
 
-                        /*foreach (Control _control in messageFormatPanel.Controls)
-                        {
-                            if (_control.Text.Length < 1)
-                            {
-                                return;
-                            }
-                        }*/
-
                         _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string parsedMessage = ParseRequest();
@@ -509,16 +561,17 @@ namespace EasyCPDLC
                         _formatMessage = String.Format("/data2/{0}//N/", parent.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string _messageContent = String.Format("POSITION REPORT PPOS {0} AT {1}Z FL{2} TO {3} AT {4}Z NEXT {5}",
-                            messageFormatPanel.Controls[4].Text,
+                            fix1.Text,
                             messageFormatPanel.Controls[6].Text,
                             messageFormatPanel.Controls[9].Text,
-                            messageFormatPanel.Controls[11].Text,
+                            fix2.Text,
                             messageFormatPanel.Controls[13].Text,
-                            messageFormatPanel.Controls[16].Text);
+                            fix3.Text);
                         _formatMessage += _messageContent;
 
                         await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
                         parent.messageOutCounter += 1;
+                        parent.nextFix = fix2.Text;
                         break;
 
 
@@ -563,11 +616,11 @@ namespace EasyCPDLC
                         return string.Empty;
                     }
                     _request = "REQUEST FL";
-                    _request += messageFormatPanel.Controls[3].Text;                    
+                    _request += messageFormatPanel.Controls[3].Text;
 
                     dueToBox = messageFormatPanel.Controls.OfType<UICheckBox>()
                                    .Where(x => x.Checked && x.group == "rsnParam").FirstOrDefault();
-                   
+
                     if (dueToBox != default(UICheckBox))
                     {
                         _request += " " + rsnConversion[dueToBox.Text];
@@ -595,7 +648,7 @@ namespace EasyCPDLC
 
                 case "speedRadioButton":
 
-                    if(messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text == "")
+                    if (messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text == "")
                     {
                         return string.Empty;
                     }
@@ -603,7 +656,7 @@ namespace EasyCPDLC
                     _request += "REQUEST ";
                     if (unitBox != default(UICheckBox))
                     {
-                        if(unitBox.Text == "MACH: M0.")
+                        if (unitBox.Text == "MACH: M0.")
                         {
                             _request += "M" + messageFormatPanel.Controls[messageFormatPanel.Controls.IndexOf(unitBox) + 1].Text;
                         }
@@ -628,7 +681,7 @@ namespace EasyCPDLC
 
                 case "wcwRadioButton":
 
-                    if(wcwBox is null)
+                    if (wcwBox is null)
                     {
                         return string.Empty;
                     }
@@ -745,6 +798,6 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
-        
+
     }
 }

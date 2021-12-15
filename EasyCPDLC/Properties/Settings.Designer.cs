@@ -46,5 +46,17 @@ namespace EasyCPDLC.Properties {
                 this["PlayAudibleAlert"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SimbriefUsername {
+            get {
+                return ((string)(this["SimbriefUsername"]));
+            }
+            set {
+                this["SimbriefUsername"] = value;
+            }
+        }
     }
 }

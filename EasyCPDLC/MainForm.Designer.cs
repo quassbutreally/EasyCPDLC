@@ -79,9 +79,11 @@
             this.outputTable.ColumnCount = 2;
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.5F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.Location = new System.Drawing.Point(12, 66);
             this.outputTable.Name = "outputTable";
+            this.outputTable.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
             this.outputTable.RowCount = 1;
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputTable.Size = new System.Drawing.Size(528, 127);

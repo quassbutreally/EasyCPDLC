@@ -18,7 +18,6 @@
 
 
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace EasyCPDLC
@@ -35,7 +34,7 @@ namespace EasyCPDLC
         public string hoppieLogonCode { get; set; }
         public int vatsimCID { get; set; }
         public bool remember { get; set; }
-        public DataEntry(MainForm _parent, object _hoppieLogonCode = null, object _vatsimCID = null)
+        public DataEntry(object _hoppieLogonCode = null, object _vatsimCID = null)
         {
             InitializeComponent();
 
