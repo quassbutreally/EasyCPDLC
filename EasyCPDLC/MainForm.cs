@@ -715,8 +715,9 @@ namespace EasyCPDLC
                 {
                     if (i > 0 && _modify[i].Length > 2)
                     {
-                        if (type == "CPDLC")
+                        if (_modify[1].StartsWith("/DATA2/"))
                         {
+                            Console.WriteLine(type);
                             Logger.Debug("CPDLC Message identified, attempting to parse");
                             await CPDLCParser(_modify[1], sender);
                             break;
@@ -782,10 +783,6 @@ namespace EasyCPDLC
                 await SendCPDLCMessage(nextATCUnit, "CPDLC", String.Format("/data2/{0}//Y/REQUEST LOGON", messageOutCounter), true, false);
                 pendingLogon = nextATCUnit;
                 messageOutCounter += 1;
-                _showUser = false;
-            }
-            else if (messageString.StartsWith("CURRENT ATC UNIT"))
-            {
                 _showUser = false;
             }
             else if (messageString.StartsWith("LOGON ACCEPTED"))
