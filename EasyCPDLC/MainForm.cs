@@ -34,6 +34,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FSUIPC;
+
 
 namespace EasyCPDLC
 {
@@ -57,12 +59,18 @@ namespace EasyCPDLC
         public string[] reportFixes;
         public string nextFix = null;
 
+        public FSUIPCData fsuipc = new FSUIPCData();
+        public bool fsConnectionOpen = false;
+        public int fsuipcErrorCount = 1;
+
         public Random random = new Random();
+
+        private List<Contract> contracts = new List<Contract>();
 
         private static readonly HttpClient webclient = new HttpClient();
         private string logonCode;
         private int cid;
-        private string callsign;
+        public string callsign;
 
         private RequestForm rForm;
         private TelexForm tForm;
@@ -90,6 +98,18 @@ namespace EasyCPDLC
             set
             {
                 Properties.Settings.Default.PlayAudibleAlert = value;
+            }
+        }
+
+        public bool useFSUIPC
+        {
+            get
+            {
+                return Properties.Settings.Default.UseFSUIPC;
+            }
+            set
+            {
+                Properties.Settings.Default.UseFSUIPC = value;
             }
         }
 
@@ -254,6 +274,7 @@ namespace EasyCPDLC
                     {
                         System.Diagnostics.Process.Start(latest.HtmlUrl);
                     }
+                    fsuipc.CloseConnection();
                     System.Windows.Forms.Application.Exit();
                 }
             }
@@ -433,6 +454,7 @@ namespace EasyCPDLC
             {
                 Logger.Info("Goodbye");
                 LogManager.Shutdown();
+                fsuipc.CloseConnection();
                 System.Windows.Forms.Application.Exit();
             }
         }
@@ -449,6 +471,36 @@ namespace EasyCPDLC
 
                 await SendCPDLCMessage("NONE", "poll", "");
                 await Task.Delay(interval, cancellationToken);
+                if(useFSUIPC && fsConnectionOpen)
+                {
+                    try
+                    {
+                        await fsuipc.RefreshData();
+                        fsuipcErrorCount = 1;
+                    }
+                    catch (FSUIPCException)
+                    {
+                        if (fsuipcErrorCount <= 3)
+                        {
+                            try
+                            {
+                                fsConnectionOpen = fsuipc.OpenConnection();
+                            }
+                            catch { }
+                            WriteMessage(String.Format("UNABLE TO CHECK FLIGHT SIM DATA. RETRYING (ATTEMPT {0} OF 3)", fsuipcErrorCount), "SYSTEM", "SYSTEM");
+                            fsuipcErrorCount += 1;
+                        }
+                        else
+                        {
+                            WriteMessage("FLIGHT SIM DATA RETRIEVAL FAILED 3 TIMES CONSECUTIVELY. DISCONNECTING FROM FLIGHT SIM", "SYSTEM", "SYSTEM");
+                            fsConnectionOpen = fsuipc.CloseConnection();
+                            fsuipcErrorCount = 1;
+                        }
+
+                    }
+                }
+                
+                
             }
         }
         public async Task SendCPDLCMessage(string recipient, string messageType, string packetData, bool _outbound = true, bool _write = true)
@@ -477,10 +529,6 @@ namespace EasyCPDLC
                     {
                         WriteMessage(packetData.Split('/').Last(), messageType, recipient, _outbound);
                     }
-                    else if (messageType == "ADS-C")
-                    {
-
-                    }
                     else if (messageType != "poll")
                     {
                         WriteMessage(packetData, messageType, recipient, _outbound);
@@ -490,7 +538,6 @@ namespace EasyCPDLC
                 if (printString != "OK")
                 {
                     await TelexParser(printString);
-
                 }
             }
 
@@ -522,23 +569,22 @@ namespace EasyCPDLC
 
         private System.Windows.Forms.Label CreateLabel(string _text)
         {
-            System.Windows.Forms.Label _message = new System.Windows.Forms.Label();
             Size maxSize = new Size
             {
                 Width = 65
             };
-            _message.MaximumSize = maxSize;
-            _message.Width = 65;
-            _message.AutoSize = true;
-            _message.BackColor = controlBackColor;
-            _message.ForeColor = SystemColors.ControlDark;
-            _message.Font = textFont;
-            _message.Text = _text;
-            _message.BorderStyle = BorderStyle.None;
-            _message.Margin = new Padding(5, 3, 0, 0);
-
-
-
+            System.Windows.Forms.Label _message = new System.Windows.Forms.Label
+            {
+                MaximumSize = maxSize,
+                Width = 65,
+                AutoSize = true,
+                BackColor = controlBackColor,
+                ForeColor = SystemColors.ControlDark,
+                Font = textFont,
+                Text = _text,
+                BorderStyle = BorderStyle.None,
+                Margin = new Padding(5, 3, 0, 0)
+            };
             return _message;
         }
         private void DeleteElement(object sender, EventArgs e)
@@ -612,6 +658,48 @@ namespace EasyCPDLC
             }
         }
 
+        private Task ADSCParser(string _response, string _sender)
+        {
+            string[] responseElements = _response.Split(' ');
+            try
+            {
+                Convert.ToInt32(responseElements[2]);
+            }
+            catch
+            {
+                return Task.CompletedTask;
+            }
+            Contract _contract;
+            switch(responseElements[1])
+            {
+                case "PERIODIC":
+                    _contract = new Contract(this, _sender, responseElements[2]);
+                    contracts.Add(_contract);
+                    _contract.StartContract();
+
+                    Console.WriteLine(String.Format("CONTRACT STARTED EVERY {0} SECONDS FOR {1}", responseElements[2], _sender));
+
+                    break;
+
+                case "EVENTS":
+                    break;
+
+                case "CANCEL":
+                    _contract = contracts.Where(x => x.sender == _sender && x.contractLength == responseElements[2]).FirstOrDefault();
+                    if(!_contract.Equals(default(Contract)))
+                    {
+                        _contract.StopContract();
+                        contracts.Remove(_contract);
+                    }
+
+                    Console.WriteLine(String.Format("{0} {1} SECOND CONTRACT CANCELLED", _sender, responseElements[2]));
+
+                    break;
+            }
+
+            return Task.CompletedTask;
+        }
+
         private async Task TelexParser(string response)
         {
             var responses = hoppieParse.Matches(response);
@@ -627,11 +715,25 @@ namespace EasyCPDLC
                 {
                     if (i > 0 && _modify[i].Length > 2)
                     {
-                        if (_modify[1].StartsWith("/DATA2/"))
+                        if (type == "CPDLC")
                         {
                             Logger.Debug("CPDLC Message identified, attempting to parse");
                             await CPDLCParser(_modify[1], sender);
                             break;
+                        }
+
+                        if (type == "ADS-C")
+                        {
+                            if (useFSUIPC)
+                            {
+                                Logger.Debug("ADS-C Message identified, attempting to parse");
+                                await ADSCParser(_modify[1], sender);
+                                break;
+                            }
+                            else
+                            {
+                                Logger.Debug("ADS-C Message identified, but no simulator connection was recognised. Ignoring.");
+                            }
                         }
 
                         format_response += _modify[1];
@@ -738,7 +840,7 @@ namespace EasyCPDLC
         public async void ArtificialDelay(string _message, string _type, string _sender, int _minDelay = 5, int _maxDelay = 15)
         {
             await Task.Delay(random.Next(_minDelay, _maxDelay) * 1000);
-            WriteMessage(_message, _type, _sender);
+            await SendCPDLCMessage(_sender, _type, _message, true, false);
             return;
         }
         private void exitButton_Click(object sender, EventArgs e)
@@ -751,6 +853,7 @@ namespace EasyCPDLC
             this.Close();
 
             LogManager.Shutdown();
+            fsuipc.CloseConnection();
             System.Windows.Forms.Application.Exit();
         }
         private void MoveWindow(object sender, MouseEventArgs e)
@@ -779,6 +882,7 @@ namespace EasyCPDLC
                     }
 
                     userVATSIMData = vatsimData.pilots.Where(i => i.cid == cid).FirstOrDefault();
+
                     response = "VATSIM DATA RETRIEVED FOR " + userVATSIMData.callsign;
                     callsign = userVATSIMData.callsign;
 
@@ -788,8 +892,7 @@ namespace EasyCPDLC
 
                     requestCancellationTokenSource = new CancellationTokenSource();
                     requestCancellationToken = requestCancellationTokenSource.Token;
-                    _ = PeriodicCheckMessage(updateTimer, requestCancellationToken);
-
+                    _ = PeriodicCheckMessage(updateTimer, requestCancellationToken);                
 
                 }
 
@@ -817,19 +920,42 @@ namespace EasyCPDLC
 
                         Logger.Debug("Simbrief Data Retrieved and Parsed");
 
-                        reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "ltlg", "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
+                        reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
                         response = "SIMBRIEF DATA RETRIEVED FOR " + JObject.Parse(simbriefjson)["atc"]["callsign"].ToString();
+                        WriteMessage(response, "SYSTEM", "SYSTEM");
                     }
                 }
 
                 catch
                 {
                     response = "ERROR RETRIEVING SIMBRIEF DATA. POSITION REPORTING WILL REVERT TO BASIC FUNCTIONALITY";
-                }
-                finally
-                {
                     WriteMessage(response, "SYSTEM", "SYSTEM");
                 }
+
+                if(useFSUIPC)
+                {
+                    try
+                    {
+                        fsConnectionOpen = fsuipc.OpenConnection();
+                        if (fsConnectionOpen)
+                        {
+                            response = "SIMULATOR CONNECTION ESTABLISHED";
+                            WriteMessage(response, "SYSTEM", "SYSTEM");
+                        }
+                        else
+                        {
+                            throw new FSUIPCException(FSUIPCError.FSUIPC_ERR_NOTOPEN, "CONNECTION FAILED");
+                        }
+
+
+                    }
+                    catch
+                    {
+                        response = "FAILED TO CONNECT TO SIMULATOR";
+                        WriteMessage(response, "SYSTEM", "SYSTEM");
+                    }
+                }
+
             }
             else
             {
@@ -837,12 +963,17 @@ namespace EasyCPDLC
                 {
                     await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
                 }
+                foreach(Contract _contract in contracts)
+                {
+                    await SendCPDLCMessage(_contract.sender, "ADS-C", "REJECT " + _contract.contractLength, true, false);
+                }
                 requestCancellationTokenSource.Cancel();
                 callsign = "";
                 response = "DISCONNECTED CLIENT";
                 vatsimData = new VATSIMRootobject();
                 userVATSIMData = new Pilot();
                 simbriefData = new Navlog();
+                fsConnectionOpen = fsuipc.CloseConnection();
 
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;

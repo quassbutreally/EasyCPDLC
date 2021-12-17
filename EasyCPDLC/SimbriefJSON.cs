@@ -64,40 +64,7 @@ namespace EasyCPDLC
         public string fir { get; set; }
         public string fir_units { get; set; }
         public string fir_valid_levels { get; set; }
-        public Wind_Data wind_data { get; set; }
-        public Fir_Crossing fir_crossing { get; set; }
+        public object wind_data { get; set; }
+        public object fir_crossing { get; set; }
     }
-
-    public class Wind_Data
-    {
-        public Level[] level { get; set; }
-    }
-
-    public class Level
-    {
-        public string altitude { get; set; }
-        public string wind_dir { get; set; }
-        public string wind_spd { get; set; }
-        public string oat { get; set; }
-    }
-
-    public class Fir_Crossing
-    {
-        public Fir fir { get; set; }
-    }
-
-    public class Fir
-    {
-        public string fir_icao { get; set; }
-        public string fir_name { get; set; }
-        public string pos_lat_entry { get; set; }
-        public string pos_long_entry { get; set; }
-    }
-
-    public class Metar
-    {
-        public string sanitized { get; set; }
-    }
-
-
 }
