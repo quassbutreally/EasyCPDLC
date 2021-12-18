@@ -34,6 +34,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Security.Principal;
 using FSUIPC;
 
 
@@ -252,6 +253,7 @@ namespace EasyCPDLC
             outputTable.AutoScroll = true;
 
             CheckNewVersion();
+            //CheckAdministrator();
             InitialisePopupMenu();
             ShowSetupForm();
             Setup();
@@ -274,7 +276,6 @@ namespace EasyCPDLC
                     {
                         System.Diagnostics.Process.Start(latest.HtmlUrl);
                     }
-                    fsuipc.CloseConnection();
                     System.Windows.Forms.Application.Exit();
                 }
             }
@@ -282,6 +283,15 @@ namespace EasyCPDLC
             catch
             {
 
+            }
+        }
+
+        public static void CheckAdministrator()
+        {
+            if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)) 
+            {
+                DialogResult updateBox = MessageBox.Show("EasyCPDLC does not appear to be running in Administrator mode. This will limit certain functionalities of the program. Please restart EasyCPDLC in admin mode. The program will now exit.", "Error");
+                System.Windows.Forms.Application.Exit();
             }
         }
 
@@ -621,11 +631,11 @@ namespace EasyCPDLC
                     deleteMenu.Enabled = false;
                 }
                 Console.WriteLine(_sender.type);
-                if (_sender.type != "SYSTEM" && !_sender.acknowledged && !_sender.outbound)
+                if (_sender.type != "SYSTEM" && _sender.type != "INFO" && !_sender.acknowledged && !_sender.outbound)
                 {
                     popupMenu.Items.Add(replyMenu);
 
-                    if (_sender.type != "TELEX")
+                    if (_sender.type == "CPDLC")
                     {
                         switch (_sender.header.responses)
                         {
@@ -805,7 +815,6 @@ namespace EasyCPDLC
             {
                 WriteMessage(message, "CPDLC", _sender, false, header);
 
-                player.Play();
                 FlashWindow.Flash(this);
             }
 
@@ -873,12 +882,13 @@ namespace EasyCPDLC
                     using (WebClient wc = new WebClient())
                     {
                         vatsimData = JsonConvert.DeserializeObject<VATSIMRootobject>(wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json"));
-
                         Logger.Debug("VATSIM Data Retrieved and Parsed");
 
                     }
 
                     userVATSIMData = vatsimData.pilots.Where(i => i.cid == cid).FirstOrDefault();
+
+                    string _fpTest = userVATSIMData.flight_plan.altitude;
 
                     response = "VATSIM DATA RETRIEVED FOR " + userVATSIMData.callsign;
                     callsign = userVATSIMData.callsign;
