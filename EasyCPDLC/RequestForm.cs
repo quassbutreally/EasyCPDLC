@@ -74,7 +74,7 @@ namespace EasyCPDLC
                 {
                     logonButton.Text = "LOGON";
                     requestButton.Enabled = false;
-                    reportButton.Enabled = true;
+                    reportButton.Enabled = false;
                 }
                 else
                 {
@@ -287,7 +287,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
             messageFormatPanel.Controls.Add(createTemplate("Z"));
             messageFormatPanel.Controls.Add(createTemplate("FL"));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
+            messageFormatPanel.Controls.Add(createTextBox(parent.useFSUIPC ? (Math.Round(parent.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("NEXT"));
             messageFormatPanel.Controls.Add(fix2);

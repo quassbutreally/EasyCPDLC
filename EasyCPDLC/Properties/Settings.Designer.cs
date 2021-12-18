@@ -58,5 +58,17 @@ namespace EasyCPDLC.Properties {
                 this["SimbriefUsername"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseFSUIPC {
+            get {
+                return ((bool)(this["UseFSUIPC"]));
+            }
+            set {
+                this["UseFSUIPC"] = value;
+            }
+        }
     }
 }

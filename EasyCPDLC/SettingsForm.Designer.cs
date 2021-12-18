@@ -76,7 +76,7 @@ namespace EasyCPDLC
             this.settingsFormatPanel.Location = new System.Drawing.Point(11, 43);
             this.settingsFormatPanel.Name = "settingsFormatPanel";
             this.settingsFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
-            this.settingsFormatPanel.Size = new System.Drawing.Size(510, 136);
+            this.settingsFormatPanel.Size = new System.Drawing.Size(510, 176);
             this.settingsFormatPanel.TabIndex = 13;
             // 
             // cancelButton
@@ -86,7 +86,7 @@ namespace EasyCPDLC
             this.cancelButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.cancelButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.cancelButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.cancelButton.Location = new System.Drawing.Point(307, 185);
+            this.cancelButton.Location = new System.Drawing.Point(307, 225);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(104, 37);
             this.cancelButton.TabIndex = 15;
@@ -101,7 +101,7 @@ namespace EasyCPDLC
             this.okButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.okButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.okButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.okButton.Location = new System.Drawing.Point(417, 185);
+            this.okButton.Location = new System.Drawing.Point(417, 225);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(104, 37);
             this.okButton.TabIndex = 14;
@@ -114,13 +114,14 @@ namespace EasyCPDLC
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(537, 234);
+            this.ClientSize = new System.Drawing.Size(537, 274);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.settingsFormatPanel);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MinimumSize = new System.Drawing.Size(537, 274);
             this.Name = "SettingsForm";
             this.Text = "Settings";
             this.ResumeLayout(false);

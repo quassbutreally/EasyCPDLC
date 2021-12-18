@@ -19,10 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -36,8 +33,6 @@ namespace EasyCPDLC
         public const int HT_CAPTION = 0x2;
         private const int cGrip = 16;
         private const int cCaption = 32;
-
-        private VATSIMRootobject atisList;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -190,62 +185,19 @@ namespace EasyCPDLC
                 {
                     case "freeTextRadioButton":
                         string _formatMessage = messageFormatPanel.Controls[3].Text;
-                        Task.Run(() => this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim()));
+                        _ = Task.Run(() => this.parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim()));
                         break;
 
                     case "metarRadioButton":
-
-                        this.parent.WriteMessage(String.Format("METAR REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
-
-                        try
-                        {
-                            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(String.Format("https://avwx.rest/api/metar/{0}", _recipient));
-                            request.Method = "GET";
-                            request.Headers["Authorization"] = "OE1u2m0EZie5oFrAwSb-GYPGqV-9ASDNfuZhrBexzjM";
-                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                            {
-                                Stream dataStream = response.GetResponseStream();
-                                StreamReader reader = new StreamReader(dataStream);
-                                Metar metar = JsonSerializer.Deserialize<Metar>(reader.ReadToEnd());
-                                Task.Run(() => this.parent.ArtificialDelay(metar.sanitized, "SYSTEM", "SYSTEM"));
-                            }
-                        }
-
-                        catch
-                        {
-                            Task.Run(() => this.parent.ArtificialDelay(String.Format("ERROR RETRIEVING METAR FOR {0}", _recipient), "SYSTEM", "METAR"));
-                        }
+                        this.parent.WriteMessage("METAR REQUEST", "SYSTEM", _recipient, true);
+                        this.parent.ArtificialDelay("METAR " + _recipient, "INFOREQ", "REQUEST");
 
                         break;
 
                     case "atisRadioButton":
 
-                        this.parent.WriteMessage(String.Format("ATIS REQUESTED FOR {0}", _recipient), "SYSTEM", "SYSTEM");
-
-                        try
-                        {
-                            using (WebClient wc = new WebClient())
-                            {
-                                var json = wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json");
-                                atisList = JsonSerializer.Deserialize<VATSIMRootobject>(json);
-                            }
-
-                            Atis atisStation = atisList.atis.Where(i => i.callsign == String.Format("{0}_ATIS", _recipient)).FirstOrDefault();
-                            if (atisStation != default(Atis))
-                            {
-                                string atisData = String.Join(" ", atisStation.text_atis);
-                                Task.Run(() => this.parent.ArtificialDelay(atisData, "SYSTEM", "ATIS"));
-                            }
-                            else
-                            {
-                                throw new NullReferenceException();
-                            }
-                        }
-
-                        catch
-                        {
-                            Task.Run(() => this.parent.ArtificialDelay(String.Format("NO ATIS AVAILABLE FOR {0}", _recipient), "SYSTEM", "ATIS"));
-                        }
+                        this.parent.WriteMessage("ATIS REQUEST", "SYSTEM", _recipient, true);
+                        this.parent.ArtificialDelay("VATATIS " + _recipient, "INFOREQ", "REQUEST");
 
                         break;
 

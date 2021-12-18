@@ -27,6 +27,7 @@ namespace EasyCPDLC
 
         UICheckBox stayOnTopBox;
         UICheckBox audiblePingBox;
+        UICheckBox useFSUIPCBox;
         UITextBox simbriefTextBox;
 
         private readonly MainForm parent;
@@ -50,21 +51,25 @@ namespace EasyCPDLC
         private void InitialiseSettings()
         {
             settingsFormatPanel.Controls.Clear();
-            stayOnTopBox = createCheckBox("Keep Window On Top", "0");
+            stayOnTopBox = CreateCheckBox("Keep Window On Top", "0");
             stayOnTopBox.Checked = parent.stayOnTop;
-            audiblePingBox = createCheckBox("Play Sound on Message Receive", "1");
+            audiblePingBox = CreateCheckBox("Play Sound on Message Receive", "1");
             audiblePingBox.Checked = parent.playSound;
+            useFSUIPCBox = CreateCheckBox("Use Simulator Connection (req. FSUIPC/XPUIPC)", "2");
+            useFSUIPCBox.Checked = parent.useFSUIPC;
             simbriefTextBox = CreateTextBox(parent.simbriefID, 7, false, true);
 
             settingsFormatPanel.Controls.Add(stayOnTopBox);
             settingsFormatPanel.SetFlowBreak(stayOnTopBox, true);
             settingsFormatPanel.Controls.Add(audiblePingBox);
             settingsFormatPanel.SetFlowBreak(audiblePingBox, true);
+            settingsFormatPanel.Controls.Add(useFSUIPCBox);
+            settingsFormatPanel.SetFlowBreak(useFSUIPCBox, true);
             settingsFormatPanel.Controls.Add(CreateTemplate("SIMBRIEF PILOT ID: "));
             settingsFormatPanel.Controls.Add(simbriefTextBox);
         }
 
-        private UICheckBox createCheckBox(string _text, string _group)
+        private UICheckBox CreateCheckBox(string _text, string _group)
         {
             UICheckBox _temp = new UICheckBox(_group)
             {
@@ -146,6 +151,7 @@ namespace EasyCPDLC
         {
             parent.stayOnTop = stayOnTopBox.Checked;
             parent.playSound = audiblePingBox.Checked;
+            parent.useFSUIPC = useFSUIPCBox.Checked;
             parent.simbriefID = simbriefTextBox.Text;
 
             Properties.Settings.Default.Save();
