@@ -38,6 +38,7 @@
             this.atcUnitLabel = new System.Windows.Forms.Label();
             this.atcUnitDisplay = new System.Windows.Forms.Label();
             this.settingsButton = new System.Windows.Forms.PictureBox();
+            this.helpButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).BeginInit();
             this.SuspendLayout();
             // 
@@ -171,6 +172,22 @@
             this.settingsButton.TabStop = false;
             this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
+            // helpButton
+            // 
+            this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.helpButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.helpButton.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.helpButton.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.helpButton.Location = new System.Drawing.Point(532, 17);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(23, 27);
+            this.helpButton.TabIndex = 10;
+            this.helpButton.Text = "?";
+            this.helpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -187,6 +204,7 @@
             this.Controls.Add(this.outputTable);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
+            this.Controls.Add(this.helpButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(552, 202);
@@ -212,6 +230,7 @@
         private System.Windows.Forms.Label atcUnitLabel;
         private System.Windows.Forms.Label atcUnitDisplay;
         private System.Windows.Forms.PictureBox settingsButton;
+        private System.Windows.Forms.Button helpButton;
     }
 }
 
