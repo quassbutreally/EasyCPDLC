@@ -161,7 +161,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
-            messageFormatPanel.Controls.Add(createTextBox("", 5));
+            messageFormatPanel.Controls.Add(createAutoFillTextBox("", 7, parent.reportFixes));
             messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));

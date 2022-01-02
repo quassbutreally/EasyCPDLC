@@ -727,7 +727,6 @@ namespace EasyCPDLC
                     {
                         if (_modify[1].StartsWith("/DATA2/"))
                         {
-                            Console.WriteLine(type);
                             Logger.Debug("CPDLC Message identified, attempting to parse");
                             await CPDLCParser(_modify[1], sender);
                             break;
