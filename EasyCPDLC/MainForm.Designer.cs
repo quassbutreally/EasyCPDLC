@@ -39,6 +39,7 @@
             this.atcUnitDisplay = new System.Windows.Forms.Label();
             this.settingsButton = new System.Windows.Forms.PictureBox();
             this.helpButton = new System.Windows.Forms.Button();
+            this.messageFormatPanel = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,10 +78,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.outputTable.ColumnCount = 2;
+            this.outputTable.ColumnCount = 3;
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.5F));
-            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.5F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.outputTable.Location = new System.Drawing.Point(12, 66);
             this.outputTable.Name = "outputTable";
@@ -164,7 +165,7 @@
             // 
             this.settingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsButton.Image = global::EasyCPDLC.Properties.Resources.cog_wheel_gear_setting;
-            this.settingsButton.Location = new System.Drawing.Point(516, 3);
+            this.settingsButton.Location = new System.Drawing.Point(517, 22);
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Size = new System.Drawing.Size(18, 18);
             this.settingsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -180,13 +181,28 @@
             this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.helpButton.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
             this.helpButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.helpButton.Location = new System.Drawing.Point(532, 17);
+            this.helpButton.Location = new System.Drawing.Point(515, -3);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(23, 27);
             this.helpButton.TabIndex = 10;
             this.helpButton.Text = "?";
             this.helpButton.UseVisualStyleBackColor = true;
             this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            // 
+            // messageFormatPanel
+            // 
+            this.messageFormatPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.messageFormatPanel.AutoScroll = true;
+            this.messageFormatPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
+            this.messageFormatPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.messageFormatPanel.Location = new System.Drawing.Point(12, 66);
+            this.messageFormatPanel.Name = "messageFormatPanel";
+            this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
+            this.messageFormatPanel.Size = new System.Drawing.Size(528, 127);
+            this.messageFormatPanel.TabIndex = 11;
+            this.messageFormatPanel.Visible = false;
             // 
             // MainForm
             // 
@@ -201,10 +217,11 @@
             this.Controls.Add(this.retrieveButton);
             this.Controls.Add(this.telexButton);
             this.Controls.Add(this.atcButton);
-            this.Controls.Add(this.outputTable);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.helpButton);
+            this.Controls.Add(this.messageFormatPanel);
+            this.Controls.Add(this.outputTable);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(552, 202);
@@ -231,6 +248,7 @@
         private System.Windows.Forms.Label atcUnitDisplay;
         private System.Windows.Forms.PictureBox settingsButton;
         private System.Windows.Forms.Button helpButton;
+        private System.Windows.Forms.FlowLayoutPanel messageFormatPanel;
     }
 }
 
