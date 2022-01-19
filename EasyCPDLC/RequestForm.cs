@@ -496,7 +496,6 @@ namespace EasyCPDLC
                         {
                             if (messageFormatPanel.Controls[i].Text.Length < 1)
                             {
-                                Console.WriteLine(i);
                                 return;
                             }
                         }
@@ -798,6 +797,20 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
+        private void RequestForm_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.CPDLCWindowLocation != new Point(0, 0))
+            {
+                Location = Properties.Settings.Default.CPDLCWindowLocation;
+                Size = Properties.Settings.Default.CPDLCWindowSize;
+            }
+        }
 
+        private void RequestForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.CPDLCWindowLocation = Location;
+            Properties.Settings.Default.CPDLCWindowSize = Size;
+            Properties.Settings.Default.Save();
+        }
     }
 }

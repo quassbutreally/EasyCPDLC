@@ -66,10 +66,7 @@ namespace EasyCPDLC
 
         public Random random = new Random();
 
-        private List<Contract> contracts = new List<Contract>();
-        private List<System.Windows.Forms.Label> canFlash = new List<System.Windows.Forms.Label>();
-
-        private System.Windows.Forms.Timer blinkTimer = new System.Windows.Forms.Timer();
+        readonly private List<Contract> contracts = new List<Contract>();
 
         private static readonly HttpClient webclient = new HttpClient();
         private string logonCode;
@@ -197,17 +194,7 @@ namespace EasyCPDLC
         public Color controlFrontColor = SystemColors.ControlLight;
 
         private readonly ContextMenuStrip popupMenu = new ContextMenuStrip();
-        ToolStripMenuItem deleteMenu;
         ToolStripMenuItem deleteAllMenu;
-        /*private ToolStripMenuItem replyMenu;
-        ToolStripMenuItem wilcoMenu;
-        ToolStripMenuItem rogerMenu;
-        ToolStripMenuItem affirmativeMenu;
-        ToolStripMenuItem negativeMenu;
-        ToolStripMenuItem standbyMenu;
-        ToolStripMenuItem unableMenu;
-        
-        ToolStripMenuItem freeTextMenu; */
 
         private System.Windows.Forms.Label wilcoLabel;
         private System.Windows.Forms.Label rogerLabel;
@@ -221,7 +208,7 @@ namespace EasyCPDLC
 
         private CPDLCMessage previewMessage;
 
-        private readonly SoundPlayer player = new SoundPlayer(Properties.Resources.notification);
+        private readonly SoundPlayer player = new SoundPlayer();
         private readonly RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
 
         private static readonly Regex hoppieParse = new Regex(@"{(.*?)}");
@@ -238,13 +225,20 @@ namespace EasyCPDLC
             var logFile = new NLog.Targets.FileTarget("logfile") { FileName = "EasyCPDLCLog.txt" };
             config.AddRule(LogLevel.Debug, LogLevel.Fatal, logFile);
             LogManager.Configuration = config;
-            blinkTimer.Interval = 500;
-            blinkTimer.Tick += new EventHandler(FlashElement);
-            blinkTimer.Start();
             Logger.Info("Logging initialised, beginning setup");
 
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
+            string _customSoundFile = System.Windows.Forms.Application.StartupPath + @"\Sounds\Notification.wav";
+            if(File.Exists(_customSoundFile))
+            {
+                player.SoundLocation = _customSoundFile;
+            }
+            else
+            {
+                player.Stream = Properties.Resources.notification;
+            }
+            player.Play();
             InitializeComponent();
             this.TopMost = stayOnTop;
             this.FormBorderStyle = FormBorderStyle.None;
@@ -276,15 +270,13 @@ namespace EasyCPDLC
             ShowSetupForm();
             Setup();
 
-            Logger.Info("Setup completed successfully");
-        }
-
-        private void FlashElement(object sender, EventArgs e)
-        {
-            foreach(System.Windows.Forms.Label _label in canFlash)
+            if(Properties.Settings.Default.MainWindowLocation != new Point(0, 0))
             {
-                _label.ForeColor = _label.ForeColor == Color.Orange ? SystemColors.ControlLight : Color.Orange;
+                Location = Properties.Settings.Default.MainWindowLocation;
+                Size = Properties.Settings.Default.MainWindowSize;
             }
+            
+            Logger.Info("Setup completed successfully");
         }
 
         private async void CheckNewVersion()
@@ -316,7 +308,7 @@ namespace EasyCPDLC
         {
             if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)) 
             {
-                DialogResult updateBox = MessageBox.Show("EasyCPDLC does not appear to be running in Administrator mode. This will limit certain functionalities of the program. Please restart EasyCPDLC in admin mode. The program will now exit.", "Error");
+                MessageBox.Show("EasyCPDLC does not appear to be running in Administrator mode. This will limit certain functionalities of the program. Please restart EasyCPDLC in admin mode. The program will now exit.", "Error");
                 System.Windows.Forms.Application.Exit();
             }
         }
@@ -367,33 +359,6 @@ namespace EasyCPDLC
             returnLabel = CreateSpecialLabel("< RETURN", false);
             returnLabel.Click += ReturnMessage;
 
-            /*replyMenu = CreateMenuItem("REPLY");
-
-            rogerMenu = CreateMenuItem("ROGER");
-            rogerMenu.Click += RogerMessage;
-
-            wilcoMenu = CreateMenuItem("WILCO");
-            wilcoMenu.Click += WilcoMessage;
-
-            unableMenu = CreateMenuItem("UNABLE");
-            unableMenu.Click += UnableMessage;
-
-            affirmativeMenu = CreateMenuItem("AFFIRMATIVE");
-            affirmativeMenu.Click += AffirmativeMessage;
-
-            negativeMenu = CreateMenuItem("NEGATIVE");
-            negativeMenu.Click += NegativeMessage;
-
-            standbyMenu = CreateMenuItem("STANDBY");
-            standbyMenu.Click += StandbyMessage;
-
-            freeTextMenu = CreateMenuItem("FREE TEXT");
-            freeTextMenu.Click += freeTextMessage;
-            
-            deleteMenu = CreateMenuItem("DELETE");
-            deleteMenu.Click += DeleteElement;*/
-
-
             deleteAllMenu = CreateMenuItem("DELETE ALL");
             deleteAllMenu.Click += DeleteAllElement;
 
@@ -424,8 +389,9 @@ namespace EasyCPDLC
         {
             message.acknowledged = true;
             int index = outputTable.Controls.GetChildIndex(message);
-            canFlash.Remove((System.Windows.Forms.Label)outputTable.Controls[index + 1]);
-            message.ForeColor = controlFrontColor;
+            ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
             message.header.responseID = messageOutCounter;
             await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/ROGER", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
@@ -437,8 +403,9 @@ namespace EasyCPDLC
         {
             message.acknowledged = true;
             int index = outputTable.Controls.GetChildIndex(message);
-            canFlash.Remove((System.Windows.Forms.Label)outputTable.Controls[index + 1]);
-            message.ForeColor = controlFrontColor;
+            ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
             await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/WILCO", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
 
@@ -457,8 +424,9 @@ namespace EasyCPDLC
         {
             message.acknowledged = true;
             int index = outputTable.Controls.GetChildIndex(message);
-            canFlash.Remove((System.Windows.Forms.Label)outputTable.Controls[index + 1]);
-            message.ForeColor = controlFrontColor;
+            ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
             await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/UNABLE", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
 
@@ -469,8 +437,9 @@ namespace EasyCPDLC
         {
             message.acknowledged = true;
             int index = outputTable.Controls.GetChildIndex(message);
-            canFlash.Remove((System.Windows.Forms.Label)outputTable.Controls[index + 1]);
-            message.ForeColor = controlFrontColor;
+            ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
             await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/AFFIRMATIVE", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
 
@@ -481,8 +450,9 @@ namespace EasyCPDLC
         {
             message.acknowledged = true;
             int index = outputTable.Controls.GetChildIndex(message);
-            canFlash.Remove((System.Windows.Forms.Label)outputTable.Controls[index + 1]);
-            message.ForeColor = controlFrontColor;
+            ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
             await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/NEGATIVE", messageOutCounter, message.header.messageID));
             messageOutCounter += 1;
 
@@ -631,7 +601,6 @@ namespace EasyCPDLC
                 Text = _text,
                 BorderStyle = BorderStyle.None
             };
-            //_message.MouseDown += MessageClicked;
             _message.Margin = new Padding(0, 3, 0, 0);
 
             return _message;
@@ -685,13 +654,13 @@ namespace EasyCPDLC
             return _message;
         }
 
-        private System.Windows.Forms.Label CreateSpecialBoldLabel(string _text, bool _useMaxSize = true)
+        private TimerLabel CreateTimerLabel(string _text, bool _useMaxSize = true)
         {
             Size maxSize = new Size
             {
                 Width = 65
             };
-            System.Windows.Forms.Label _message = new System.Windows.Forms.Label
+            TimerLabel _message = new TimerLabel
             {
                 Width = 65,
                 AutoSize = true,
@@ -700,7 +669,7 @@ namespace EasyCPDLC
                 Font = textFontBold,
                 Text = _text,
                 BorderStyle = BorderStyle.None,
-                Margin = new Padding(5, 3, 0, 0)
+                Margin = new Padding(10, 0, 0, 0)
             };
             if (_useMaxSize)
             {
@@ -725,56 +694,68 @@ namespace EasyCPDLC
             CPDLCMessage _sender = (CPDLCMessage)outputTable.Controls[messageIndex];
             previewMessage = _sender;
             System.Windows.Forms.Label _timeStamp = (System.Windows.Forms.Label)outputTable.Controls[messageIndex - 1];
-            Console.WriteLine(_sender.Text);
             List<System.Windows.Forms.Label> responses = new List<System.Windows.Forms.Label>();
 
-            if (_sender.type != "CPDLC" || _sender.outbound || _sender.header.responses == "NE")
-            {
-                _sender.ForeColor = SystemColors.ControlDark;
-            }
 
             if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
             {
-
-                if (_sender.type != "SYSTEM" && _sender.type != "INFO" && !_sender.acknowledged && !_sender.outbound)
+                if (_sender.Text.Contains("CLR TO") || _sender.Text.Contains("CLRD TO") || _sender.Text.Contains("CLEARED TO"))
                 {
-                    //responses.Add(); // FREE TEXT
-
-                    if (_sender.type == "CPDLC")
+                    System.Windows.Forms.Label acceptLabel = CreateSpecialLabel("> ACCEPT", false);
+                    System.Windows.Forms.Label rejectLabel = CreateSpecialLabel("> REJECT", false);
+                    switch (_sender.header.responses)
                     {
-                        switch (_sender.header.responses)
-                        {
-                            case "WU":
-                                //responses.Add(); // WILCO
-                                responses.Add(wilcoLabel);
-                                //responses.Add(); // UNABLE
-                                responses.Add(unableLabel);
-                                //responses.Add(); // STANDBY
-                                responses.Add(standbyLabel);
-                                break;
+                        case "WU":
+                            acceptLabel.Click += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
+                            rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                            break;
 
-                            case "AN":
-                                //responses.Add(); // AFFIRM
-                                responses.Add(affirmativeLabel);
-                                //responses.Add(); // NEGATIVE
-                                responses.Add(negativeLabel);
-                                //responses.Add(); // STANDBY
-                                responses.Add(standbyLabel);
-                                break;
+                        case "AN":
+                            acceptLabel.Click += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
+                            rejectLabel.Click += (lSender, le) => NegativeMessage(_sender, e, previewMessage);
+                            break;
 
-                            case "R":
-                                //responses.Add(); // ROGER
-                                responses.Add(rogerLabel);
-                                //responses.Add(); // STANDBY
-                                responses.Add(standbyLabel);
-                                break;
+                        case "R":
+                            acceptLabel.Click += (lSender, le) => RogerMessage(_sender, e, previewMessage);
+                            rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                            break;
 
-                            default:
-                                break;
 
-                        }
+                    }
+
+                    responses.Add(acceptLabel);
+                    responses.Add(rejectLabel);
+                    responses.Add(standbyLabel);
+                }
+
+                else
+                {
+                    switch (_sender.header.responses)
+                    {
+                        case "WU":
+                            responses.Add(wilcoLabel);
+                            responses.Add(unableLabel);
+                            responses.Add(standbyLabel);
+                            break;
+
+                        case "AN":
+                            responses.Add(affirmativeLabel);
+                            responses.Add(negativeLabel);
+                            responses.Add(standbyLabel);
+                            break;
+
+                        case "R":
+                            responses.Add(rogerLabel);
+                            responses.Add(standbyLabel);
+                            break;
                     }
                 }
+
+                responses.Add(freeTextLabel);
+            }
+            else if (_sender.type == "TELEX" && !_sender.outbound)
+            {
+                responses.Add(freeTextLabel);
             }
             
             messageFormatPanel.Size = outputTable.Size;
@@ -787,72 +768,13 @@ namespace EasyCPDLC
             {
                 messageFormatPanel.Controls.Add(_response);
             }
-
-            messageFormatPanel.Controls.Add(wilcoLabel);
-            messageFormatPanel.Controls.Add(unableLabel);
-            messageFormatPanel.Controls.Add(standbyLabel);
-            messageFormatPanel.Controls.Add(deleteLabel);
+            if(_sender.type != "CPDLC")
+            {
+                messageFormatPanel.Controls.Add(deleteLabel);
+            }
+            
 
         }
-
-        /* private void MessageClicked(object sender, EventArgs e)
-        {
-            MouseEventArgs me = (MouseEventArgs)e;
-
-            CPDLCMessage _sender = (CPDLCMessage)sender;
-
-            if (_sender.type != "CPDLC" || _sender.outbound || _sender.header.responses == "NE")
-            {
-                _sender.ForeColor = SystemColors.ControlDark;
-            }
-            if (me.Button == MouseButtons.Right)
-            {
-                popupMenu.Items.Clear();
-                popupMenu.Items.Add(deleteMenu);
-                popupMenu.Items.Add(deleteAllMenu);
-                deleteMenu.Enabled = true;
-                if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
-                {
-                    deleteMenu.Enabled = false;
-                }
-                Console.WriteLine(_sender.type);
-                if (_sender.type != "SYSTEM" && _sender.type != "INFO" && !_sender.acknowledged && !_sender.outbound)
-                {
-                    popupMenu.Items.Add(replyMenu);
-
-                    if (_sender.type == "CPDLC")
-                    {
-                        switch (_sender.header.responses)
-                        {
-                            case "WU":
-                                replyMenu.DropDownItems.Add(wilcoMenu);
-                                replyMenu.DropDownItems.Add(unableMenu);
-                                replyMenu.DropDownItems.Add(standbyMenu);
-                                break;
-
-                            case "AN":  
-                                replyMenu.DropDownItems.Add(affirmativeMenu);
-                                replyMenu.DropDownItems.Add(negativeMenu);
-                                replyMenu.DropDownItems.Add(standbyMenu);
-                                break;
-
-                            case "R":
-                                replyMenu.DropDownItems.Add(rogerMenu);
-                                break;
-
-                            default:
-                                break;
-
-                        }
-                    }
-
-                    replyMenu.DropDownItems.Add(freeTextMenu);
-                }
-
-                popupMenu.Show(_sender, _sender.PointToClient(Cursor.Position));
-            }
-        } */
-
         private Task ADSCParser(string _response, string _sender)
         {
             string[] responseElements = _response.Split(' ');
@@ -872,8 +794,6 @@ namespace EasyCPDLC
                     contracts.Add(_contract);
                     _contract.StartContract();
 
-                    Console.WriteLine(String.Format("CONTRACT STARTED EVERY {0} SECONDS FOR {1}", responseElements[2], _sender));
-
                     break;
 
                 case "EVENTS":
@@ -886,8 +806,6 @@ namespace EasyCPDLC
                         _contract.StopContract();
                         contracts.Remove(_contract);
                     }
-
-                    Console.WriteLine(String.Format("{0} {1} SECOND CONTRACT CANCELLED", _sender, responseElements[2]));
 
                     break;
             }
@@ -982,6 +900,7 @@ namespace EasyCPDLC
             else if (messageString.StartsWith("LOGON ACCEPTED"))
             {
                 currentATCUnit = pendingLogon;
+                _showUser = false;
             }
 
             string message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_", "");
@@ -1010,20 +929,20 @@ namespace EasyCPDLC
             CPDLCMessage message;
             if (_outbound)
             {
-                message = CreateCPDLCMessage(callsign + ": " + _recipient + " " + _response + ".", _type, _recipient, _outbound, _header);
+                message = CreateCPDLCMessage(callsign + ": " + _recipient + " " + _response, _type, _recipient, _outbound, _header);
             }
             else
             {
-                message = CreateCPDLCMessage(_recipient + ": " + _response + ".", _type, _recipient, _outbound, _header);
+                message = CreateCPDLCMessage(_recipient + ": " + _response, _type, _recipient, _outbound, _header);
                 if (playSound && _recipient != "SYSTEM") { player.Play(); }
             }
 
             Logger.Debug("Writing message: " + _response);
 
-            System.Windows.Forms.Label menuLabel = CreateSpecialBoldLabel(">>");
-            if(_type == "CPDLC")
+            TimerLabel menuLabel = CreateTimerLabel(">>", true);
+            if (_type == "CPDLC" && !_outbound && _header.responses != "NE")
             {
-                canFlash.Add(menuLabel);
+                menuLabel.canFlash = true;
             }
             menuLabel.Click += MessageClicked;
 
@@ -1114,7 +1033,6 @@ namespace EasyCPDLC
                     {
                         var simbriefjson = wc.DownloadString(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", simbriefID));
                         var simbriefNavlog = JObject.Parse(simbriefjson)["navlog"].ToString();
-                        Console.WriteLine(simbriefjson);
                         simbriefData = JsonConvert.DeserializeObject<Navlog>(simbriefNavlog);
 
                         Logger.Debug("Simbrief Data Retrieved and Parsed");
@@ -1198,6 +1116,10 @@ namespace EasyCPDLC
 
         private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Properties.Settings.Default.MainWindowLocation = Location;
+            Properties.Settings.Default.MainWindowSize = Size;
+            Properties.Settings.Default.Save();
+
             if (!(currentATCUnit is null))
             {
                 await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);

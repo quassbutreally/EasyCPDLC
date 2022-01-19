@@ -25,7 +25,7 @@ namespace EasyCPDLC
         public string sender;
         public string contractLength;
         private Timer timer;
-        private MainForm parent;
+        readonly private MainForm parent;
 
         public Contract(MainForm _parent, string _sender, string _timeSpan)
         {
@@ -36,8 +36,10 @@ namespace EasyCPDLC
 
         public void StartContract()
         {
-            timer = new Timer(Convert.ToInt32(contractLength) * 1000);
-            timer.AutoReset = true;
+            timer = new Timer(Convert.ToInt32(contractLength) * 1000)
+            {
+                AutoReset = true
+            };
             timer.Elapsed += new ElapsedEventHandler(SendReply);
             timer.Start();
         }
@@ -54,7 +56,6 @@ namespace EasyCPDLC
                     Math.Round(parent.fsuipc.position.Latitude.DecimalDegrees, 5),
                     Math.Round(parent.fsuipc.position.Longitude.DecimalDegrees, 5),
                     Math.Round(parent.fsuipc.altitude.Feet / 100));
-                    Console.WriteLine(message);
                     await parent.SendCPDLCMessage(sender, "ADS-C", message, true, false);
                 }
             }

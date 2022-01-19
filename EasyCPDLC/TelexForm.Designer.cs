@@ -72,7 +72,7 @@
             this.clearButton.TabIndex = 8;
             this.clearButton.Text = "CLEAR";
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ReloadPanel);
+            this.clearButton.Click += new System.EventHandler(this.ResetPanel);
             // 
             // sendButton
             // 
@@ -226,6 +226,7 @@
             this.MinimumSize = new System.Drawing.Size(532, 241);
             this.Name = "TelexForm";
             this.Text = "TelexForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TelexForm_FormClosing);
             this.Load += new System.EventHandler(this.ReloadPanel);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             this.radioContainer.ResumeLayout(false);
