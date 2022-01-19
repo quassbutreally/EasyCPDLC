@@ -161,7 +161,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
-            messageFormatPanel.Controls.Add(createTextBox("", 5));
+            messageFormatPanel.Controls.Add(createAutoFillTextBox("", 7, parent.reportFixes));
             messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
@@ -496,7 +496,6 @@ namespace EasyCPDLC
                         {
                             if (messageFormatPanel.Controls[i].Text.Length < 1)
                             {
-                                Console.WriteLine(i);
                                 return;
                             }
                         }
@@ -798,6 +797,20 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
+        private void RequestForm_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.CPDLCWindowLocation != new Point(0, 0))
+            {
+                Location = Properties.Settings.Default.CPDLCWindowLocation;
+                Size = Properties.Settings.Default.CPDLCWindowSize;
+            }
+        }
 
+        private void RequestForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.CPDLCWindowLocation = Location;
+            Properties.Settings.Default.CPDLCWindowSize = Size;
+            Properties.Settings.Default.Save();
+        }
     }
 }

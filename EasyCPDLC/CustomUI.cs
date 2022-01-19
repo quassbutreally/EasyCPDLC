@@ -5,7 +5,6 @@ namespace EasyCPDLC
 {
     public class CustomUI
     {
-
         public static UITextBox CreateTextBox(string _text, int _maxLength, Color _controlFrontColor, Color _controlBackColor, Font _font)
         {
             UITextBox _temp = new UITextBox(_controlFrontColor)

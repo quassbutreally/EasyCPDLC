@@ -36,6 +36,43 @@ namespace EasyCPDLC
         }
     }
 
+    public class TimerLabel : Label
+    {
+        readonly Timer blinkTimer = new Timer();
+        private bool _canFlash = false;
+        public bool canFlash
+        {
+            get
+            {
+                return _canFlash;
+            }
+            set
+            {
+                _canFlash = value;
+                if(_canFlash)
+                {
+                    blinkTimer.Start();
+                }
+                else
+                {
+                    blinkTimer.Stop();
+                    ForeColor = SystemColors.ControlLight;
+                }
+            }
+        }
+        public TimerLabel()
+        {
+            blinkTimer.Interval = 500;
+            blinkTimer.Tick += new EventHandler(FlashElement);
+
+        }
+
+        public void FlashElement(object sender, EventArgs e)
+        {
+            this.ForeColor = this.ForeColor == Color.Orange ? SystemColors.ControlLight : Color.Orange;
+        }
+    }
+
     public class RoundPanel : Panel
     {
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]

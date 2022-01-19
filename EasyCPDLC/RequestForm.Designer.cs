@@ -316,6 +316,8 @@
             this.MinimumSize = new System.Drawing.Size(612, 290);
             this.Name = "RequestForm";
             this.Text = "RequestForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RequestForm_FormClosing);
+            this.Load += new System.EventHandler(this.RequestForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             this.radioContainer.ResumeLayout(false);
             this.radioContainer.PerformLayout();

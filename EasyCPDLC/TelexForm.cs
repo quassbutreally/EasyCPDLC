@@ -145,6 +145,16 @@ namespace EasyCPDLC
         }
         private void ReloadPanel(object sender, EventArgs e)
         {
+            if (Properties.Settings.Default.TelexWindowLocation != new Point(0, 0))
+            {
+                Location = Properties.Settings.Default.TelexWindowLocation;
+                Size = Properties.Settings.Default.TelexWindowSize;
+            }
+            freeTextButton.PerformClick();
+        }
+
+        private void ResetPanel(object sender, EventArgs e)
+        {
             freeTextButton.PerformClick();
         }
 
@@ -266,6 +276,13 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(CreateTextBox("", 4));
 
             atisRadioButton.Checked = true;
+        }
+
+        private void TelexForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.TelexWindowLocation = Location;
+            Properties.Settings.Default.TelexWindowSize = Size;
+            Properties.Settings.Default.Save();
         }
     }
 }
