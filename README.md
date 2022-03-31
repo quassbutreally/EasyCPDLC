@@ -15,3 +15,9 @@ You can download the latest release [here.](https://github.com/josh-seagrave/Eas
 
 # It's broken. What do I do?
 EasyCPDLC is still under active development. If you encounter crashes or a bug, please [submit an issue](https://github.com/josh-seagrave/EasyCPDLC/issues) with as much detail as possible so I can investigate.
+
+# Is it free?
+Yes, and it always will be.
+
+# I'd like to buy you a coffee, you seem like you need one.
+[that's very kind of you.](https://www.paypal.com/donate/?hosted_button_id=9MK7SMKEKGAZY)
