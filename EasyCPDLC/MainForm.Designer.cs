@@ -145,9 +145,9 @@
             this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcUnitLabel.Location = new System.Drawing.Point(337, 44);
             this.atcUnitLabel.Name = "atcUnitLabel";
-            this.atcUnitLabel.Size = new System.Drawing.Size(135, 19);
+            this.atcUnitLabel.Size = new System.Drawing.Size(134, 19);
             this.atcUnitLabel.TabIndex = 7;
-            this.atcUnitLabel.Text = "Current ATC Unit: ";
+            this.atcUnitLabel.Text = "Current ATS Unit: ";
             // 
             // atcUnitDisplay
             // 

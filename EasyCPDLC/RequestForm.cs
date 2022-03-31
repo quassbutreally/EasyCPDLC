@@ -302,7 +302,7 @@ namespace EasyCPDLC
 
         private void PreFill(object sender, EventArgs e)
         {
-            if (parent.reportFixes.Contains(fix1.Text))
+            if (parent.reportFixes != null && parent.reportFixes.Contains(fix1.Text))
             {
                 int refIndex = Array.IndexOf(parent.reportFixes, fix1.Text);
                 try
@@ -345,7 +345,10 @@ namespace EasyCPDLC
             _temp.AutoCompleteMode = AutoCompleteMode.Append;
             _temp.AutoCompleteSource = AutoCompleteSource.CustomSource;
             var autoComplete = new AutoCompleteStringCollection();
-            autoComplete.AddRange(_source);
+            if (_source != null)
+            {
+                autoComplete.AddRange(_source);
+            }
             _temp.AutoCompleteCustomSource = autoComplete;
             _temp.TextAlign = HorizontalAlignment.Center;
 

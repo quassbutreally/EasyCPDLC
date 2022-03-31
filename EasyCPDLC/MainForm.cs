@@ -557,6 +557,7 @@ namespace EasyCPDLC
             try
             {
                 var response = await webclient.PostAsync("http://www.hoppie.nl/acars/system/connect.html", content);
+                
                 Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, _outbound, _write));
                 var responseString = await response.Content.ReadAsStringAsync();
                 string printString = responseString.ToString().ToUpper();
@@ -575,6 +576,10 @@ namespace EasyCPDLC
                     }
                 }
 
+                if (printString.Contains("ERROR"))
+                {
+                    //handle error here
+                }
                 if (printString != "OK")
                 {
                     await TelexParser(printString);
@@ -590,15 +595,15 @@ namespace EasyCPDLC
             return;
 
         }
-        private CPDLCMessage CreateCPDLCMessage(string _text, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
+        private CPDLCMessage CreateCPDLCMessage(string _contents, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
         {
-            CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _outbound, _header)
+            CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _contents, _outbound, _header)
             {
                 AutoSize = true,
                 BackColor = controlBackColor,
                 ForeColor = SystemColors.ControlDark,
                 Font = textFont,
-                Text = _text,
+                Text = _type == "SYSTEM" ? "SYSTEM MESSAGE" : _outbound ? String.Format("{1} MESSAGE => {0}", _recipient, _type.ToUpper()) : String.Format("{1} MESSAGE <= {0}", _recipient, _type.ToUpper()),
                 BorderStyle = BorderStyle.None
             };
             _message.Margin = new Padding(0, 3, 0, 0);
@@ -699,7 +704,7 @@ namespace EasyCPDLC
 
             if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
             {
-                if (_sender.Text.Contains("CLR TO") || _sender.Text.Contains("CLRD TO") || _sender.Text.Contains("CLEARED TO"))
+                if (_sender.message.Contains("CLR TO") || _sender.message.Contains("CLRD TO") || _sender.message.Contains("CLEARED TO"))
                 {
                     System.Windows.Forms.Label acceptLabel = CreateSpecialLabel("> ACCEPT", false);
                     System.Windows.Forms.Label rejectLabel = CreateSpecialLabel("> REJECT", false);
@@ -762,8 +767,11 @@ namespace EasyCPDLC
             messageFormatPanel.Visible = true;
             messageFormatPanel.Controls.Add(returnLabel);
             messageFormatPanel.SetFlowBreak(returnLabel, true);
-            messageFormatPanel.Controls.Add(CreateLabel(_sender.Text, false));
-            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[1], true);
+            foreach(string line in _sender.message.Split('\n'))
+            {
+                messageFormatPanel.Controls.Add(CreateLabel(line, false));
+                messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            }
             foreach (System.Windows.Forms.Label _response in responses)
             {
                 messageFormatPanel.Controls.Add(_response);
@@ -854,7 +862,6 @@ namespace EasyCPDLC
                         FlashWindow.Flash(this);
                     }
                 }
-
             }
             return;
         }
@@ -900,6 +907,11 @@ namespace EasyCPDLC
             else if (messageString.StartsWith("LOGON ACCEPTED"))
             {
                 currentATCUnit = pendingLogon;
+                WriteMessage("CURRENT ATS UNIT: " + pendingLogon, "CPDLC", _sender, false, header);
+                _showUser = false;
+            }
+            else if (messageString.StartsWith("CURRENT ATS UNIT"))
+            {
                 _showUser = false;
             }
 
@@ -929,11 +941,11 @@ namespace EasyCPDLC
             CPDLCMessage message;
             if (_outbound)
             {
-                message = CreateCPDLCMessage(callsign + ": " + _recipient + " " + _response, _type, _recipient, _outbound, _header);
+                message = CreateCPDLCMessage(_response, _type, _recipient, _outbound, _header);
             }
             else
             {
-                message = CreateCPDLCMessage(_recipient + ": " + _response, _type, _recipient, _outbound, _header);
+                message = CreateCPDLCMessage(_response, _type, _recipient, _outbound, _header);
                 if (playSound && _recipient != "SYSTEM") { player.Play(); }
             }
 
@@ -1001,10 +1013,8 @@ namespace EasyCPDLC
 
                     string _fpTest = userVATSIMData.flight_plan.altitude;
 
-                    response = "VATSIM DATA RETRIEVED FOR " + userVATSIMData.callsign;
+                    response += "VATSIM: OK" + Environment.NewLine;
                     callsign = userVATSIMData.callsign;
-
-                    WriteMessage(response, "SYSTEM", "SYSTEM");
 
                     connected = true;
 
@@ -1016,12 +1026,10 @@ namespace EasyCPDLC
 
                 catch
                 {
-                    response = "ERROR RETRIEVING VATSIM DATA. ENSURE YOU ARE CONNECTED TO THE NETWORK AND A FLIGHT PLAN HAS BEEN FILED";
+                    response += "VATSIM: ERROR.\n";
                     atcButton.Enabled = false;
                     telexButton.Enabled = false;
                     connected = false;
-
-                    WriteMessage(response, "SYSTEM", "SYSTEM");
 
                     return;
                 }
@@ -1038,15 +1046,13 @@ namespace EasyCPDLC
                         Logger.Debug("Simbrief Data Retrieved and Parsed");
 
                         reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
-                        response = "SIMBRIEF DATA RETRIEVED FOR " + JObject.Parse(simbriefjson)["atc"]["callsign"].ToString();
-                        WriteMessage(response, "SYSTEM", "SYSTEM");
+                        response += "SIMBRIEF: OK\n";
                     }
                 }
 
                 catch
                 {
-                    response = "ERROR RETRIEVING SIMBRIEF DATA. POSITION REPORTING WILL REVERT TO BASIC FUNCTIONALITY";
-                    WriteMessage(response, "SYSTEM", "SYSTEM");
+                    response += "SIMBRIEF: ERROR\n";
                 }
 
                 if(useFSUIPC)
@@ -1056,8 +1062,7 @@ namespace EasyCPDLC
                         fsConnectionOpen = fsuipc.OpenConnection();
                         if (fsConnectionOpen)
                         {
-                            response = "SIMULATOR CONNECTION ESTABLISHED";
-                            WriteMessage(response, "SYSTEM", "SYSTEM");
+                            response += "SIMULATOR: OK\n";
                         }
                         else
                         {
@@ -1068,10 +1073,11 @@ namespace EasyCPDLC
                     }
                     catch
                     {
-                        response = "FAILED TO CONNECT TO SIMULATOR";
-                        WriteMessage(response, "SYSTEM", "SYSTEM");
+                        response += "SIMULATOR: ERROR\n";
                     }
                 }
+                response += "LOGON SUCCESSFUL.";
+                WriteMessage(response, "SYSTEM", "SYSTEM");
 
             }
             else
@@ -1176,7 +1182,7 @@ namespace EasyCPDLC
             System.Diagnostics.Process.Start("https://github.com/josh-seagrave/EasyCPDLC/wiki");
             MessageBox.Show(
                 @"EasyCPDLC
-Copyright(C) 2021 Joshua Seagrave
+Copyright(C) 2022 Joshua Seagrave
 
 This program is free software: you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
@@ -1189,7 +1195,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.If not, see < https://www.gnu.org/licenses/>.", "Licensing & Copyright Notice");
+along with this program.If not, see <https://www.gnu.org/licenses/>.", String.Format("EasyCPDLC v{0} Licensing & Copyright Notice", System.Windows.Forms.Application.ProductVersion), MessageBoxButtons.OK);
         }
     }
     internal class NoHighlightRenderer : ToolStripProfessionalRenderer

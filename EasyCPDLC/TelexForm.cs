@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FSUIPC;
 
 namespace EasyCPDLC
 {
@@ -199,14 +200,14 @@ namespace EasyCPDLC
                         break;
 
                     case "metarRadioButton":
-                        this.parent.WriteMessage("METAR REQUEST", "SYSTEM", _recipient, true);
+                        this.parent.WriteMessage("METAR REQUEST", "METAR", _recipient, true);
                         this.parent.ArtificialDelay("METAR " + _recipient, "INFOREQ", "REQUEST");
 
                         break;
 
                     case "atisRadioButton":
 
-                        this.parent.WriteMessage("ATIS REQUEST", "SYSTEM", _recipient, true);
+                        this.parent.WriteMessage("ATIS REQUEST", "ATIS", _recipient, true);
                         this.parent.ArtificialDelay("VATATIS " + _recipient, "INFOREQ", "REQUEST");
 
                         break;
@@ -264,7 +265,22 @@ namespace EasyCPDLC
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
-            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            try
+            {
+                if (parent.fsuipc.groundspeed < 100)
+                {
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.departure, 4));
+                }
+                else
+                {
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.arrival, 4));
+                }
+            }
+            catch
+            {
+                messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            }
+
 
             metarRadioButton.Checked = true;
         }
@@ -273,7 +289,22 @@ namespace EasyCPDLC
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
-            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            try
+            {
+                if (parent.fsuipc.groundspeed < 100)
+                {
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.departure, 4));
+                }
+                else
+                {
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.arrival, 4));
+                }
+            }
+            catch
+            {
+                messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            }
+            
 
             atisRadioButton.Checked = true;
         }
