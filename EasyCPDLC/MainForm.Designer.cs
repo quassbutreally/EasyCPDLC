@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.titleLabel = new System.Windows.Forms.Label();
             this.exitButton = new System.Windows.Forms.Button();
@@ -37,10 +38,10 @@
             this.retrieveButton = new System.Windows.Forms.Button();
             this.atcUnitLabel = new System.Windows.Forms.Label();
             this.atcUnitDisplay = new System.Windows.Forms.Label();
-            this.settingsButton = new System.Windows.Forms.PictureBox();
             this.helpButton = new System.Windows.Forms.Button();
             this.messageFormatPanel = new System.Windows.Forms.FlowLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).BeginInit();
+            this.settingsButton = new System.Windows.Forms.Button();
+            this.iconList = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // titleLabel
@@ -58,6 +59,7 @@
             // 
             // exitButton
             // 
+            this.exitButton.AccessibleName = "Exit";
             this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
@@ -67,7 +69,7 @@
             this.exitButton.Location = new System.Drawing.Point(531, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(24, 24);
-            this.exitButton.TabIndex = 1;
+            this.exitButton.TabIndex = 7;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
@@ -90,6 +92,7 @@
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputTable.Size = new System.Drawing.Size(528, 127);
             this.outputTable.TabIndex = 3;
+            this.outputTable.TabStop = true;
             this.outputTable.Click += new System.EventHandler(this.outputTable_Click);
             // 
             // atcButton
@@ -102,7 +105,7 @@
             this.atcButton.Location = new System.Drawing.Point(243, 12);
             this.atcButton.Name = "atcButton";
             this.atcButton.Size = new System.Drawing.Size(90, 48);
-            this.atcButton.TabIndex = 4;
+            this.atcButton.TabIndex = 2;
             this.atcButton.Text = "ATC";
             this.atcButton.UseVisualStyleBackColor = true;
             this.atcButton.Click += new System.EventHandler(this.requestButton_Click);
@@ -117,7 +120,7 @@
             this.telexButton.Location = new System.Drawing.Point(147, 12);
             this.telexButton.Name = "telexButton";
             this.telexButton.Size = new System.Drawing.Size(90, 48);
-            this.telexButton.TabIndex = 5;
+            this.telexButton.TabIndex = 1;
             this.telexButton.Text = "TELEX";
             this.telexButton.UseVisualStyleBackColor = true;
             this.telexButton.Click += new System.EventHandler(this.telexButton_Click);
@@ -132,7 +135,7 @@
             this.retrieveButton.Location = new System.Drawing.Point(12, 12);
             this.retrieveButton.Name = "retrieveButton";
             this.retrieveButton.Size = new System.Drawing.Size(129, 48);
-            this.retrieveButton.TabIndex = 6;
+            this.retrieveButton.TabIndex = 0;
             this.retrieveButton.Text = "CONNECT";
             this.retrieveButton.UseVisualStyleBackColor = true;
             this.retrieveButton.Click += new System.EventHandler(this.retrieveButton_Click);
@@ -146,7 +149,7 @@
             this.atcUnitLabel.Location = new System.Drawing.Point(337, 44);
             this.atcUnitLabel.Name = "atcUnitLabel";
             this.atcUnitLabel.Size = new System.Drawing.Size(134, 19);
-            this.atcUnitLabel.TabIndex = 7;
+            this.atcUnitLabel.TabIndex = 0;
             this.atcUnitLabel.Text = "Current ATS Unit: ";
             // 
             // atcUnitDisplay
@@ -158,23 +161,12 @@
             this.atcUnitDisplay.Location = new System.Drawing.Point(472, 44);
             this.atcUnitDisplay.Name = "atcUnitDisplay";
             this.atcUnitDisplay.Size = new System.Drawing.Size(29, 19);
-            this.atcUnitDisplay.TabIndex = 8;
+            this.atcUnitDisplay.TabIndex = 0;
             this.atcUnitDisplay.Text = "----";
-            // 
-            // settingsButton
-            // 
-            this.settingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.settingsButton.Image = global::EasyCPDLC.Properties.Resources.cog_wheel_gear_setting;
-            this.settingsButton.Location = new System.Drawing.Point(517, 22);
-            this.settingsButton.Name = "settingsButton";
-            this.settingsButton.Size = new System.Drawing.Size(18, 18);
-            this.settingsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.settingsButton.TabIndex = 9;
-            this.settingsButton.TabStop = false;
-            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
             // helpButton
             // 
+            this.helpButton.AccessibleName = "About";
             this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.helpButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
@@ -184,7 +176,7 @@
             this.helpButton.Location = new System.Drawing.Point(515, -3);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(23, 27);
-            this.helpButton.TabIndex = 10;
+            this.helpButton.TabIndex = 6;
             this.helpButton.Text = "?";
             this.helpButton.UseVisualStyleBackColor = true;
             this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
@@ -201,8 +193,31 @@
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
             this.messageFormatPanel.Size = new System.Drawing.Size(528, 127);
-            this.messageFormatPanel.TabIndex = 11;
+            this.messageFormatPanel.TabIndex = 4;
+            this.messageFormatPanel.TabStop = true;
             this.messageFormatPanel.Visible = false;
+            // 
+            // settingsButton
+            // 
+            this.settingsButton.AccessibleName = "Settings";
+            this.settingsButton.BackgroundImage = global::EasyCPDLC.Properties.Resources.cog_wheel_gear_setting;
+            this.settingsButton.FlatAppearance.BorderSize = 0;
+            this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.settingsButton.ImageIndex = 0;
+            this.settingsButton.ImageList = this.iconList;
+            this.settingsButton.Location = new System.Drawing.Point(515, 21);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(20, 20);
+            this.settingsButton.TabIndex = 5;
+            this.settingsButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
+            // iconList
+            // 
+            this.iconList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("iconList.ImageStream")));
+            this.iconList.TransparentColor = System.Drawing.Color.Transparent;
+            this.iconList.Images.SetKeyName(0, "cog-wheel-gear-setting.png");
             // 
             // MainForm
             // 
@@ -230,7 +245,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindow);
-            ((System.ComponentModel.ISupportInitialize)(this.settingsButton)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,9 +260,10 @@
         private System.Windows.Forms.Button retrieveButton;
         private System.Windows.Forms.Label atcUnitLabel;
         private System.Windows.Forms.Label atcUnitDisplay;
-        private System.Windows.Forms.PictureBox settingsButton;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.FlowLayoutPanel messageFormatPanel;
+        private System.Windows.Forms.Button settingsButton;
+        private System.Windows.Forms.ImageList iconList;
     }
 }
 

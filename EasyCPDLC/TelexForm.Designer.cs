@@ -57,10 +57,12 @@
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
             this.messageFormatPanel.Size = new System.Drawing.Size(504, 127);
-            this.messageFormatPanel.TabIndex = 4;
+            this.messageFormatPanel.TabIndex = 3;
             // 
             // clearButton
             // 
+            this.clearButton.AccessibleDescription = "Clear Telex";
+            this.clearButton.AccessibleName = "Clear";
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
@@ -69,13 +71,15 @@
             this.clearButton.Location = new System.Drawing.Point(304, 190);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
-            this.clearButton.TabIndex = 8;
+            this.clearButton.TabIndex = 4;
             this.clearButton.Text = "CLEAR";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.ResetPanel);
             // 
             // sendButton
             // 
+            this.sendButton.AccessibleDescription = "Send Telex Message";
+            this.sendButton.AccessibleName = "Send";
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.sendButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
@@ -84,13 +88,15 @@
             this.sendButton.Location = new System.Drawing.Point(414, 190);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(104, 37);
-            this.sendButton.TabIndex = 9;
+            this.sendButton.TabIndex = 5;
             this.sendButton.Text = "SEND";
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
             // 
             // exitButton
             // 
+            this.exitButton.AccessibleDescription = "Exit Telex Form";
+            this.exitButton.AccessibleName = "Exit";
             this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
@@ -100,7 +106,7 @@
             this.exitButton.Location = new System.Drawing.Point(509, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(24, 24);
-            this.exitButton.TabIndex = 11;
+            this.exitButton.TabIndex = 6;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
@@ -114,7 +120,7 @@
             this.titleLabel.Location = new System.Drawing.Point(329, 9);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
-            this.titleLabel.TabIndex = 10;
+            this.titleLabel.TabIndex = 0;
             this.titleLabel.Text = "EasyCPDLC";
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             // 
@@ -127,7 +133,7 @@
             this.freeTextButton.Location = new System.Drawing.Point(14, 10);
             this.freeTextButton.Name = "freeTextButton";
             this.freeTextButton.Size = new System.Drawing.Size(100, 37);
-            this.freeTextButton.TabIndex = 12;
+            this.freeTextButton.TabIndex = 0;
             this.freeTextButton.Text = "FREE TEXT";
             this.freeTextButton.UseVisualStyleBackColor = true;
             this.freeTextButton.Click += new System.EventHandler(this.freeTextButton_Click);
@@ -141,7 +147,7 @@
             this.metarButton.Location = new System.Drawing.Point(120, 10);
             this.metarButton.Name = "metarButton";
             this.metarButton.Size = new System.Drawing.Size(100, 37);
-            this.metarButton.TabIndex = 13;
+            this.metarButton.TabIndex = 1;
             this.metarButton.Text = "METAR";
             this.metarButton.UseVisualStyleBackColor = true;
             this.metarButton.Click += new System.EventHandler(this.metarButton_Click);
@@ -155,7 +161,7 @@
             this.atisButton.Location = new System.Drawing.Point(226, 10);
             this.atisButton.Name = "atisButton";
             this.atisButton.Size = new System.Drawing.Size(100, 37);
-            this.atisButton.TabIndex = 14;
+            this.atisButton.TabIndex = 2;
             this.atisButton.Text = "ATIS";
             this.atisButton.UseVisualStyleBackColor = true;
             this.atisButton.Click += new System.EventHandler(this.atisButton_Click);

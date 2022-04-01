@@ -59,9 +59,9 @@ namespace EasyCPDLC
             this.TopMost = parent.TopMost;
         }
 
-        private Label CreateTemplate(string _text)
+        private AccessibleLabel CreateTemplate(string _text)
         {
-            Label _temp = new Label
+            AccessibleLabel _temp = new AccessibleLabel(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -72,7 +72,9 @@ namespace EasyCPDLC
                 Height = 20,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(0, 10, 0, 0),
-                Margin = new Padding(0, 0, 0, 0)
+                Margin = new Padding(0, 0, 0, 0),
+                TabStop = true,
+                TabIndex = 0
             };
 
             return _temp;
@@ -93,7 +95,8 @@ namespace EasyCPDLC
                 Padding = new Padding(3, 0, 3, -10),
                 Margin = new Padding(3, 5, 3, -10),
                 Height = 20,
-                TextAlign = HorizontalAlignment.Center
+                TextAlign = HorizontalAlignment.Center,
+                TabIndex = 0
             };
 
             using (Graphics G = _temp.CreateGraphics())
@@ -119,7 +122,8 @@ namespace EasyCPDLC
                 WordWrap = true,
                 Text = _text,
                 MaxLength = 255,
-                Height = 20
+                Height = 20,
+                TabIndex = 0
             };
             _temp.TextChanged += ExpandMultiLineBox;
 

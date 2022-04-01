@@ -165,7 +165,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
 
 
@@ -183,7 +182,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
@@ -205,7 +203,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTemplate("KTS"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
@@ -220,21 +217,17 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(createTemplate("WHEN CAN WE EXPECT:"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("HIGHER LEVEL?", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("LOWER LEVEL?", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("BACK ON ROUTE?", "wcwParam"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("CLIMB TO: FL", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("DESCENT TO: FL", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
             messageFormatPanel.Controls.Add(createTemplate("KTS"));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
             messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "wcwParam"));
             messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
@@ -355,9 +348,9 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private Label createTemplate(string _text)
+        private AccessibleLabel createTemplate(string _text)
         {
-            Label _temp = new Label
+            AccessibleLabel _temp = new AccessibleLabel(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -368,7 +361,9 @@ namespace EasyCPDLC
                 Height = 20,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(0, 10, 0, 0),
-                Margin = new Padding(0, 0, 0, 0)
+                Margin = new Padding(0, 0, 0, 0),
+                TabStop = true,
+                TabIndex = 0
             };
 
             return _temp;
@@ -386,11 +381,12 @@ namespace EasyCPDLC
                 Text = _text,
                 CharacterCasing = CharacterCasing.Upper,
                 Top = 10,
-                Padding = new Padding(3, 0, 3, -10),
+                Padding = new Padding(3, 0, 10, -10),
                 //_temp.Margin = new Padding(3, 5, 3, -10);
                 Height = 20,
                 ReadOnly = _readOnly,
-                TextAlign = HorizontalAlignment.Center
+                TextAlign = HorizontalAlignment.Center,
+                TabIndex = 0
             };
 
             if (_numsOnly)
@@ -423,8 +419,9 @@ namespace EasyCPDLC
                 ForeColor = controlFrontColor,
                 Font = textFont,
                 Text = _text,
-                Padding = new Padding(3, 10, 3, -30),
-                AutoSize = true
+                Padding = new Padding(3, 10, 10, -30),
+                AutoSize = true,
+                TabIndex = 0
             };
             _temp.Click += DeselectCheckBox;
             return _temp;
@@ -457,7 +454,8 @@ namespace EasyCPDLC
                 WordWrap = true,
                 Text = _text,
                 MaxLength = 255,
-                Height = 20
+                Height = 20,
+                TabIndex = 0
             };
             _temp.TextChanged += ExpandMultiLineBox;
 

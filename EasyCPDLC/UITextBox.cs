@@ -64,7 +64,7 @@ namespace EasyCPDLC
         {
             blinkTimer.Interval = 500;
             blinkTimer.Tick += new EventHandler(FlashElement);
-
+            SetStyle(ControlStyles.Selectable, true);
         }
 
         public void FlashElement(object sender, EventArgs e)

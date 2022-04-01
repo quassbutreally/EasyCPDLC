@@ -1,6 +1,10 @@
-﻿namespace EasyCPDLC
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace EasyCPDLC
 {
-    class CPDLCMessage : System.Windows.Forms.Label
+    public class CPDLCMessage : Label
     {
 
         public string type;
@@ -16,6 +20,17 @@
             message = _message;
             outbound = _outbound;
             header = _header;
+            SetStyle(ControlStyles.Selectable, true);
+        }
+
+        protected override void OnEnter(EventArgs e)
+        {
+            ForeColor = Color.Orange;
+        }
+
+        protected override void OnLeave(EventArgs e)
+        {
+            ForeColor = SystemColors.ControlDark;
         }
     }
 
@@ -25,5 +40,25 @@
         public int messageID { get; set; }
         public int responseID { get; set; }
         public string responses { get; set; }
+    }
+
+    public class AccessibleLabel : Label
+    {
+        private Color foreColor;
+        public AccessibleLabel(Color _foreColor)
+        {
+            SetStyle(ControlStyles.Selectable, true);
+            foreColor = _foreColor;
+        }
+
+        protected override void OnEnter(EventArgs e)
+        {
+            ForeColor = Color.Orange;
+        }
+
+        protected override void OnLeave(EventArgs e)
+        {
+            ForeColor = foreColor;
+        }
     }
 }
