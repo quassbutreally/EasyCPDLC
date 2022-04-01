@@ -861,17 +861,23 @@ namespace EasyCPDLC
                         {
                             case "WU":
                                 acceptLabel.Click += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(_sender, e, previewMessage);
                                 break;
 
                             case "AN":
                                 acceptLabel.Click += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => NegativeMessage(_sender, e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => NegativeMessage(_sender, e, previewMessage);
                                 break;
 
                             case "R":
                                 acceptLabel.Click += (lSender, le) => RogerMessage(_sender, e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => RogerMessage(_sender, e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(_sender, e, previewMessage);
                                 break;
 
 
