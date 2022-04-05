@@ -598,7 +598,7 @@ namespace EasyCPDLC
 
             Logger.Info("Login Form Displayed");
 
-            DataEntry dataEntry = new(SavedCID == new int() ? null : global::EasyCPDLC.MainForm.SavedCID, SavedHoppieCode == String.Empty ? null : SavedHoppieCode);
+            DataEntry dataEntry = new(SavedHoppieCode == String.Empty ? null : SavedHoppieCode, SavedCID == new int() ? null : global::EasyCPDLC.MainForm.SavedCID);
 
             if (dataEntry.ShowDialog(this) == DialogResult.OK)
             {
