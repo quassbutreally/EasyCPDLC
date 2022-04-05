@@ -81,7 +81,7 @@
             this.exitButton.TabIndex = 8;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // messageFormatPanel
             // 
@@ -112,7 +112,7 @@
             this.sendButton.TabIndex = 7;
             this.sendButton.Text = "SEND";
             this.sendButton.UseVisualStyleBackColor = true;
-            this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
+            this.sendButton.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // clearButton
             // 
@@ -129,7 +129,7 @@
             this.clearButton.TabIndex = 6;
             this.clearButton.Text = "CLEAR";
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // pdcButton
             // 
@@ -144,7 +144,7 @@
             this.pdcButton.TabIndex = 1;
             this.pdcButton.Text = "REQ PDC";
             this.pdcButton.UseVisualStyleBackColor = true;
-            this.pdcButton.Click += new System.EventHandler(this.pdcButton_Click);
+            this.pdcButton.Click += new System.EventHandler(this.PdcButton_Click);
             // 
             // logonButton
             // 
@@ -159,7 +159,7 @@
             this.logonButton.TabIndex = 2;
             this.logonButton.Text = "LOGON";
             this.logonButton.UseVisualStyleBackColor = true;
-            this.logonButton.Click += new System.EventHandler(this.logonButton_Click);
+            this.logonButton.Click += new System.EventHandler(this.LogonButton_Click);
             // 
             // requestButton
             // 
@@ -173,7 +173,7 @@
             this.requestButton.TabIndex = 3;
             this.requestButton.Text = "REQUEST";
             this.requestButton.UseVisualStyleBackColor = true;
-            this.requestButton.Click += new System.EventHandler(this.requestButton_Click);
+            this.requestButton.Click += new System.EventHandler(this.RequestButton_Click);
             // 
             // radioContainer
             // 
@@ -244,7 +244,7 @@
             this.reportButton.TabIndex = 4;
             this.reportButton.Text = "REPORT";
             this.reportButton.UseVisualStyleBackColor = true;
-            this.reportButton.Click += new System.EventHandler(this.reportButton_Click);
+            this.reportButton.Click += new System.EventHandler(this.ReportButton_Click);
             // 
             // requestContainer
             // 

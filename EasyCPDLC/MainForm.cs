@@ -14,8 +14,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-using Microsoft.Win32;
 using NLog;
 using Octokit;
 using System;
@@ -37,7 +35,6 @@ using System.Windows.Forms;
 using System.Security.Principal;
 using FSUIPC;
 
-
 namespace EasyCPDLC
 {
     public partial class MainForm : Form
@@ -48,9 +45,9 @@ namespace EasyCPDLC
         private const int cGrip = 16;
         private const int cCaption = 32;
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -60,15 +57,15 @@ namespace EasyCPDLC
         public string[] reportFixes;
         public string nextFix = null;
 
-        public FSUIPCData fsuipc = new FSUIPCData();
+        public FSUIPCData fsuipc = new();
         public bool fsConnectionOpen = false;
         public int fsuipcErrorCount = 1;
 
-        public Random random = new Random();
+        public Random random = new();
 
-        readonly private List<Contract> contracts = new List<Contract>();
+        readonly private List<Contract> contracts = new();
 
-        private static readonly HttpClient webclient = new HttpClient();
+        private static readonly HttpClient webclient = new();
         private string logonCode;
         private int cid;
         public string callsign;
@@ -77,7 +74,7 @@ namespace EasyCPDLC
         private TelexForm tForm;
         private SettingsForm sForm;
 
-        public bool stayOnTop
+        public bool StayOnTop
         {
             get
             {
@@ -90,7 +87,7 @@ namespace EasyCPDLC
             }
         }
 
-        public bool playSound
+        public static bool PlaySound
         {
             get
             {
@@ -102,7 +99,7 @@ namespace EasyCPDLC
             }
         }
 
-        public bool useFSUIPC
+        public static bool UseFSUIPC
         {
             get
             {
@@ -114,7 +111,33 @@ namespace EasyCPDLC
             }
         }
 
-        public string simbriefID
+        public static int SavedCID
+        {
+            get
+            {
+                return Properties.Settings.Default.CID;
+            }
+            set
+            {
+                Properties.Settings.Default.CID = value;
+
+            }
+        }
+
+        public static string SavedHoppieCode
+        {
+            get
+            {
+                return Properties.Settings.Default.HoppieCode;
+            }
+            set
+            {
+                Properties.Settings.Default.HoppieCode = value;
+
+            }
+        }
+
+        public static string SimbriefID
         {
             get
             {
@@ -128,7 +151,7 @@ namespace EasyCPDLC
 
         public int messageOutCounter = 1;
         private bool _connected;
-        public bool connected
+        public bool Connected
         {
             get
             {
@@ -154,7 +177,7 @@ namespace EasyCPDLC
 
         public string pendingLogon = null;
         private string _currentATCUnit;
-        public string currentATCUnit
+        public string CurrentATCUnit
         {
             get
             {
@@ -168,13 +191,13 @@ namespace EasyCPDLC
                     if (_currentATCUnit is null)
                     {
                         atcUnitDisplay.Text = "----";
-                        rForm.needsLogon = true;
+                        rForm.NeedsLogon = true;
 
                     }
                     else
                     {
                         atcUnitDisplay.Text = _currentATCUnit;
-                        rForm.needsLogon = false;
+                        rForm.NeedsLogon = false;
 
                     }
                 }
@@ -185,15 +208,15 @@ namespace EasyCPDLC
             }
         }
 
-        public Font controlFont = new Font("Oxygen", 10.0f, FontStyle.Regular);
-        public Font controlFontBold = new Font("Oxygen", 10.0f, FontStyle.Bold);
-        public Font textFont = new Font("B612 Mono", 10.0f, FontStyle.Regular);
-        public Font textFontBold = new Font("B612 Mono", 12.5f, FontStyle.Bold);
-        public Font dataEntryFont = new Font("B612 Mono", 11.0f, FontStyle.Regular);
+        public Font controlFont = new("Oxygen", 10.0f, FontStyle.Regular);
+        public Font controlFontBold = new("Oxygen", 10.0f, FontStyle.Bold);
+        public Font textFont = new("B612 Mono", 10.0f, FontStyle.Regular);
+        public Font textFontBold = new("B612 Mono", 12.5f, FontStyle.Bold);
+        public Font dataEntryFont = new("B612 Mono", 11.0f, FontStyle.Regular);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
 
-        private readonly ContextMenuStrip popupMenu = new ContextMenuStrip();
+        private readonly ContextMenuStrip popupMenu = new();
         ToolStripMenuItem deleteAllMenu;
 
         private AccessibleLabel wilcoLabel;
@@ -208,12 +231,11 @@ namespace EasyCPDLC
 
         private CPDLCMessage previewMessage;
 
-        private readonly SoundPlayer player = new SoundPlayer();
-        private readonly RegistryKey regKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\EasyCPDLC");
+        private readonly SoundPlayer player = new();
 
-        private static readonly Regex hoppieParse = new Regex(@"{(.*?)}");
-        private static readonly Regex cpdlcHeaderParse = new Regex(@"(\/\s*)\w*");
-        private static readonly Regex cpdlcUnitParse = new Regex(@"_@([\w]*)@_");
+        private static readonly Regex hoppieParse = new(@"{(.*?)}");
+        private static readonly Regex cpdlcHeaderParse = new(@"(\/\s*)\w*");
+        private static readonly Regex cpdlcUnitParse = new(@"_@([\w]*)@_");
 
         private static readonly TimeSpan updateTimer = TimeSpan.FromSeconds(10);
         private CancellationTokenSource requestCancellationTokenSource;
@@ -240,11 +262,11 @@ namespace EasyCPDLC
             }
             player.Play();
             InitializeComponent();
-            this.TopMost = stayOnTop;
+            this.TopMost = StayOnTop;
             this.FormBorderStyle = FormBorderStyle.None;
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
-            currentATCUnit = null;
+            CurrentATCUnit = null;
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
         }
@@ -279,7 +301,7 @@ namespace EasyCPDLC
             Logger.Info("Setup completed successfully");
         }
 
-        private async void CheckNewVersion()
+        private static async void CheckNewVersion()
         {
             try
             {
@@ -311,7 +333,7 @@ namespace EasyCPDLC
 
         private ToolStripMenuItem CreateMenuItem(string name)
         {
-            ToolStripMenuItem _temp = new ToolStripMenuItem(name)
+            ToolStripMenuItem _temp = new(name)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -337,24 +359,24 @@ namespace EasyCPDLC
             wilcoLabel.KeyDown += (_sender, e) => WilcoMessage(_sender, e, previewMessage);
 
             standbyLabel = CreateSpecialLabel("> STANDBY", false);
-            standbyLabel.Click += (_sender, e) => StandbyMessage(_sender, e, previewMessage);
-            standbyLabel.KeyDown += (_sender, e) => StandbyMessage(_sender, e, previewMessage);
+            standbyLabel.Click += (_sender, e) => StandbyMessage(e, previewMessage);
+            standbyLabel.KeyDown += (_sender, e) => StandbyMessage(e, previewMessage);
 
             unableLabel = CreateSpecialLabel("> UNABLE", false);
-            unableLabel.Click += (_sender, e) => UnableMessage(_sender, e, previewMessage);
-            unableLabel.KeyDown += (_sender, e) => UnableMessage(_sender, e, previewMessage);
+            unableLabel.Click += (_sender, e) => UnableMessage(e, previewMessage);
+            unableLabel.KeyDown += (_sender, e) => UnableMessage(e, previewMessage);
 
             affirmativeLabel = CreateSpecialLabel("> AFFIRM", false);
             affirmativeLabel.Click += (_sender, e) => AffirmativeMessage(_sender, e, previewMessage);
             affirmativeLabel.KeyDown += (_sender, e) => AffirmativeMessage(_sender, e, previewMessage);
 
             negativeLabel = CreateSpecialLabel("> NEGATIVE", false);
-            negativeLabel.Click += (_sender, e) => NegativeMessage(_sender, e, previewMessage);
-            negativeLabel.KeyDown += (_sender, e) => FreeTextMessage(_sender, e, previewMessage);
+            negativeLabel.Click += (_sender, e) => NegativeMessage(e, previewMessage);
+            negativeLabel.KeyDown += (_sender, e) => NegativeMessage(e, previewMessage);
 
             freeTextLabel = CreateSpecialLabel("> FREE TEXT", false);
-            freeTextLabel.Click += (_sender, e) => FreeTextMessage(_sender, e, previewMessage);
-            freeTextLabel.KeyDown += (_sender, e) => FreeTextMessage(_sender, e, previewMessage);
+            freeTextLabel.Click += (_sender, e) => FreeTextMessage(previewMessage);
+            freeTextLabel.KeyDown += (_sender, e) => FreeTextMessage(previewMessage);
 
             deleteLabel = CreateSpecialLabel("> DELETE", false);
             deleteLabel.Click += (_sender, e) => DeleteElement(_sender, e, previewMessage);
@@ -370,12 +392,12 @@ namespace EasyCPDLC
             Logger.Info("Login menu initialised");
         }
 
-        private void FreeTextMessage(object sender, EventArgs e, CPDLCMessage message)
+        private void FreeTextMessage(CPDLCMessage message)
         {
 
             tForm = new TelexForm(this, message.recipient)
             {
-                TopMost = stayOnTop
+                TopMost = StayOnTop
             };
             tForm.Show();
         }
@@ -425,7 +447,7 @@ namespace EasyCPDLC
             {
                 message.acknowledged = true;
                 int index = outputTable.Controls.GetChildIndex(message);
-                ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+                ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
                 outputTable.Controls[index + 1].ForeColor = controlFrontColor;
                 message.ForeColor = SystemColors.ControlDark;
                 message.header.responseID = messageOutCounter;
@@ -454,7 +476,7 @@ namespace EasyCPDLC
             {
                 message.acknowledged = true;
                 int index = outputTable.Controls.GetChildIndex(message);
-                ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+                ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
                 outputTable.Controls[index + 1].ForeColor = controlFrontColor;
                 message.ForeColor = SystemColors.ControlDark;
                 await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/WILCO", messageOutCounter, message.header.messageID));
@@ -464,7 +486,7 @@ namespace EasyCPDLC
             }
         }
 
-        private async void StandbyMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void StandbyMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -487,7 +509,7 @@ namespace EasyCPDLC
             }
         }
 
-        private async void UnableMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void UnableMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -505,7 +527,7 @@ namespace EasyCPDLC
             {
                 message.acknowledged = true;
                 int index = outputTable.Controls.GetChildIndex(message);
-                ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+                ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
                 outputTable.Controls[index + 1].ForeColor = controlFrontColor;
                 message.ForeColor = SystemColors.ControlDark;
                 await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/UNABLE", messageOutCounter, message.header.messageID));
@@ -533,7 +555,7 @@ namespace EasyCPDLC
             {
                 message.acknowledged = true;
                 int index = outputTable.Controls.GetChildIndex(message);
-                ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+                ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
                 outputTable.Controls[index + 1].ForeColor = controlFrontColor;
                 message.ForeColor = SystemColors.ControlDark;
                 await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/AFFIRMATIVE", messageOutCounter, message.header.messageID));
@@ -543,7 +565,7 @@ namespace EasyCPDLC
             }
         }
 
-        private async void NegativeMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void NegativeMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -561,7 +583,7 @@ namespace EasyCPDLC
             {
                 message.acknowledged = true;
                 int index = outputTable.Controls.GetChildIndex(message);
-                ((TimerLabel)outputTable.Controls[index + 1]).canFlash = false;
+                ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
                 outputTable.Controls[index + 1].ForeColor = controlFrontColor;
                 message.ForeColor = SystemColors.ControlDark;
                 await SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/NEGATIVE", messageOutCounter, message.header.messageID));
@@ -576,7 +598,7 @@ namespace EasyCPDLC
 
             Logger.Info("Login Form Displayed");
 
-            DataEntry dataEntry = new DataEntry(regKey.GetValue("hoppieCode"), regKey.GetValue("vatsimCID"));
+            DataEntry dataEntry = new(SavedCID == new int() ? null : global::EasyCPDLC.MainForm.SavedCID, SavedHoppieCode == String.Empty ? null : SavedHoppieCode);
 
             if (dataEntry.ShowDialog(this) == DialogResult.OK)
             {
@@ -585,28 +607,20 @@ namespace EasyCPDLC
                 if (dataEntry.remember)
                 {
                     Logger.Info("REMEMBER ME: TRUE. REGISTRY SET.");
-                    regKey.SetValue("hoppieCode", logonCode);
-                    regKey.SetValue("vatsimCID", cid);
+                    SavedHoppieCode = logonCode;
+                    SavedCID = cid;
                 }
                 else
                 {
-                    Logger.Info("REMEMBER ME: FALSE. REGISTRY CLEARED.");
-                    if (!(regKey.GetValue("hoppieCode") is null))
-                    {
-                        regKey.DeleteValue("hoppieCode");
-                    }
-                    if (!(regKey.GetValue("vatsimCID") is null))
-                    {
-                        regKey.DeleteValue("vatsimCID");
-                    }
-
+                    SavedCID = new int();
+                    SavedHoppieCode = String.Empty;
                 }
             }
             else
             {
                 Logger.Info("Goodbye");
                 LogManager.Shutdown();
-                fsuipc.CloseConnection();
+                FSUIPCData.CloseConnection();
                 System.Windows.Forms.Application.Exit();
             }
         }
@@ -623,7 +637,7 @@ namespace EasyCPDLC
 
                 await SendCPDLCMessage("NONE", "poll", "");
                 await Task.Delay(interval, cancellationToken);
-                if(useFSUIPC && fsConnectionOpen)
+                if(UseFSUIPC && fsConnectionOpen)
                 {
                     try
                     {
@@ -636,7 +650,7 @@ namespace EasyCPDLC
                         {
                             try
                             {
-                                fsConnectionOpen = fsuipc.OpenConnection();
+                                fsConnectionOpen = FSUIPCData.OpenConnection();
                             }
                             catch { }
                             WriteMessage(String.Format("UNABLE TO CHECK FLIGHT SIM DATA. RETRYING (ATTEMPT {0} OF 3)", fsuipcErrorCount), "SYSTEM", "SYSTEM");
@@ -645,7 +659,7 @@ namespace EasyCPDLC
                         else
                         {
                             WriteMessage("FLIGHT SIM DATA RETRIEVAL FAILED 3 TIMES CONSECUTIVELY. DISCONNECTING FROM FLIGHT SIM", "SYSTEM", "SYSTEM");
-                            fsConnectionOpen = fsuipc.CloseConnection();
+                            fsConnectionOpen = FSUIPCData.CloseConnection();
                             fsuipcErrorCount = 1;
                         }
 
@@ -709,7 +723,7 @@ namespace EasyCPDLC
         }
         private CPDLCMessage CreateCPDLCMessage(string _contents, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
         {
-            CPDLCMessage _message = new CPDLCMessage(_type, _recipient, _contents, _outbound, _header)
+            CPDLCMessage _message = new(_type, _recipient, _contents, _outbound, _header)
             {
                 AutoSize = true,
                 BackColor = controlBackColor,
@@ -727,11 +741,11 @@ namespace EasyCPDLC
 
         private AccessibleLabel CreateLabel(string _text, bool _useMaxSize = true)
         {
-            Size maxSize = new Size
+            Size maxSize = new()
             {
                 Width = 65
             };
-            AccessibleLabel _message = new AccessibleLabel(SystemColors.ControlDark)
+            AccessibleLabel _message = new(SystemColors.ControlDark)
             {
                 Width = 65,
                 AutoSize = true,
@@ -754,11 +768,11 @@ namespace EasyCPDLC
 
         private AccessibleLabel CreateSpecialLabel(string _text, bool _useMaxSize = true)
         {
-            Size maxSize = new Size
+            Size maxSize = new()
             {
                 Width = 65
             };
-            AccessibleLabel _message = new AccessibleLabel(SystemColors.ControlLight)
+            AccessibleLabel _message = new(SystemColors.ControlLight)
             {
                 Width = 65,
                 AutoSize = true,
@@ -780,11 +794,11 @@ namespace EasyCPDLC
 
         private TimerLabel CreateTimerLabel(string _text, bool _useMaxSize = true)
         {
-            Size maxSize = new Size
+            Size maxSize = new()
             {
                 Width = 65
             };
-            TimerLabel _message = new TimerLabel
+            TimerLabel _message = new()
             {
                 Width = 65,
                 AutoSize = true,
@@ -848,7 +862,7 @@ namespace EasyCPDLC
                 CPDLCMessage _sender = (CPDLCMessage)outputTable.Controls[messageIndex];
                 previewMessage = _sender;
                 System.Windows.Forms.Label _timeStamp = (System.Windows.Forms.Label)outputTable.Controls[messageIndex - 1];
-                List<System.Windows.Forms.Label> responses = new List<System.Windows.Forms.Label>();
+                List<System.Windows.Forms.Label> responses = new();
 
 
                 if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
@@ -862,22 +876,22 @@ namespace EasyCPDLC
                             case "WU":
                                 acceptLabel.Click += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
                                 acceptLabel.KeyDown += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
-                                rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
-                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                                rejectLabel.Click += (lSender, le) => UnableMessage(e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(e, previewMessage);
                                 break;
 
                             case "AN":
                                 acceptLabel.Click += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
                                 acceptLabel.KeyDown += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
-                                rejectLabel.Click += (lSender, le) => NegativeMessage(_sender, e, previewMessage);
-                                rejectLabel.KeyDown += (lSender, le) => NegativeMessage(_sender, e, previewMessage);
+                                rejectLabel.Click += (lSender, le) => NegativeMessage(e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => NegativeMessage(e, previewMessage);
                                 break;
 
                             case "R":
                                 acceptLabel.Click += (lSender, le) => RogerMessage(_sender, e, previewMessage);
                                 acceptLabel.KeyDown += (lSender, le) => RogerMessage(_sender, e, previewMessage);
-                                rejectLabel.Click += (lSender, le) => UnableMessage(_sender, e, previewMessage);
-                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(_sender, e, previewMessage);
+                                rejectLabel.Click += (lSender, le) => UnableMessage(e, previewMessage);
+                                rejectLabel.KeyDown += (lSender, le) => UnableMessage(e, previewMessage);
                                 break;
 
 
@@ -1001,7 +1015,7 @@ namespace EasyCPDLC
 
                         if (type == "ADS-C")
                         {
-                            if (useFSUIPC)
+                            if (UseFSUIPC)
                             {
                                 Logger.Debug("ADS-C Message identified, attempting to parse");
                                 await ADSCParser(_modify[1], sender);
@@ -1030,11 +1044,11 @@ namespace EasyCPDLC
             var unit = cpdlcUnitParse.Match(_response);
             if (unit.Success)
             {
-                currentATCUnit = unit.Value.Trim('_', '@');
+                CurrentATCUnit = unit.Value.Trim('_', '@');
             }
 
             var responses = cpdlcHeaderParse.Matches(_response);
-            CPDLCResponse header = new CPDLCResponse
+            CPDLCResponse header = new()
             {
                 dataType = responses[0].Value.Trim('/'),
                 messageID = Convert.ToInt32(responses[1].Value.Trim('/')),
@@ -1054,7 +1068,7 @@ namespace EasyCPDLC
             if (messageString.StartsWith("HANDOVER"))
             {
                 string nextATCUnit = messageString.Split(' ').Last().Trim('@').Trim();
-                currentATCUnit = null;
+                CurrentATCUnit = null;
                 await SendCPDLCMessage(nextATCUnit, "CPDLC", String.Format("/data2/{0}//Y/REQUEST LOGON", messageOutCounter), true, false);
                 pendingLogon = nextATCUnit;
                 messageOutCounter += 1;
@@ -1062,7 +1076,7 @@ namespace EasyCPDLC
             }
             else if (messageString.StartsWith("LOGON ACCEPTED"))
             {
-                currentATCUnit = pendingLogon;
+                CurrentATCUnit = pendingLogon;
                 WriteMessage("CURRENT ATS UNIT: " + pendingLogon, "CPDLC", _sender, false, header);
                 _showUser = false;
             }
@@ -1078,7 +1092,7 @@ namespace EasyCPDLC
 
             if (message.Contains("LOGOFF"))
             {
-                currentATCUnit = null;
+                CurrentATCUnit = null;
                 pendingLogon = null;
             }
 
@@ -1102,7 +1116,7 @@ namespace EasyCPDLC
             else
             {
                 message = CreateCPDLCMessage(_response, _type, _recipient, _outbound, _header);
-                if (playSound && _recipient != "SYSTEM") { player.Play(); }
+                if (PlaySound && _recipient != "SYSTEM") { player.Play(); }
             }
 
             Logger.Debug("Writing message: " + _response);
@@ -1110,7 +1124,7 @@ namespace EasyCPDLC
             TimerLabel menuLabel = CreateTimerLabel(">>", true);
             if (_type == "CPDLC" && !_outbound && _header.responses != "NE")
             {
-                menuLabel.canFlash = true;
+                menuLabel.CanFlash = true;
             }
             menuLabel.Click += MessageClicked;
             message.KeyDown += MessageClicked;
@@ -1129,7 +1143,7 @@ namespace EasyCPDLC
             await SendCPDLCMessage(_sender, _type, _message, true, false);
             return;
         }
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -1139,7 +1153,7 @@ namespace EasyCPDLC
             this.Close();
 
             LogManager.Shutdown();
-            fsuipc.CloseConnection();
+            FSUIPCData.CloseConnection();
             System.Windows.Forms.Application.Exit();
         }
         private void MoveWindow(object sender, MouseEventArgs e)
@@ -1147,21 +1161,20 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
-        private async void retrieveButton_Click(object sender, EventArgs e)
+        private async void RetrieveButton_Click(object sender, EventArgs e)
         {
             string response = "";
 
-            if (!connected)
+            if (!Connected)
             {
                 try
                 {
-
-                    using (WebClient wc = new WebClient())
+                    using (HttpClient wc = new())
                     {
-                        vatsimData = JsonConvert.DeserializeObject<VATSIMRootobject>(wc.DownloadString("https://data.vatsim.net/v3/vatsim-data.json"));
+                        vatsimData = JsonConvert.DeserializeObject<VATSIMRootobject>(wc.GetStringAsync("https://data.vatsim.net/v3/vatsim-data.json").Result);
                         Logger.Debug("VATSIM Data Retrieved and Parsed");
 
                     }
@@ -1175,7 +1188,7 @@ namespace EasyCPDLC
                     string _fpTest = userVATSIMData.flight_plan.altitude;
                     callsign = userVATSIMData.callsign;
 
-                    connected = true;
+                    Connected = true;
 
                     requestCancellationTokenSource = new CancellationTokenSource();
                     requestCancellationToken = requestCancellationTokenSource.Token;
@@ -1187,7 +1200,7 @@ namespace EasyCPDLC
                     response += "VATSIM: ERROR. WAIT 60 SECONDS AND RETRY.\n";
                     atcButton.Enabled = false;
                     telexButton.Enabled = false;
-                    connected = false;
+                    Connected = false;
                     WriteMessage(response, "SYSTEM", "SYSTEM");
                     return;
                 }
@@ -1197,7 +1210,7 @@ namespace EasyCPDLC
                     response += "FLIGHT PLAN: ERROR. WAIT 60 SECONDS AND RETRY.\n";
                     atcButton.Enabled = false;
                     telexButton.Enabled = false;
-                    connected = false;
+                    Connected = false;
                     WriteMessage(response, "SYSTEM", "SYSTEM");
                     return;
                 }
@@ -1207,17 +1220,15 @@ namespace EasyCPDLC
                 try
                 {
 
-                    using (WebClient wc = new WebClient())
-                    {
-                        var simbriefjson = wc.DownloadString(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", simbriefID));
-                        var simbriefNavlog = JObject.Parse(simbriefjson)["navlog"].ToString();
-                        simbriefData = JsonConvert.DeserializeObject<Navlog>(simbriefNavlog);
+                    using HttpClient wc = new();
+                    var simbriefjson = wc.GetStringAsync(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", SimbriefID)).Result;
+                    var simbriefNavlog = JObject.Parse(simbriefjson)["navlog"].ToString();
+                    simbriefData = JsonConvert.DeserializeObject<Navlog>(simbriefNavlog);
 
-                        Logger.Debug("Simbrief Data Retrieved and Parsed");
+                    Logger.Debug("Simbrief Data Retrieved and Parsed");
 
-                        reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
-                        response += " SIMBRIEF OK,";
-                    }
+                    reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
+                    response += " SIMBRIEF OK,";
                 }
 
                 catch
@@ -1225,11 +1236,11 @@ namespace EasyCPDLC
                     response += "SIMBRIEF ERROR,";
                 }
 
-                if (useFSUIPC)
+                if (UseFSUIPC)
                 {
                     try
                     {
-                        fsConnectionOpen = fsuipc.OpenConnection();
+                        fsConnectionOpen = FSUIPCData.OpenConnection();
                         if (fsConnectionOpen)
                         {
                             response += "SIMULATOR OK.";
@@ -1238,8 +1249,6 @@ namespace EasyCPDLC
                         {
                             throw new FSUIPCException(FSUIPCError.FSUIPC_ERR_NOTOPEN, "CONNECTION FAILED");
                         }
-
-
                     }
                     catch
                     {
@@ -1251,9 +1260,9 @@ namespace EasyCPDLC
             }
             else
             {
-                if (!(currentATCUnit is null))
+                if (CurrentATCUnit is not null)
                 {
-                    await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
+                    await SendCPDLCMessage(CurrentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
                 }
                 foreach(Contract _contract in contracts)
                 {
@@ -1265,26 +1274,26 @@ namespace EasyCPDLC
                 vatsimData = new VATSIMRootobject();
                 userVATSIMData = new Pilot();
                 simbriefData = new Navlog();
-                fsConnectionOpen = fsuipc.CloseConnection();
+                fsConnectionOpen = FSUIPCData.CloseConnection();
 
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;
-                connected = false;
+                Connected = false;
 
                 WriteMessage(response, "SYSTEM", "SYSTEM");
 
             }
         }
-        private void telexButton_Click(object sender, EventArgs e)
+        private void TelexButton_Click(object sender, EventArgs e)
         {
             tForm = new TelexForm(this);
             tForm.Show();
         }
-        private void requestButton_Click(object sender, EventArgs e)
+        private void RequestButton_Click(object sender, EventArgs e)
         {
             rForm = new RequestForm(this)
             {
-                TopMost = stayOnTop
+                TopMost = StayOnTop
             };
             rForm.Show();
         }
@@ -1295,14 +1304,14 @@ namespace EasyCPDLC
             Properties.Settings.Default.MainWindowSize = Size;
             Properties.Settings.Default.Save();
 
-            if (!(currentATCUnit is null))
+            if (CurrentATCUnit is not null)
             {
-                await SendCPDLCMessage(currentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
+                await SendCPDLCMessage(CurrentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), true, false);
                 requestCancellationTokenSource.Cancel();
             }
         }
 
-        private void outputTable_Click(object sender, EventArgs e)
+        private void OutputTable_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
 
@@ -1321,7 +1330,7 @@ namespace EasyCPDLC
         {
             if (m.Msg == 0x84)
             {  // Trap WM_NCHITTEST
-                Point pos = new Point(m.LParam.ToInt32());
+                Point pos = new(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
                 if (pos.Y < cCaption)
                 {
@@ -1337,18 +1346,19 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
-        private void settingsButton_Click(object sender, EventArgs e)
+        private void SettingsButton_Click(object sender, EventArgs e)
         {
             sForm = new SettingsForm(this)
             {
-                TopMost = stayOnTop
+                TopMost = StayOnTop
             };
             sForm.Show();
         }
 
-        private void helpButton_Click(object sender, EventArgs e)
+        private void HelpButton_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/josh-seagrave/EasyCPDLC/wiki");
+            //worst bodge I've ever had to pull, thanks to this: github.com/dotnet/runtime/issues/17938
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/josh-seagrave/EasyCPDLC/wiki"){ UseShellExecute = true });
             MessageBox.Show(
                 @"EasyCPDLC
 Copyright(C) 2022 Joshua Seagrave

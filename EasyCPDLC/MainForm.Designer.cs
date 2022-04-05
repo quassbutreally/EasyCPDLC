@@ -48,9 +48,10 @@
             // 
             this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.titleLabel.Location = new System.Drawing.Point(334, 3);
+            this.titleLabel.Location = new System.Drawing.Point(397, 6);
+            this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
             this.titleLabel.TabIndex = 0;
@@ -64,15 +65,16 @@
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.exitButton.Location = new System.Drawing.Point(531, 0);
+            this.exitButton.Location = new System.Drawing.Point(617, 4);
+            this.exitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(24, 24);
+            this.exitButton.Size = new System.Drawing.Size(28, 28);
             this.exitButton.TabIndex = 7;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // outputTable
             // 
@@ -85,68 +87,73 @@
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.5F));
             this.outputTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.outputTable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
-            this.outputTable.Location = new System.Drawing.Point(12, 66);
+            this.outputTable.Location = new System.Drawing.Point(14, 76);
+            this.outputTable.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.outputTable.Name = "outputTable";
-            this.outputTable.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.outputTable.Padding = new System.Windows.Forms.Padding(0, 0, 12, 0);
             this.outputTable.RowCount = 1;
             this.outputTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputTable.Size = new System.Drawing.Size(528, 127);
+            this.outputTable.Size = new System.Drawing.Size(616, 147);
             this.outputTable.TabIndex = 3;
             this.outputTable.TabStop = true;
-            this.outputTable.Click += new System.EventHandler(this.outputTable_Click);
+            this.outputTable.Click += new System.EventHandler(this.OutputTable_Click);
             // 
             // atcButton
             // 
             this.atcButton.Enabled = false;
             this.atcButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.atcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.atcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.atcButton.Location = new System.Drawing.Point(243, 12);
+            this.atcButton.Location = new System.Drawing.Point(284, 14);
+            this.atcButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.atcButton.Name = "atcButton";
-            this.atcButton.Size = new System.Drawing.Size(90, 48);
+            this.atcButton.Size = new System.Drawing.Size(105, 55);
             this.atcButton.TabIndex = 2;
             this.atcButton.Text = "ATC";
             this.atcButton.UseVisualStyleBackColor = true;
-            this.atcButton.Click += new System.EventHandler(this.requestButton_Click);
+            this.atcButton.Click += new System.EventHandler(this.RequestButton_Click);
             // 
             // telexButton
             // 
             this.telexButton.Enabled = false;
             this.telexButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.telexButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.telexButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.telexButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.telexButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.telexButton.Location = new System.Drawing.Point(147, 12);
+            this.telexButton.Location = new System.Drawing.Point(172, 14);
+            this.telexButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.telexButton.Name = "telexButton";
-            this.telexButton.Size = new System.Drawing.Size(90, 48);
+            this.telexButton.Size = new System.Drawing.Size(105, 55);
             this.telexButton.TabIndex = 1;
             this.telexButton.Text = "TELEX";
             this.telexButton.UseVisualStyleBackColor = true;
-            this.telexButton.Click += new System.EventHandler(this.telexButton_Click);
+            this.telexButton.Click += new System.EventHandler(this.TelexButton_Click);
             // 
             // retrieveButton
             // 
             this.retrieveButton.Enabled = false;
             this.retrieveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.retrieveButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.retrieveButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.retrieveButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.retrieveButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.retrieveButton.Location = new System.Drawing.Point(12, 12);
+            this.retrieveButton.Location = new System.Drawing.Point(14, 14);
+            this.retrieveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.retrieveButton.Name = "retrieveButton";
-            this.retrieveButton.Size = new System.Drawing.Size(129, 48);
+            this.retrieveButton.Size = new System.Drawing.Size(150, 55);
             this.retrieveButton.TabIndex = 0;
             this.retrieveButton.Text = "CONNECT";
             this.retrieveButton.UseVisualStyleBackColor = true;
-            this.retrieveButton.Click += new System.EventHandler(this.retrieveButton_Click);
+            this.retrieveButton.Click += new System.EventHandler(this.RetrieveButton_Click);
             // 
             // atcUnitLabel
             // 
             this.atcUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitLabel.AutoSize = true;
-            this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.atcUnitLabel.Location = new System.Drawing.Point(337, 44);
+            this.atcUnitLabel.Location = new System.Drawing.Point(403, 49);
+            this.atcUnitLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.atcUnitLabel.Name = "atcUnitLabel";
             this.atcUnitLabel.Size = new System.Drawing.Size(134, 19);
             this.atcUnitLabel.TabIndex = 0;
@@ -156,9 +163,10 @@
             // 
             this.atcUnitDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitDisplay.AutoSize = true;
-            this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcUnitDisplay.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.atcUnitDisplay.Location = new System.Drawing.Point(472, 44);
+            this.atcUnitDisplay.Location = new System.Drawing.Point(551, 49);
+            this.atcUnitDisplay.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.atcUnitDisplay.Name = "atcUnitDisplay";
             this.atcUnitDisplay.Size = new System.Drawing.Size(29, 19);
             this.atcUnitDisplay.TabIndex = 0;
@@ -171,15 +179,16 @@
             this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.helpButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.helpButton.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold);
+            this.helpButton.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.helpButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.helpButton.Location = new System.Drawing.Point(515, -3);
+            this.helpButton.Location = new System.Drawing.Point(598, 1);
+            this.helpButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(23, 27);
+            this.helpButton.Size = new System.Drawing.Size(27, 31);
             this.helpButton.TabIndex = 6;
             this.helpButton.Text = "?";
             this.helpButton.UseVisualStyleBackColor = true;
-            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
             // 
             // messageFormatPanel
             // 
@@ -189,10 +198,11 @@
             this.messageFormatPanel.AutoScroll = true;
             this.messageFormatPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.messageFormatPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.messageFormatPanel.Location = new System.Drawing.Point(12, 66);
+            this.messageFormatPanel.Location = new System.Drawing.Point(14, 76);
+            this.messageFormatPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.messageFormatPanel.Name = "messageFormatPanel";
-            this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
-            this.messageFormatPanel.Size = new System.Drawing.Size(528, 127);
+            this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(12, 0, 0, 35);
+            this.messageFormatPanel.Size = new System.Drawing.Size(614, 146);
             this.messageFormatPanel.TabIndex = 4;
             this.messageFormatPanel.TabStop = true;
             this.messageFormatPanel.Visible = false;
@@ -205,27 +215,29 @@
             this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.settingsButton.ImageIndex = 0;
             this.settingsButton.ImageList = this.iconList;
-            this.settingsButton.Location = new System.Drawing.Point(515, 21);
+            this.settingsButton.Location = new System.Drawing.Point(576, 5);
+            this.settingsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.settingsButton.Name = "settingsButton";
-            this.settingsButton.Size = new System.Drawing.Size(20, 20);
+            this.settingsButton.Size = new System.Drawing.Size(23, 23);
             this.settingsButton.TabIndex = 5;
             this.settingsButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.settingsButton.UseVisualStyleBackColor = true;
-            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            this.settingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
             // 
             // iconList
             // 
+            this.iconList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.iconList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("iconList.ImageStream")));
             this.iconList.TransparentColor = System.Drawing.Color.Transparent;
             this.iconList.Images.SetKeyName(0, "cog-wheel-gear-setting.png");
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(552, 202);
+            this.ClientSize = new System.Drawing.Size(644, 233);
             this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.atcUnitDisplay);
             this.Controls.Add(this.atcUnitLabel);
@@ -239,9 +251,10 @@
             this.Controls.Add(this.outputTable);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(552, 202);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MinimumSize = new System.Drawing.Size(644, 233);
             this.Name = "MainForm";
-            this.Text = "MainForm";
+            this.Text = "9";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindow);

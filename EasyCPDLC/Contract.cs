@@ -48,7 +48,7 @@ namespace EasyCPDLC
         {
             try
             {
-                if (parent.useFSUIPC)
+                if (MainForm.UseFSUIPC)
                 {
                     string message = String.Format("REPORT {0} {1} {2} {3} {4}",
                     parent.callsign,

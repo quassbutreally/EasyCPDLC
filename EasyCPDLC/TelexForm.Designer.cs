@@ -91,7 +91,7 @@
             this.sendButton.TabIndex = 5;
             this.sendButton.Text = "SEND";
             this.sendButton.UseVisualStyleBackColor = true;
-            this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
+            this.sendButton.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // exitButton
             // 
@@ -109,7 +109,7 @@
             this.exitButton.TabIndex = 6;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // titleLabel
             // 
@@ -136,7 +136,7 @@
             this.freeTextButton.TabIndex = 0;
             this.freeTextButton.Text = "FREE TEXT";
             this.freeTextButton.UseVisualStyleBackColor = true;
-            this.freeTextButton.Click += new System.EventHandler(this.freeTextButton_Click);
+            this.freeTextButton.Click += new System.EventHandler(this.FreeTextButton_Click);
             // 
             // metarButton
             // 
@@ -150,7 +150,7 @@
             this.metarButton.TabIndex = 1;
             this.metarButton.Text = "METAR";
             this.metarButton.UseVisualStyleBackColor = true;
-            this.metarButton.Click += new System.EventHandler(this.metarButton_Click);
+            this.metarButton.Click += new System.EventHandler(this.MetarButton_Click);
             // 
             // atisButton
             // 
@@ -164,7 +164,7 @@
             this.atisButton.TabIndex = 2;
             this.atisButton.Text = "ATIS";
             this.atisButton.UseVisualStyleBackColor = true;
-            this.atisButton.Click += new System.EventHandler(this.atisButton_Click);
+            this.atisButton.Click += new System.EventHandler(this.AtisButton_Click);
             // 
             // radioContainer
             // 

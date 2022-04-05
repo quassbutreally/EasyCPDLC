@@ -67,9 +67,10 @@ namespace EasyCPDLC
             // titleLabel
             // 
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.titleLabel.Location = new System.Drawing.Point(11, 137);
+            this.titleLabel.Location = new System.Drawing.Point(28, 158);
+            this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
             this.titleLabel.TabIndex = 1;
@@ -80,11 +81,12 @@ namespace EasyCPDLC
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.exitButton.Location = new System.Drawing.Point(186, 0);
+            this.exitButton.Location = new System.Drawing.Point(217, 0);
+            this.exitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(24, 24);
+            this.exitButton.Size = new System.Drawing.Size(28, 28);
             this.exitButton.TabIndex = 2;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
@@ -93,9 +95,10 @@ namespace EasyCPDLC
             // hoppieLogonLabel
             // 
             this.hoppieLogonLabel.AutoSize = true;
-            this.hoppieLogonLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hoppieLogonLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.hoppieLogonLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.hoppieLogonLabel.Location = new System.Drawing.Point(28, 184);
+            this.hoppieLogonLabel.Location = new System.Drawing.Point(48, 217);
+            this.hoppieLogonLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.hoppieLogonLabel.Name = "hoppieLogonLabel";
             this.hoppieLogonLabel.Size = new System.Drawing.Size(147, 19);
             this.hoppieLogonLabel.TabIndex = 3;
@@ -104,9 +107,10 @@ namespace EasyCPDLC
             // vatsimCIDLabel
             // 
             this.vatsimCIDLabel.AutoSize = true;
-            this.vatsimCIDLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.vatsimCIDLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.vatsimCIDLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.vatsimCIDLabel.Location = new System.Drawing.Point(56, 242);
+            this.vatsimCIDLabel.Location = new System.Drawing.Point(76, 280);
+            this.vatsimCIDLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.vatsimCIDLabel.Name = "vatsimCIDLabel";
             this.vatsimCIDLabel.Size = new System.Drawing.Size(90, 19);
             this.vatsimCIDLabel.TabIndex = 4;
@@ -116,9 +120,10 @@ namespace EasyCPDLC
             // 
             this.rememberCheckBox.AutoSize = true;
             this.rememberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.rememberCheckBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rememberCheckBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.rememberCheckBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.rememberCheckBox.Location = new System.Drawing.Point(39, 300);
+            this.rememberCheckBox.Location = new System.Drawing.Point(56, 342);
+            this.rememberCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rememberCheckBox.Name = "rememberCheckBox";
             this.rememberCheckBox.Size = new System.Drawing.Size(130, 23);
             this.rememberCheckBox.TabIndex = 7;
@@ -129,11 +134,12 @@ namespace EasyCPDLC
             // 
             this.connectButton.Enabled = false;
             this.connectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.connectButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.connectButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.connectButton.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.connectButton.Location = new System.Drawing.Point(34, 329);
+            this.connectButton.Location = new System.Drawing.Point(40, 380);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(140, 29);
+            this.connectButton.Size = new System.Drawing.Size(163, 33);
             this.connectButton.TabIndex = 8;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
@@ -142,9 +148,10 @@ namespace EasyCPDLC
             // pictureBox1
             // 
             this.pictureBox1.Image = global::EasyCPDLC.Properties.Resources.Stretchboard;
-            this.pictureBox1.Location = new System.Drawing.Point(13, -19);
+            this.pictureBox1.Location = new System.Drawing.Point(28, -18);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(197, 150);
+            this.pictureBox1.Size = new System.Drawing.Size(230, 173);
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataEntry_MouseDown);
@@ -154,21 +161,23 @@ namespace EasyCPDLC
             this.roundPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.roundPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roundPanel2.Controls.Add(this.vatsimCIDTextBox);
-            this.roundPanel2.Location = new System.Drawing.Point(15, 262);
+            this.roundPanel2.Location = new System.Drawing.Point(17, 302);
+            this.roundPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.roundPanel2.Name = "roundPanel2";
-            this.roundPanel2.Size = new System.Drawing.Size(179, 30);
+            this.roundPanel2.Size = new System.Drawing.Size(208, 34);
             this.roundPanel2.TabIndex = 11;
             // 
             // vatsimCIDTextBox
             // 
             this.vatsimCIDTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.vatsimCIDTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.vatsimCIDTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.vatsimCIDTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.vatsimCIDTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.vatsimCIDTextBox.Location = new System.Drawing.Point(-1, 6);
+            this.vatsimCIDTextBox.Location = new System.Drawing.Point(7, 8);
+            this.vatsimCIDTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.vatsimCIDTextBox.MaxLength = 7;
             this.vatsimCIDTextBox.Name = "vatsimCIDTextBox";
-            this.vatsimCIDTextBox.Size = new System.Drawing.Size(179, 19);
+            this.vatsimCIDTextBox.Size = new System.Drawing.Size(192, 19);
             this.vatsimCIDTextBox.TabIndex = 1;
             this.vatsimCIDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.vatsimCIDTextBox_TextChanged);
@@ -179,31 +188,33 @@ namespace EasyCPDLC
             this.roundPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.roundPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roundPanel1.Controls.Add(this.hoppieCodeTextBox);
-            this.roundPanel1.Location = new System.Drawing.Point(15, 207);
+            this.roundPanel1.Location = new System.Drawing.Point(17, 239);
+            this.roundPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.roundPanel1.Name = "roundPanel1";
-            this.roundPanel1.Size = new System.Drawing.Size(179, 30);
+            this.roundPanel1.Size = new System.Drawing.Size(208, 34);
             this.roundPanel1.TabIndex = 10;
             // 
             // hoppieCodeTextBox
             // 
             this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F);
+            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.hoppieCodeTextBox.Location = new System.Drawing.Point(-1, 5);
+            this.hoppieCodeTextBox.Location = new System.Drawing.Point(7, 7);
+            this.hoppieCodeTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hoppieCodeTextBox.MaxLength = 18;
             this.hoppieCodeTextBox.Name = "hoppieCodeTextBox";
-            this.hoppieCodeTextBox.Size = new System.Drawing.Size(179, 19);
+            this.hoppieCodeTextBox.Size = new System.Drawing.Size(192, 19);
             this.hoppieCodeTextBox.TabIndex = 0;
             this.hoppieCodeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
             // 
             // DataEntry
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(209, 375);
+            this.ClientSize = new System.Drawing.Size(244, 433);
             this.Controls.Add(this.roundPanel2);
             this.Controls.Add(this.roundPanel1);
             this.Controls.Add(this.connectButton);
@@ -216,6 +227,7 @@ namespace EasyCPDLC
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "DataEntry";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DataEntry";

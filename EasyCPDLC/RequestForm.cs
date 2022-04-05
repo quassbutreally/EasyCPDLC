@@ -32,11 +32,11 @@ namespace EasyCPDLC
         private const int cCaption = 32;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
 
-        private readonly ContextMenuStrip popupMenu = new ContextMenuStrip();
+        private readonly ContextMenuStrip popupMenu = new();
         private ToolStripMenuItem directRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem levelRequestMenu;// = new ToolStripMenuItem();
         private ToolStripMenuItem speedRequestMenu;// = new ToolStripMenuItem();
@@ -47,19 +47,19 @@ namespace EasyCPDLC
         UITextBox fix2;
         UITextBox fix3;
 
-        private readonly MainForm parent;
+        private readonly MainForm MainForm;
         private readonly Pilot userVATSIMData;
         private readonly Color controlBackColor;
         private readonly Color controlFrontColor;
 
-        private readonly Dictionary<string, string> rsnConversion = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> rsnConversion = new();
 
         private readonly Font controlFontBold;
         private readonly Font textFont;
         private readonly Font textFontBold;
 
         private bool _needsLogon;
-        public bool needsLogon
+        public bool NeedsLogon
         {
             get
             {
@@ -88,15 +88,15 @@ namespace EasyCPDLC
         public RequestForm(MainForm parent)
         {
             InitializeComponent();
-            this.parent = parent;
+            this.MainForm = parent;
             this.TopMost = parent.TopMost;
-            if (this.parent.currentATCUnit != null)
+            if (this.MainForm.CurrentATCUnit != null)
             {
-                needsLogon = false;
+                NeedsLogon = false;
             }
             else
             {
-                needsLogon = true;
+                NeedsLogon = true;
             }
 
             userVATSIMData = parent.userVATSIMData;
@@ -122,7 +122,7 @@ namespace EasyCPDLC
 
         private ToolStripMenuItem CreateMenuItem(string name)
         {
-            ToolStripMenuItem _temp = new ToolStripMenuItem(name)
+            ToolStripMenuItem _temp = new(name)
             {
                 BackColor = Color.FromArgb(28, 28, 28),
                 ForeColor = controlFrontColor,
@@ -157,15 +157,15 @@ namespace EasyCPDLC
             directRadioButton.Checked = true;
 
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.CurrentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("REQUEST DIRECT TO "));
-            messageFormatPanel.Controls.Add(createAutoFillTextBox("", 7, parent.reportFixes));
+            messageFormatPanel.Controls.Add(CreateTemplate("REQUEST DIRECT TO "));
+            messageFormatPanel.Controls.Add(CreateAutoFillTextBox("", 7, MainForm.reportFixes));
             messageFormatPanel.Controls.Add(dummyLabel);
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
 
 
         }
@@ -175,14 +175,14 @@ namespace EasyCPDLC
             levelRadioButton.Checked = true;
 
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.CurrentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("REQUEST FL"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("REQUEST FL"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
         private void SpeedRequestClick(object sender, EventArgs e)
@@ -190,20 +190,20 @@ namespace EasyCPDLC
             speedRadioButton.Checked = true;
 
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.CurrentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("REQUEST"));
+            messageFormatPanel.Controls.Add(CreateTemplate("REQUEST"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], false);
-            messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "unitParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
-            messageFormatPanel.Controls.Add(createTemplate("   "));
-            messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "unitParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
-            messageFormatPanel.Controls.Add(createTemplate("KTS"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("MACH: M0.", "unitParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 2, false, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("   "));
+            messageFormatPanel.Controls.Add(CreateCheckBox("SPEED: ", "unitParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("KTS"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO WX", "rsnParam"));
-            messageFormatPanel.Controls.Add(createCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO WX", "rsnParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"));
         }
 
         private void WhenCanWeRequestClick(object sender, EventArgs e)
@@ -211,96 +211,96 @@ namespace EasyCPDLC
             wcwRadioButton.Checked = true;
 
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.CurrentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("WHEN CAN WE EXPECT:"));
+            messageFormatPanel.Controls.Add(CreateTemplate("WHEN CAN WE EXPECT:"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("HIGHER LEVEL?", "wcwParam"));
-            messageFormatPanel.Controls.Add(createCheckBox("LOWER LEVEL?", "wcwParam"));
-            messageFormatPanel.Controls.Add(createCheckBox("BACK ON ROUTE?", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("HIGHER LEVEL?", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("LOWER LEVEL?", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("BACK ON ROUTE?", "wcwParam"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("CLIMB TO: FL", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
-            messageFormatPanel.Controls.Add(createCheckBox("DESCENT TO: FL", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(CreateCheckBox("CLIMB TO: FL", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(CreateCheckBox("DESCENT TO: FL", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 3, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createCheckBox("SPEED: ", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 3, false, true));
-            messageFormatPanel.Controls.Add(createTemplate("KTS"));
-            messageFormatPanel.Controls.Add(createCheckBox("MACH: M0.", "wcwParam"));
-            messageFormatPanel.Controls.Add(createTextBox("", 2, false, true));
+            messageFormatPanel.Controls.Add(CreateCheckBox("SPEED: ", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 3, false, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("KTS"));
+            messageFormatPanel.Controls.Add(CreateCheckBox("MACH: M0.", "wcwParam"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 2, false, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
         }
 
-        private void pdcButton_Click(object sender, EventArgs e)
+        private void PdcButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.departure, 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("REQUEST PREDEP CLEARANCE"));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.callsign, 7));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.aircraft_short, 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("REQUEST PREDEP CLEARANCE"));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.callsign, 7));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.aircraft_short, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("TO"));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.arrival, 4));
-            messageFormatPanel.Controls.Add(createTemplate("AT"));
-            messageFormatPanel.Controls.Add(createTextBox(userVATSIMData.flight_plan.departure, 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("TO"));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.arrival, 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("AT"));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("STAND"));
-            messageFormatPanel.Controls.Add(createTextBox("", 4));
-            messageFormatPanel.Controls.Add(createTemplate("ATIS"));
-            messageFormatPanel.Controls.Add(createTextBox("", 1));
+            messageFormatPanel.Controls.Add(CreateTemplate("STAND"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("ATIS"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 1));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateMultiLineBox(""));
 
             pdcRadioButton.Checked = true;
         }
 
-        private void reportButton_Click(object sender, EventArgs e)
+        private void ReportButton_Click(object sender, EventArgs e)
         {
-            fix1 = createAutoFillTextBox("", 7, parent.reportFixes);
+            fix1 = CreateAutoFillTextBox("", 7, MainForm.reportFixes);
             fix1.TextChanged += PreFill;
-            fix2 = createTextBox("", 7);
-            fix3 = createTextBox("", 7);
+            fix2 = CreateTextBox("", 7);
+            fix3 = CreateTextBox("", 7);
 
-            fix1.Text = parent.nextFix ?? "";
+            fix1.Text = MainForm.nextFix ?? "";
 
             reportRadioButton.Checked = true;
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.CurrentATCUnit, 4, true));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("POSITION REPORT"));
+            messageFormatPanel.Controls.Add(CreateTemplate("POSITION REPORT"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("OVERHEAD"));
+            messageFormatPanel.Controls.Add(CreateTemplate("OVERHEAD"));
             messageFormatPanel.Controls.Add(fix1);
-            messageFormatPanel.Controls.Add(createTemplate("AT"));
-            messageFormatPanel.Controls.Add(createTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
-            messageFormatPanel.Controls.Add(createTemplate("Z"));
-            messageFormatPanel.Controls.Add(createTemplate("FL"));
-            messageFormatPanel.Controls.Add(createTextBox(parent.useFSUIPC ? (Math.Round(parent.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.flight_plan.altitude.Substring(0, 3), 3));
+            messageFormatPanel.Controls.Add(CreateTemplate("AT"));
+            messageFormatPanel.Controls.Add(CreateTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("Z"));
+            messageFormatPanel.Controls.Add(CreateTemplate("FL"));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.UseFSUIPC ? (Math.Round(MainForm.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.flight_plan.altitude[..3], 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("NEXT"));
+            messageFormatPanel.Controls.Add(CreateTemplate("NEXT"));
             messageFormatPanel.Controls.Add(fix2);
-            messageFormatPanel.Controls.Add(createTemplate("AT"));
-            messageFormatPanel.Controls.Add(createTextBox("", 4));
-            messageFormatPanel.Controls.Add(createTemplate("Z"));
+            messageFormatPanel.Controls.Add(CreateTemplate("AT"));
+            messageFormatPanel.Controls.Add(CreateTextBox("", 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("Z"));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-            messageFormatPanel.Controls.Add(createTemplate("THEN"));
+            messageFormatPanel.Controls.Add(CreateTemplate("THEN"));
             messageFormatPanel.Controls.Add(fix3);
 
         }
 
         private void PreFill(object sender, EventArgs e)
         {
-            if (parent.reportFixes != null && parent.reportFixes.Contains(fix1.Text))
+            if (MainForm.reportFixes != null && MainForm.reportFixes.Contains(fix1.Text))
             {
-                int refIndex = Array.IndexOf(parent.reportFixes, fix1.Text);
+                int refIndex = Array.IndexOf(MainForm.reportFixes, fix1.Text);
                 try
                 {
-                    fix3.Text = parent.reportFixes[refIndex + 2];
+                    fix3.Text = MainForm.reportFixes[refIndex + 2];
                 }
                 catch
                 {
@@ -308,7 +308,7 @@ namespace EasyCPDLC
                 }
                 try
                 {
-                    fix2.Text = parent.reportFixes[refIndex + 1];
+                    fix2.Text = MainForm.reportFixes[refIndex + 1];
                 }
                 catch
                 {
@@ -323,18 +323,18 @@ namespace EasyCPDLC
 
         }
 
-        private void logonButton_Click(object sender, EventArgs e)
+        private void LogonButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
-            messageFormatPanel.Controls.Add(createTemplate("ATC UNIT:"));
-            messageFormatPanel.Controls.Add(createTextBox(needsLogon ? "" : parent.currentATCUnit, 4));
+            messageFormatPanel.Controls.Add(CreateTemplate("ATC UNIT:"));
+            messageFormatPanel.Controls.Add(CreateTextBox(NeedsLogon ? "" : MainForm.CurrentATCUnit, 4));
 
             logonRadioButton.Checked = true;
         }
 
-        private UITextBox createAutoFillTextBox(string _text, int _maxLength, string[] _source)
+        private UITextBox CreateAutoFillTextBox(string _text, int _maxLength, string[] _source)
         {
-            UITextBox _temp = createTextBox(_text, _maxLength);
+            UITextBox _temp = CreateTextBox(_text, _maxLength);
             _temp.AutoCompleteMode = AutoCompleteMode.Append;
             _temp.AutoCompleteSource = AutoCompleteSource.CustomSource;
             var autoComplete = new AutoCompleteStringCollection();
@@ -348,9 +348,9 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private AccessibleLabel createTemplate(string _text)
+        private AccessibleLabel CreateTemplate(string _text)
         {
-            AccessibleLabel _temp = new AccessibleLabel(controlFrontColor)
+            AccessibleLabel _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -369,9 +369,9 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private UITextBox createTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
+        private UITextBox CreateTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -411,9 +411,9 @@ namespace EasyCPDLC
             }
         }
 
-        private UICheckBox createCheckBox(string _text, string _group)
-        {
-            UICheckBox _temp = new UICheckBox(_group)
+        private UICheckBox CreateCheckBox(string _text, string _group)
+        {         
+            UICheckBox _temp = new(_group)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -443,7 +443,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -467,17 +467,17 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
+        private void ClearButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
         }
 
-        private async void sendButton_Click(object sender, EventArgs e)
+        private async void SendButton_Click(object sender, EventArgs e)
         {
 
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
@@ -507,7 +507,7 @@ namespace EasyCPDLC
                         {
                             _formatMessage += messageFormatPanel.Controls[i].Text + " ";
                         }
-                        await parent.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+                        await MainForm.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
                         break;
 
                     case "logonRadioButton":
@@ -521,44 +521,44 @@ namespace EasyCPDLC
                         }
 
                         _recipient = messageFormatPanel.Controls[1].Text;
-                        if (needsLogon)
+                        if (NeedsLogon)
                         {
-                            _formatMessage = String.Format("/data2/{0}//Y/REQUEST LOGON", parent.messageOutCounter);
-                            parent.pendingLogon = _recipient;
+                            _formatMessage = String.Format("/data2/{0}//Y/REQUEST LOGON", MainForm.messageOutCounter);
+                            MainForm.pendingLogon = _recipient;
                         }
                         else
                         {
-                            _formatMessage = String.Format("/data2/{0}//N/LOGOFF", parent.messageOutCounter);
-                            parent.currentATCUnit = null;
+                            _formatMessage = String.Format("/data2/{0}//N/LOGOFF", MainForm.messageOutCounter);
+                            MainForm.CurrentATCUnit = null;
 
                         }
-                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
-                        parent.messageOutCounter += 1;
+                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        MainForm.messageOutCounter += 1;
 
                         break;
 
                     case "requestRadioButton":
 
-                        _formatMessage = String.Format("/data2/{0}//Y/", parent.messageOutCounter);
+                        _formatMessage = String.Format("/data2/{0}//Y/", MainForm.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string parsedMessage = ParseRequest();
 
                         if (parsedMessage == "")
                         {
-                            parent.WriteMessage("ERROR PARSING CPDLC MESSAGE. NO MESSAGE SENT", "SYSTEM", "SYSTEM");
+                            MainForm.WriteMessage("ERROR PARSING CPDLC MESSAGE. NO MESSAGE SENT", "SYSTEM", "SYSTEM");
                             break;
                         }
 
                         _formatMessage += parsedMessage;
 
-                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
-                        parent.messageOutCounter += 1;
+                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        MainForm.messageOutCounter += 1;
 
                         break;
 
                     case "reportRadioButton":
 
-                        _formatMessage = String.Format("/data2/{0}//N/", parent.messageOutCounter);
+                        _formatMessage = String.Format("/data2/{0}//N/", MainForm.messageOutCounter);
                         _recipient = messageFormatPanel.Controls[1].Text;
                         string _messageContent = String.Format("POSITION REPORT PPOS {0} AT {1}Z FL{2} TO {3} AT {4}Z NEXT {5}",
                             fix1.Text,
@@ -569,9 +569,9 @@ namespace EasyCPDLC
                             fix3.Text);
                         _formatMessage += _messageContent;
 
-                        await parent.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
-                        parent.messageOutCounter += 1;
-                        parent.nextFix = fix2.Text;
+                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        MainForm.messageOutCounter += 1;
+                        MainForm.nextFix = fix2.Text;
                         break;
 
 
@@ -736,7 +736,7 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 
@@ -755,16 +755,14 @@ namespace EasyCPDLC
             ScrollToBottom(messageFormatPanel);
         }
 
-        private void ScrollToBottom(FlowLayoutPanel p)
+        private static void ScrollToBottom(FlowLayoutPanel p)
         {
-            using (Control c = new Control() { Parent = p, Dock = DockStyle.Bottom })
-            {
-                p.ScrollControlIntoView(c);
-                c.Parent = null;
-            }
+            using Control c = new() { Parent = p, Dock = DockStyle.Bottom };
+            p.ScrollControlIntoView(c);
+            c.Parent = null;
         }
 
-        private void requestButton_Click(object sender, EventArgs e)
+        private void RequestButton_Click(object sender, EventArgs e)
         {
             requestRadioButton.Checked = true;
 
@@ -782,7 +780,7 @@ namespace EasyCPDLC
         {
             if (m.Msg == 0x84)
             {  // Trap WM_NCHITTEST
-                Point pos = new Point(m.LParam.ToInt32());
+                Point pos = new(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
                 if (pos.Y < cCaption)
                 {

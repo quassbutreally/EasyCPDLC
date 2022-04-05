@@ -7,7 +7,7 @@ namespace EasyCPDLC
     {
         public static UITextBox CreateTextBox(string _text, int _maxLength, Color _controlFrontColor, Color _controlBackColor, Font _font)
         {
-            UITextBox _temp = new UITextBox(_controlFrontColor)
+            UITextBox _temp = new(_controlFrontColor)
             {
                 BackColor = _controlBackColor,
                 ForeColor = _controlFrontColor,
@@ -34,7 +34,7 @@ namespace EasyCPDLC
 
         public static Label CreateTemplate(string _text, Color _controlFrontColor, Color _controlBackColor, Font _font)
         {
-            Label _temp = new Label
+            Label _temp = new()
             {
                 BackColor = _controlBackColor,
                 ForeColor = _controlFrontColor,

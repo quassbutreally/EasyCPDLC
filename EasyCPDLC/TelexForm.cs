@@ -36,9 +36,9 @@ namespace EasyCPDLC
         private const int cCaption = 32;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
 
         private readonly MainForm parent;
         private readonly Color controlBackColor;
@@ -61,7 +61,7 @@ namespace EasyCPDLC
 
         private AccessibleLabel CreateTemplate(string _text)
         {
-            AccessibleLabel _temp = new AccessibleLabel(controlFrontColor)
+            AccessibleLabel _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -82,7 +82,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateTextBox(string _text, int _maxLength)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -111,7 +111,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -135,7 +135,7 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -145,7 +145,7 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
         private void ReloadPanel(object sender, EventArgs e)
@@ -177,16 +177,14 @@ namespace EasyCPDLC
             ScrollToBottom(messageFormatPanel);
         }
 
-        private void ScrollToBottom(FlowLayoutPanel p)
+        private static void ScrollToBottom(FlowLayoutPanel p)
         {
-            using (Control c = new Control() { Parent = p, Dock = DockStyle.Bottom })
-            {
-                p.ScrollControlIntoView(c);
-                c.Parent = null;
-            }
+            using Control c = new() { Parent = p, Dock = DockStyle.Bottom };
+            p.ScrollControlIntoView(c);
+            c.Parent = null;
         }
 
-        private async void sendButton_Click(object sender, EventArgs e)
+        private void SendButton_Click(object sender, EventArgs e)
         {
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
@@ -236,7 +234,7 @@ namespace EasyCPDLC
         {
             if (m.Msg == 0x84)
             {  // Trap WM_NCHITTEST
-                Point pos = new Point(m.LParam.ToInt32());
+                Point pos = new(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
                 if (pos.Y < cCaption)
                 {
@@ -252,7 +250,7 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
-        private void freeTextButton_Click(object sender, EventArgs e)
+        private void FreeTextButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
@@ -265,7 +263,7 @@ namespace EasyCPDLC
             freeTextRadioButton.Checked = true;
         }
 
-        private void metarButton_Click(object sender, EventArgs e)
+        private void MetarButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
@@ -289,7 +287,7 @@ namespace EasyCPDLC
             metarRadioButton.Checked = true;
         }
 
-        private void atisButton_Click(object sender, EventArgs e)
+        private void AtisButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
