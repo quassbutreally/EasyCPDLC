@@ -237,16 +237,16 @@ namespace EasyCPDLC
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("REQUEST PREDEP CLEARANCE"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.callsign, 7));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.aircraft_short, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.Callsign, 7));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.AircraftShort, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("TO"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.arrival, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Arrival, 4));
             messageFormatPanel.Controls.Add(CreateTemplate("AT"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("STAND"));
             messageFormatPanel.Controls.Add(CreateTextBox("", 4));
@@ -280,7 +280,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(CreateTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
             messageFormatPanel.Controls.Add(CreateTemplate("Z"));
             messageFormatPanel.Controls.Add(CreateTemplate("FL"));
-            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.UseFSUIPC ? (Math.Round(MainForm.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.flight_plan.altitude[..3], 3));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.UseFSUIPC ? (Math.Round(MainForm.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.FlightPlan.Altitude[..3], 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("NEXT"));
             messageFormatPanel.Controls.Add(fix2);

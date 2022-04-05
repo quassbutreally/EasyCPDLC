@@ -20,51 +20,56 @@ namespace EasyCPDLC
 
     public class Navlog
     {
-        public Fix[] fix { get; set; }
+        public Fix[] Fix { get; set; }
     }
 
     public class Fix
     {
-        public string ident { get; set; }
-        public string name { get; set; }
-        public string type { get; set; }
-        public object frequency { get; set; }
-        public string pos_lat { get; set; }
-        public string pos_long { get; set; }
-        public string stage { get; set; }
-        public string via_airway { get; set; }
-        public string is_sid_star { get; set; }
-        public string distance { get; set; }
-        public string track_true { get; set; }
-        public string track_mag { get; set; }
-        public string heading_true { get; set; }
-        public string heading_mag { get; set; }
-        public string altitude_feet { get; set; }
-        public string ind_airspeed { get; set; }
-        public string true_airspeed { get; set; }
-        public string mach { get; set; }
-        public string mach_thousandths { get; set; }
-        public string wind_component { get; set; }
-        public string groundspeed { get; set; }
-        public string time_leg { get; set; }
-        public string time_total { get; set; }
-        public string fuel_flow { get; set; }
-        public string fuel_leg { get; set; }
-        public string fuel_totalused { get; set; }
-        public string fuel_min_onboard { get; set; }
-        public string fuel_plan_onboard { get; set; }
-        public string oat { get; set; }
-        public string oat_isa_dev { get; set; }
-        public string wind_dir { get; set; }
-        public string wind_spd { get; set; }
-        public string shear { get; set; }
-        public string tropopause_feet { get; set; }
-        public string ground_height { get; set; }
-        public string mora { get; set; }
-        public string fir { get; set; }
-        public string fir_units { get; set; }
-        public string fir_valid_levels { get; set; }
-        public object wind_data { get; set; }
-        public object fir_crossing { get; set; }
+        public Fix(string mora)
+        {
+            this.Mora = mora;
+        }
+
+        public string Ident { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public object Frequency { get; set; }
+        public string Pos_lat { get; set; }
+        public string Pos_long { get; set; }
+        public string Stage { get; set; }
+        public string ViaAirway { get; set; }
+        public string IsSidStar { get; set; }
+        public string Distance { get; set; }
+        public string TrackTrue { get; set; }
+        public string TrackMag { get; set; }
+        public string HeadingTrue { get; set; }
+        public string HeadingMag { get; set; }
+        public string AltitudeFeet { get; set; }
+        public string IndAirspeed { get; set; }
+        public string TrueAirspeed { get; set; }
+        public string Mach { get; set; }
+        public string MachThousandths { get; set; }
+        public string WindComponent { get; set; }
+        public string Groundspeed { get; set; }
+        public string TimeLeg { get; set; }
+        public string TimeTotal { get; set; }
+        public string FuelFlow { get; set; }
+        public string FuelLeg { get; set; }
+        public string FuelTotalused { get; set; }
+        public string FuelMinOnboard { get; set; }
+        public string FuelPlanOnboard { get; set; }
+        public string Oat { get; set; }
+        public string OatIsaDev { get; set; }
+        public string WindDir { get; set; }
+        public string WindSpd { get; set; }
+        public string Shear { get; set; }
+        public string TropopauseFeet { get; set; }
+        public string GroundHeight { get; set; }
+        public string Mora { get; set; }
+        public string Fir { get; set; }
+        public string FirUnits { get; set; }
+        public string FirValidLevels { get; set; }
+        public object WindData { get; set; }
+        public object FirCrossing { get; set; }
     }
 }

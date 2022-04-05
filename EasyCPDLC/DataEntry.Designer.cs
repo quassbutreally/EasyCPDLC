@@ -90,7 +90,7 @@ namespace EasyCPDLC
             this.exitButton.TabIndex = 2;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // hoppieLogonLabel
             // 
@@ -143,7 +143,7 @@ namespace EasyCPDLC
             this.connectButton.TabIndex = 8;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
             // pictureBox1
             // 
@@ -180,7 +180,7 @@ namespace EasyCPDLC
             this.vatsimCIDTextBox.Size = new System.Drawing.Size(192, 19);
             this.vatsimCIDTextBox.TabIndex = 1;
             this.vatsimCIDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.vatsimCIDTextBox_TextChanged);
+            this.vatsimCIDTextBox.TextChanged += new System.EventHandler(this.VatsimCIDTextBox_TextChanged);
             this.vatsimCIDTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumsOnly);
             // 
             // roundPanel1
@@ -207,7 +207,7 @@ namespace EasyCPDLC
             this.hoppieCodeTextBox.Size = new System.Drawing.Size(192, 19);
             this.hoppieCodeTextBox.TabIndex = 0;
             this.hoppieCodeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.hoppieCodeTextBox_TextChanged);
+            this.hoppieCodeTextBox.TextChanged += new System.EventHandler(this.HoppieCodeTextBox_TextChanged);
             // 
             // DataEntry
             // 

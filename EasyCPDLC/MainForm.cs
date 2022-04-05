@@ -351,12 +351,12 @@ namespace EasyCPDLC
             popupMenu.ShowImageMargin = false;
 
             rogerLabel = CreateSpecialLabel("> ROGER", false);
-            rogerLabel.Click += (_sender, e) => RogerMessage(_sender, e, previewMessage);
-            rogerLabel.KeyDown += (_sender, e) => RogerMessage(_sender, e, previewMessage);
+            rogerLabel.Click += (_sender, e) => RogerMessage(e, previewMessage);
+            rogerLabel.KeyDown += (_sender, e) => RogerMessage(e, previewMessage);
 
             wilcoLabel = CreateSpecialLabel("> WILCO", false);
-            wilcoLabel.Click += (_sender, e) => WilcoMessage(_sender, e, previewMessage);
-            wilcoLabel.KeyDown += (_sender, e) => WilcoMessage(_sender, e, previewMessage);
+            wilcoLabel.Click += (_sender, e) => WilcoMessage(e, previewMessage);
+            wilcoLabel.KeyDown += (_sender, e) => WilcoMessage(e, previewMessage);
 
             standbyLabel = CreateSpecialLabel("> STANDBY", false);
             standbyLabel.Click += (_sender, e) => StandbyMessage(e, previewMessage);
@@ -367,8 +367,8 @@ namespace EasyCPDLC
             unableLabel.KeyDown += (_sender, e) => UnableMessage(e, previewMessage);
 
             affirmativeLabel = CreateSpecialLabel("> AFFIRM", false);
-            affirmativeLabel.Click += (_sender, e) => AffirmativeMessage(_sender, e, previewMessage);
-            affirmativeLabel.KeyDown += (_sender, e) => AffirmativeMessage(_sender, e, previewMessage);
+            affirmativeLabel.Click += (_sender, e) => AffirmativeMessage(e, previewMessage);
+            affirmativeLabel.KeyDown += (_sender, e) => AffirmativeMessage(e, previewMessage);
 
             negativeLabel = CreateSpecialLabel("> NEGATIVE", false);
             negativeLabel.Click += (_sender, e) => NegativeMessage(e, previewMessage);
@@ -379,8 +379,8 @@ namespace EasyCPDLC
             freeTextLabel.KeyDown += (_sender, e) => FreeTextMessage(previewMessage);
 
             deleteLabel = CreateSpecialLabel("> DELETE", false);
-            deleteLabel.Click += (_sender, e) => DeleteElement(_sender, e, previewMessage);
-            deleteLabel.KeyDown += (_sender, e) => DeleteElement(_sender, e, previewMessage);
+            deleteLabel.Click += (_sender, e) => DeleteElement(e, previewMessage);
+            deleteLabel.KeyDown += (_sender, e) => DeleteElement(e, previewMessage);
 
             returnLabel = CreateSpecialLabel("< RETURN", false);
             returnLabel.Click += ReturnMessage;
@@ -429,7 +429,7 @@ namespace EasyCPDLC
                 ClearPreview();
             }
         }
-        private async void RogerMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void RogerMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -458,7 +458,7 @@ namespace EasyCPDLC
             }
         }
 
-        private async void WilcoMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void WilcoMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -537,7 +537,7 @@ namespace EasyCPDLC
             }
         }
 
-        private async void AffirmativeMessage(object sender, EventArgs e, CPDLCMessage message)
+        private async void AffirmativeMessage(EventArgs e, CPDLCMessage message)
         {
             try
             {
@@ -602,9 +602,9 @@ namespace EasyCPDLC
 
             if (dataEntry.ShowDialog(this) == DialogResult.OK)
             {
-                logonCode = dataEntry.hoppieLogonCode;
-                cid = dataEntry.vatsimCID;
-                if (dataEntry.remember)
+                logonCode = dataEntry.HoppieLogonCode;
+                cid = dataEntry.VatsimCID;
+                if (dataEntry.Remember)
                 {
                     Logger.Info("REMEMBER ME: TRUE. REGISTRY SET.");
                     SavedHoppieCode = logonCode;
@@ -815,7 +815,7 @@ namespace EasyCPDLC
             }
             return _message;
         }
-        private void DeleteElement(object sender, EventArgs e, CPDLCMessage control)
+        private void DeleteElement(EventArgs e, CPDLCMessage control)
         {
             try
             {
@@ -874,22 +874,22 @@ namespace EasyCPDLC
                         switch (_sender.header.responses)
                         {
                             case "WU":
-                                acceptLabel.Click += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
-                                acceptLabel.KeyDown += (lSender, le) => WilcoMessage(_sender, e, previewMessage);
+                                acceptLabel.Click += (lSender, le) => WilcoMessage(e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => WilcoMessage(e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => UnableMessage(e, previewMessage);
                                 rejectLabel.KeyDown += (lSender, le) => UnableMessage(e, previewMessage);
                                 break;
 
                             case "AN":
-                                acceptLabel.Click += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
-                                acceptLabel.KeyDown += (lSender, le) => AffirmativeMessage(_sender, e, previewMessage);
+                                acceptLabel.Click += (lSender, le) => AffirmativeMessage(e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => AffirmativeMessage(e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => NegativeMessage(e, previewMessage);
                                 rejectLabel.KeyDown += (lSender, le) => NegativeMessage(e, previewMessage);
                                 break;
 
                             case "R":
-                                acceptLabel.Click += (lSender, le) => RogerMessage(_sender, e, previewMessage);
-                                acceptLabel.KeyDown += (lSender, le) => RogerMessage(_sender, e, previewMessage);
+                                acceptLabel.Click += (lSender, le) => RogerMessage(e, previewMessage);
+                                acceptLabel.KeyDown += (lSender, le) => RogerMessage(e, previewMessage);
                                 rejectLabel.Click += (lSender, le) => UnableMessage(e, previewMessage);
                                 rejectLabel.KeyDown += (lSender, le) => UnableMessage(e, previewMessage);
                                 break;
@@ -1179,14 +1179,14 @@ namespace EasyCPDLC
 
                     }
 
-                    userVATSIMData = vatsimData.pilots.Where(i => i.cid == cid).FirstOrDefault();
+                    userVATSIMData = vatsimData.Pilots.Where(i => i.Cid == cid).FirstOrDefault();
                     if(userVATSIMData is null)
                     {
                         throw new IndexOutOfRangeException();
                     }
 
-                    string _fpTest = userVATSIMData.flight_plan.altitude;
-                    callsign = userVATSIMData.callsign;
+                    string _fpTest = userVATSIMData.FlightPlan.Altitude;
+                    callsign = userVATSIMData.Callsign;
 
                     Connected = true;
 
@@ -1227,7 +1227,7 @@ namespace EasyCPDLC
 
                     Logger.Debug("Simbrief Data Retrieved and Parsed");
 
-                    reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
+                    reportFixes = simbriefData.Fix.Where(x => x.IsSidStar == "0" && !new string[] { "apt" }.Contains(x.Type)).Select(x => x.Ident).ToArray();
                     response += " SIMBRIEF OK,";
                 }
 
