@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace EasyCPDLC
 {
@@ -237,16 +238,16 @@ namespace EasyCPDLC
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Departure, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("REQUEST PREDEP CLEARANCE"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.Callsign, 7));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.AircraftShort, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.callsign, 7));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.aircraft_short, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("TO"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Arrival, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.arrival, 4));
             messageFormatPanel.Controls.Add(CreateTemplate("AT"));
-            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.FlightPlan.Departure, 4));
+            messageFormatPanel.Controls.Add(CreateTextBox(userVATSIMData.flight_plan.departure, 4));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("STAND"));
             messageFormatPanel.Controls.Add(CreateTextBox("", 4));
@@ -280,7 +281,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(CreateTextBox(DateTime.UtcNow.ToString("HHmm"), 4));
             messageFormatPanel.Controls.Add(CreateTemplate("Z"));
             messageFormatPanel.Controls.Add(CreateTemplate("FL"));
-            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.UseFSUIPC ? (Math.Round(MainForm.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.FlightPlan.Altitude[..3], 3));
+            messageFormatPanel.Controls.Add(CreateTextBox(MainForm.UseFSUIPC ? (Math.Round(MainForm.fsuipc.altitude.Feet / 1000) * 10).ToString() : userVATSIMData.flight_plan.altitude[..3], 3));
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(CreateTemplate("NEXT"));
             messageFormatPanel.Controls.Add(fix2);
@@ -477,7 +478,7 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Clear();
         }
 
-        private async void SendButton_Click(object sender, EventArgs e)
+        private void SendButton_Click(object sender, EventArgs e)
         {
 
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
@@ -507,7 +508,7 @@ namespace EasyCPDLC
                         {
                             _formatMessage += messageFormatPanel.Controls[i].Text + " ";
                         }
-                        await MainForm.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim());
+                        _ = Task.Run(() => MainForm.SendCPDLCMessage(_recipient, "TELEX", _formatMessage.Trim()));
                         break;
 
                     case "logonRadioButton":
@@ -532,7 +533,7 @@ namespace EasyCPDLC
                             MainForm.CurrentATCUnit = null;
 
                         }
-                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        _ = Task.Run(() => MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage));
                         MainForm.messageOutCounter += 1;
 
                         break;
@@ -551,7 +552,7 @@ namespace EasyCPDLC
 
                         _formatMessage += parsedMessage;
 
-                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        _ = Task.Run(() => MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage));
                         MainForm.messageOutCounter += 1;
 
                         break;
@@ -569,7 +570,7 @@ namespace EasyCPDLC
                             fix3.Text);
                         _formatMessage += _messageContent;
 
-                        await MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage);
+                        _ = Task.Run(() => MainForm.SendCPDLCMessage(_recipient, "CPDLC", _formatMessage));
                         MainForm.messageOutCounter += 1;
                         MainForm.nextFix = fix2.Text;
                         break;

@@ -12,7 +12,14 @@ namespace EasyCPDLC
         public string recipient;
         public string message;
         public bool outbound;
+        private string storedText;
+
         public CPDLCResponse header;
+
+        public CPDLCMessage()
+        {
+
+        }
         public CPDLCMessage(string _type, string _recipient, string _message, bool _outbound = false, CPDLCResponse _header = null)
         {
             type = _type;
@@ -21,6 +28,18 @@ namespace EasyCPDLC
             outbound = _outbound;
             header = _header;
             SetStyle(ControlStyles.Selectable, true);
+        }
+
+        public void OverrideText(string newText)
+        {
+            storedText = Text;
+            Console.WriteLine(storedText);
+            Invoke(new Action(() => Text = newText));
+        }
+
+        public void RestoreText()
+        {
+            Invoke(new Action(() => Text = storedText));
         }
 
         protected override void OnEnter(EventArgs e)
@@ -36,15 +55,16 @@ namespace EasyCPDLC
 
     public class CPDLCResponse
     {
-        public string dataType { get; set; }
-        public int messageID { get; set; }
-        public int responseID { get; set; }
-        public string responses { get; set; }
+        public string DataType { get; set; }
+        public int MessageID { get; set; }
+        public int ResponseID { get; set; }
+        public string Responses { get; set; }
+
     }
 
     public class AccessibleLabel : Label
     {
-        private Color foreColor;
+        private readonly Color foreColor;
         public AccessibleLabel(Color _foreColor)
         {
             SetStyle(ControlStyles.Selectable, true);

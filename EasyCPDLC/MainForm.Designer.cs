@@ -42,6 +42,7 @@
             this.messageFormatPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.settingsButton = new System.Windows.Forms.Button();
             this.iconList = new System.Windows.Forms.ImageList(this.components);
+            this.SendingProgress = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -231,6 +232,18 @@
             this.iconList.TransparentColor = System.Drawing.Color.Transparent;
             this.iconList.Images.SetKeyName(0, "cog-wheel-gear-setting.png");
             // 
+            // SendingProgress
+            // 
+            this.SendingProgress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.SendingProgress.Location = new System.Drawing.Point(14, 223);
+            this.SendingProgress.MarqueeAnimationSpeed = 10;
+            this.SendingProgress.Maximum = 30;
+            this.SendingProgress.Name = "SendingProgress";
+            this.SendingProgress.Size = new System.Drawing.Size(614, 2);
+            this.SendingProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.SendingProgress.TabIndex = 8;
+            this.SendingProgress.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -238,6 +251,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(644, 233);
+            this.Controls.Add(this.SendingProgress);
             this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.atcUnitDisplay);
             this.Controls.Add(this.atcUnitLabel);
@@ -277,6 +291,7 @@
         private System.Windows.Forms.FlowLayoutPanel messageFormatPanel;
         private System.Windows.Forms.Button settingsButton;
         private System.Windows.Forms.ImageList iconList;
+        private System.Windows.Forms.ProgressBar SendingProgress;
     }
 }
 

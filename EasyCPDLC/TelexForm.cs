@@ -40,6 +40,8 @@ namespace EasyCPDLC
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool ReleaseCapture();
 
+        private bool isReply = false;
+
         private readonly MainForm parent;
         private readonly Color controlBackColor;
         private readonly Color controlFrontColor;
@@ -55,6 +57,7 @@ namespace EasyCPDLC
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
+            isReply = _recipient is null ? false : true;
 
             this.TopMost = parent.TopMost;
         }
@@ -217,7 +220,10 @@ namespace EasyCPDLC
                     default:
                         break;
                 }
-
+                if(isReply)
+                {
+                    parent.ClearPreview();
+                }
                 this.Close();
 
 
@@ -271,11 +277,11 @@ namespace EasyCPDLC
             {
                 if (parent.fsuipc.groundspeed < 100)
                 {
-                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.FlightPlan.Departure, 4));
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.departure, 4));
                 }
                 else
                 {
-                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.FlightPlan.Arrival, 4));
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.arrival, 4));
                 }
             }
             catch
@@ -295,11 +301,11 @@ namespace EasyCPDLC
             {
                 if (parent.fsuipc.groundspeed < 100)
                 {
-                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.FlightPlan.Departure, 4));
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.departure, 4));
                 }
                 else
                 {
-                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.FlightPlan.Arrival, 4));
+                    messageFormatPanel.Controls.Add(CreateTextBox(parent.userVATSIMData.flight_plan.arrival, 4));
                 }
             }
             catch
