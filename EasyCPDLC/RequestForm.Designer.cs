@@ -48,6 +48,8 @@
             this.directRadioButton = new System.Windows.Forms.RadioButton();
             this.speedRadioButton = new System.Windows.Forms.RadioButton();
             this.levelRadioButton = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.oceanRadioButton = new System.Windows.Forms.RadioButton();
             this.radioContainer.SuspendLayout();
             this.requestContainer.SuspendLayout();
             this.SuspendLayout();
@@ -240,13 +242,15 @@
             // 
             // requestContainer
             // 
+            this.requestContainer.Controls.Add(this.oceanRadioButton);
+            this.requestContainer.Controls.Add(this.radioButton1);
             this.requestContainer.Controls.Add(this.wcwRadioButton);
             this.requestContainer.Controls.Add(this.directRadioButton);
             this.requestContainer.Controls.Add(this.speedRadioButton);
             this.requestContainer.Controls.Add(this.levelRadioButton);
-            this.requestContainer.Location = new System.Drawing.Point(151, 236);
+            this.requestContainer.Location = new System.Drawing.Point(126, 236);
             this.requestContainer.Name = "requestContainer";
-            this.requestContainer.Size = new System.Drawing.Size(82, 26);
+            this.requestContainer.Size = new System.Drawing.Size(107, 26);
             this.requestContainer.TabIndex = 13;
             this.requestContainer.Visible = false;
             // 
@@ -293,6 +297,28 @@
             this.levelRadioButton.TabStop = true;
             this.levelRadioButton.UseVisualStyleBackColor = true;
             this.levelRadioButton.Visible = false;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(46, 7);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(14, 13);
+            this.radioButton1.TabIndex = 4;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Visible = false;
+            // 
+            // oceanRadioButton
+            // 
+            this.oceanRadioButton.AutoSize = true;
+            this.oceanRadioButton.Location = new System.Drawing.Point(84, 7);
+            this.oceanRadioButton.Name = "oceanRadioButton";
+            this.oceanRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.oceanRadioButton.TabIndex = 5;
+            this.oceanRadioButton.TabStop = true;
+            this.oceanRadioButton.UseVisualStyleBackColor = true;
+            this.oceanRadioButton.Visible = false;
             // 
             // RequestForm
             // 
@@ -349,5 +375,7 @@
         private System.Windows.Forms.RadioButton directRadioButton;
         private System.Windows.Forms.RadioButton speedRadioButton;
         private System.Windows.Forms.RadioButton levelRadioButton;
+        private System.Windows.Forms.RadioButton oceanRadioButton;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }

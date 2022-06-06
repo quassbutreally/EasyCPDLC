@@ -294,7 +294,6 @@ namespace EasyCPDLC
                     {
                         System.Diagnostics.Process.Start(latest.HtmlUrl);
                     }
-                    System.Windows.Forms.Application.Exit();
                 }
             }
 

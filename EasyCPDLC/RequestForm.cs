@@ -37,10 +37,11 @@ namespace EasyCPDLC
         public static extern bool ReleaseCapture();
 
         private readonly ContextMenuStrip popupMenu = new ContextMenuStrip();
-        private ToolStripMenuItem directRequestMenu;// = new ToolStripMenuItem();
-        private ToolStripMenuItem levelRequestMenu;// = new ToolStripMenuItem();
-        private ToolStripMenuItem speedRequestMenu;// = new ToolStripMenuItem();
-        private ToolStripMenuItem whenCanWeRequestMenu;// = new ToolStripMenuItem();
+        private ToolStripMenuItem directRequestMenu;
+        private ToolStripMenuItem levelRequestMenu;
+        private ToolStripMenuItem speedRequestMenu;
+        private ToolStripMenuItem whenCanWeRequestMenu;
+        private ToolStripMenuItem oceanicRequestMenu;
         private readonly Label dummyLabel;
 
         UITextBox fix1;
@@ -150,6 +151,8 @@ namespace EasyCPDLC
             speedRequestMenu.Click += SpeedRequestClick;
             whenCanWeRequestMenu = CreateMenuItem("WHEN CAN WE?");
             whenCanWeRequestMenu.Click += WhenCanWeRequestClick;
+            oceanicRequestMenu = CreateMenuItem("OCEANIC");
+            oceanicRequestMenu.Click += OceanicRequestClick;
         }
 
         private void DirectRequestClick(object sender, EventArgs e)
@@ -297,6 +300,32 @@ namespace EasyCPDLC
             messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
             messageFormatPanel.Controls.Add(createTemplate("THEN"));
             messageFormatPanel.Controls.Add(fix3);
+        }
+
+        private void OceanicRequestClick(object sender, EventArgs e)
+        {
+            oceanRadioButton.Checked = true;
+
+            fix1 = createAutoFillTextBox("", 7, parent.reportFixes);
+            fix1.TextChanged += PreFill;
+
+            messageFormatPanel.Controls.Clear();
+            messageFormatPanel.Controls.Add(createTemplate("RECIPIENT"));
+            messageFormatPanel.Controls.Add(createTextBox(parent.currentATCUnit, 4, true));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("ENTRY POINT"));
+            messageFormatPanel.Controls.Add(fix1);
+            messageFormatPanel.Controls.Add(createTemplate("ETA"));
+            messageFormatPanel.Controls.Add(createTextBox("", 4));
+            messageFormatPanel.Controls.Add(createTemplate("Z"));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("MACH: M0."));
+            messageFormatPanel.Controls.Add(createTextBox("", 2));
+            messageFormatPanel.Controls.Add(createTemplate("FL"));
+            messageFormatPanel.Controls.Add(createTextBox("", 3));
+            messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
+            messageFormatPanel.Controls.Add(createTemplate("FREE TEXT"));
+            messageFormatPanel.Controls.Add(createTextBox("", 153));
 
         }
 
