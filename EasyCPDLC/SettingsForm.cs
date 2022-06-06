@@ -37,9 +37,9 @@ namespace EasyCPDLC
         private const int cGrip = 16;
         private const int cCaption = 32;
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
 
         public SettingsForm(MainForm _parent)
         {
@@ -52,12 +52,12 @@ namespace EasyCPDLC
         {
             settingsFormatPanel.Controls.Clear();
             stayOnTopBox = CreateCheckBox("Keep Window On Top", "0");
-            stayOnTopBox.Checked = parent.stayOnTop;
+            stayOnTopBox.Checked = parent.StayOnTop;
             audiblePingBox = CreateCheckBox("Play Sound on Message Receive", "1");
-            audiblePingBox.Checked = parent.playSound;
+            audiblePingBox.Checked = MainForm.PlaySound;
             useFSUIPCBox = CreateCheckBox("Use Simulator Connection (req. FSUIPC/XPUIPC)", "2");
-            useFSUIPCBox.Checked = parent.useFSUIPC;
-            simbriefTextBox = CreateTextBox(parent.simbriefID, 7, false, true);
+            useFSUIPCBox.Checked = MainForm.UseFSUIPC;
+            simbriefTextBox = CreateTextBox(MainForm.SimbriefID, 7, false, true);
 
             settingsFormatPanel.Controls.Add(stayOnTopBox);
             settingsFormatPanel.SetFlowBreak(stayOnTopBox, true);
@@ -71,7 +71,7 @@ namespace EasyCPDLC
 
         private UICheckBox CreateCheckBox(string _text, string _group)
         {
-            UICheckBox _temp = new UICheckBox(_group)
+            UICheckBox _temp = new(_group)
             {
                 BackColor = parent.controlBackColor,
                 ForeColor = parent.controlFrontColor,
@@ -85,7 +85,7 @@ namespace EasyCPDLC
 
         private Label CreateTemplate(string _text)
         {
-            Label _temp = new Label
+            Label _temp = new()
             {
                 BackColor = parent.controlBackColor,
                 ForeColor = parent.controlFrontColor,
@@ -104,7 +104,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateTextBox(string _text, int _maxLength, bool _readOnly = false, bool _numsOnly = false)
         {
-            UITextBox _temp = new UITextBox(parent.controlFrontColor)
+            UITextBox _temp = new(parent.controlFrontColor)
             {
                 BackColor = parent.controlBackColor,
                 ForeColor = parent.controlFrontColor,
@@ -142,23 +142,23 @@ namespace EasyCPDLC
             }
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
-            parent.stayOnTop = stayOnTopBox.Checked;
-            parent.playSound = audiblePingBox.Checked;
-            parent.useFSUIPC = useFSUIPCBox.Checked;
-            parent.simbriefID = simbriefTextBox.Text;
+            parent.StayOnTop = stayOnTopBox.Checked;
+            MainForm.PlaySound = audiblePingBox.Checked;
+            MainForm.UseFSUIPC = useFSUIPCBox.Checked;
+            MainForm.SimbriefID = simbriefTextBox.Text;
 
             Properties.Settings.Default.Save();
             this.Close();
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -168,7 +168,7 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 
@@ -176,7 +176,7 @@ namespace EasyCPDLC
         {
             if (m.Msg == 0x84)
             {  // Trap WM_NCHITTEST
-                Point pos = new Point(m.LParam.ToInt32());
+                Point pos = new(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
                 if (pos.Y < cCaption)
                 {

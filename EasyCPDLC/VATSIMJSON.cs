@@ -1,4 +1,23 @@
-﻿using System;
+﻿#pragma warning disable IDE1006 // Naming Styles
+
+/*  EASYCPDLC: CPDLC Client for the VATSIM Network
+    Copyright (C) 2022 Joshua Seagrave joshseagrave@googlemail.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+using System;
 
 namespace EasyCPDLC
 {
@@ -18,6 +37,7 @@ namespace EasyCPDLC
 
     public class VATSIMGeneral
     {
+
         public int version { get; set; }
         public int reload { get; set; }
         public string update { get; set; }

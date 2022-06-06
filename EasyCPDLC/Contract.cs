@@ -48,7 +48,7 @@ namespace EasyCPDLC
         {
             try
             {
-                if (parent.useFSUIPC)
+                if (MainForm.UseFSUIPC)
                 {
                     string message = String.Format("REPORT {0} {1} {2} {3} {4}",
                     parent.callsign,
@@ -56,7 +56,7 @@ namespace EasyCPDLC
                     Math.Round(parent.fsuipc.position.Latitude.DecimalDegrees, 5),
                     Math.Round(parent.fsuipc.position.Longitude.DecimalDegrees, 5),
                     Math.Round(parent.fsuipc.altitude.Feet / 100));
-                    await parent.SendCPDLCMessage(sender, "ADS-C", message, true, false);
+                    await parent.SendCPDLCMessage(sender, "ADS-C", message, false);
                 }
             }
             catch { }

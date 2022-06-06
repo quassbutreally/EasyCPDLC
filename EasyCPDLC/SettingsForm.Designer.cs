@@ -50,7 +50,7 @@ namespace EasyCPDLC
             this.exitButton.TabIndex = 10;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // titleLabel
             // 
@@ -92,7 +92,7 @@ namespace EasyCPDLC
             this.cancelButton.TabIndex = 15;
             this.cancelButton.Text = "CANCEL";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // okButton
             // 
@@ -107,7 +107,7 @@ namespace EasyCPDLC
             this.okButton.TabIndex = 14;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // SettingsForm
             // 

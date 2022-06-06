@@ -16,14 +16,14 @@ namespace EasyCPDLC
         FsLongitude longitude;
         int pDelta;
 
-        readonly Offset<int> altOffset = new Offset<int>(0x3324);
-        readonly Offset<ushort> pOffset = new Offset<ushort>(0x0330);
-        readonly Offset<uint> gsOffset = new Offset<uint>(0x02B4);
-        readonly Offset<short> feetOrMeters = new Offset<short>(0x0C18);
-        readonly Offset<long> latOffset = new Offset<long>(0x0560);
-        readonly Offset<long> lonOffset = new Offset<long>(0x0568);
+        readonly Offset<int> altOffset = new(0x3324);
+        readonly Offset<ushort> pOffset = new(0x0330);
+        readonly Offset<uint> gsOffset = new(0x02B4);
+        readonly Offset<short> feetOrMeters = new(0x0C18);
+        readonly Offset<long> latOffset = new(0x0560);
+        readonly Offset<long> lonOffset = new(0x0568);
 
-        public bool OpenConnection()
+        public static bool OpenConnection()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace EasyCPDLC
             
         }
 
-        public bool CloseConnection()
+        public static bool CloseConnection()
         {
             {
                 try

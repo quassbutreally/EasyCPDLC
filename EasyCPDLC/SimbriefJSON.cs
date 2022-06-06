@@ -1,4 +1,6 @@
-﻿/*  EASYCPDLC: CPDLC Client for the VATSIM Network
+﻿#pragma warning disable IDE1006 // Naming Styles
+
+/*  EASYCPDLC: CPDLC Client for the VATSIM Network
     Copyright (C) 2021 Joshua Seagrave joshseagrave@googlemail.com
 
     This program is free software: you can redistribute it and/or modify
