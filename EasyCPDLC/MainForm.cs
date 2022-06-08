@@ -61,6 +61,8 @@ namespace EasyCPDLC
         public bool fsConnectionOpen = false;
         public int fsuipcErrorCount = 1;
 
+        private bool isErrorState = false;
+
         public Random random = new();
 
         readonly private List<Contract> contracts = new();
@@ -583,15 +585,20 @@ namespace EasyCPDLC
                 Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, true, _write));
                 var responseString = await response.Content.ReadAsStringAsync();
                 string printString = responseString.ToString().ToUpper().Trim();
-
                 Logger.Debug("RECEIVED: " + responseString);
 
                 if (printString.Contains("ERROR"))
                 {
-                    //handle error here
+                    throw new HttpRequestException();
                 }
                 else
                 {
+                    if(isErrorState)
+                    {
+                        WriteMessage("HOPPIE CONNECTIVITY RESTORED.", "SYSTEM", "SYSTEM");
+                        isErrorState = false;
+                    }
+                    
                     SendingProgress.Invoke(() => SendingProgress.PerformStep());
 
                     if (_write && messageType != "poll")
@@ -610,9 +617,12 @@ namespace EasyCPDLC
 
             catch (Exception e)
             {
-                Logger.Error(String.Format("{0}: {1}", e.GetType().FullName, e.Message));
-                WriteMessage("ERROR CHECKING FOR NEW MESSAGES. RETRYING...", "SYSTEM", "SYSTEM");
-
+                if(!isErrorState)
+                {
+                    Logger.Error(String.Format("{0}: {1}", e.GetType().FullName, e.Message));
+                    WriteMessage("ERROR CHECKING FOR NEW MESSAGES. THIS IS LIKELY AN ERROR WITH THE HOPPIE NETWORK. THE SYSTEM WILL CONTINUE ATTEMPTING TO CONTACT THE SERVER AND LET YOU KNOW WHEN CONNECTION IS RE-ESTABLISHED.", "SYSTEM", "SYSTEM");
+                    isErrorState = true;
+                }
                 SendingProgress.Invoke(() => SendingProgress.Visible = false);
             }
 
@@ -630,9 +640,9 @@ namespace EasyCPDLC
                 Text = _type == "SYSTEM" ? "SYSTEM MESSAGE" : _outbound ? String.Format("{1} MESSAGE TO {0}", _recipient, _type.ToUpper()) : String.Format("{1} MESSAGE FROM {0}", _recipient, _type.ToUpper()),
                 BorderStyle = BorderStyle.None,
                 TabStop = true,
-                TabIndex = 0
+                TabIndex = 0,
+                Margin = new Padding(0, 3, 0, 0)
             };
-            _message.Margin = new Padding(0, 3, 0, 0);
 
             return _message;
         }
@@ -872,9 +882,6 @@ namespace EasyCPDLC
 
                     break;
 
-                case "EVENTS":
-                    break;
-
                 case "CANCEL":
                     _contract = contracts.Where(x => x.sender == _sender && x.contractLength == responseElements[2]).FirstOrDefault();
                     if(!_contract.Equals(default(Contract)))
@@ -978,7 +985,7 @@ namespace EasyCPDLC
                 WriteMessage("CURRENT ATS UNIT: " + pendingLogon, "CPDLC", _sender, false, header);
                 _showUser = false;
             }
-            else if (messageString.StartsWith("CURRENT ATS UNIT"))
+            else if (messageString.StartsWith("CURRENT ATC UNIT") || messageString.StartsWith("CURRENT ATS UNIT"))
             {
                 _showUser = false;
             }
@@ -1070,6 +1077,7 @@ namespace EasyCPDLC
 
             if (!Connected)
             {
+
                 try
                 {
                     using (HttpClient wc = new())

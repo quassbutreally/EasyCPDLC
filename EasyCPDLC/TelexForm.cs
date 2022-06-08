@@ -57,7 +57,7 @@ namespace EasyCPDLC
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
-            isReply = _recipient is null ? false : true;
+            isReply = _recipient is not null;
 
             this.TopMost = parent.TopMost;
         }
@@ -95,17 +95,17 @@ namespace EasyCPDLC
                 Text = _text,
                 CharacterCasing = CharacterCasing.Upper,
                 Top = 10,
-                Padding = new Padding(3, 0, 3, -10),
-                Margin = new Padding(3, 5, 3, -10),
-                Height = 20,
-                TextAlign = HorizontalAlignment.Center,
-                TabIndex = 0
+                PlaceholderText = new string('▯', _maxLength),
+                Height = 30,
+                TextAlign = HorizontalAlignment.Left,
+                TabIndex = 0,
+                Anchor = AnchorStyles.Left
             };
 
             using (Graphics G = _temp.CreateGraphics())
             {
                 _temp.Width = (int)(_temp.MaxLength *
-                              G.MeasureString("x", _temp.Font).Width);
+                              G.MeasureString("▯", _temp.Font).Width * 1.5);
             }
 
             return _temp;
@@ -123,6 +123,7 @@ namespace EasyCPDLC
                 Width = messageFormatPanel.Width - 50,
                 Multiline = true,
                 WordWrap = true,
+                PlaceholderText = "Your message here...",
                 Text = _text,
                 MaxLength = 255,
                 Height = 20,

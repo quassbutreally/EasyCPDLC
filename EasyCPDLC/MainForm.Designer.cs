@@ -211,6 +211,7 @@
             // settingsButton
             // 
             this.settingsButton.AccessibleName = "Settings";
+            this.settingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsButton.BackgroundImage = global::EasyCPDLC.Properties.Resources.cog_wheel_gear_setting;
             this.settingsButton.FlatAppearance.BorderSize = 0;
             this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -234,6 +235,8 @@
             // 
             // SendingProgress
             // 
+            this.SendingProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.SendingProgress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.SendingProgress.Location = new System.Drawing.Point(14, 223);
             this.SendingProgress.MarqueeAnimationSpeed = 10;

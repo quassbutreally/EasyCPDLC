@@ -31,8 +31,24 @@ namespace EasyCPDLC
             BorderStyle = BorderStyle.None;
             AutoSize = false;
             Margin = new Padding(0, 5, 0, -5);
-            Controls.Add(new Label()
-            { Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(0, -10, 0, 0) });
+            //Controls.Add(new Label()
+            //{ Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(0, -10, 0, 0) });
+        }
+    }
+
+    public partial class TabControlWithoutHeader : TabControl
+    {
+        public TabControlWithoutHeader()
+        {
+            if (!this.DesignMode) this.Multiline = true;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x1328 && !this.DesignMode)
+                m.Result = new IntPtr(1);
+            else
+                base.WndProc(ref m);
         }
     }
 
