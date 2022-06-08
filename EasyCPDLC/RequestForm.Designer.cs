@@ -63,12 +63,14 @@
             this.titleLabel.Location = new System.Drawing.Point(412, 8);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(186, 41);
-            this.titleLabel.TabIndex = 1;
+            this.titleLabel.TabIndex = 0;
             this.titleLabel.Text = "EasyCPDLC";
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WindowDrag);
             // 
             // exitButton
             // 
+            this.exitButton.AccessibleDescription = "Exit CPDLC Form";
+            this.exitButton.AccessibleName = "Exit";
             this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
@@ -78,10 +80,10 @@
             this.exitButton.Location = new System.Drawing.Point(588, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(24, 24);
-            this.exitButton.TabIndex = 2;
+            this.exitButton.TabIndex = 8;
             this.exitButton.Text = "X";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // messageFormatPanel
             // 
@@ -95,10 +97,12 @@
             this.messageFormatPanel.Name = "messageFormatPanel";
             this.messageFormatPanel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 30);
             this.messageFormatPanel.Size = new System.Drawing.Size(586, 184);
-            this.messageFormatPanel.TabIndex = 3;
+            this.messageFormatPanel.TabIndex = 5;
             // 
             // sendButton
             // 
+            this.sendButton.AccessibleDescription = "Send Request";
+            this.sendButton.AccessibleName = "Send";
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.sendButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
@@ -107,13 +111,15 @@
             this.sendButton.Location = new System.Drawing.Point(494, 243);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(104, 37);
-            this.sendButton.TabIndex = 6;
+            this.sendButton.TabIndex = 7;
             this.sendButton.Text = "SEND";
             this.sendButton.UseVisualStyleBackColor = true;
-            this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
+            this.sendButton.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // clearButton
             // 
+            this.clearButton.AccessibleDescription = "Clear Request";
+            this.clearButton.AccessibleName = "Clear";
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
@@ -122,13 +128,14 @@
             this.clearButton.Location = new System.Drawing.Point(384, 243);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(104, 37);
-            this.clearButton.TabIndex = 7;
+            this.clearButton.TabIndex = 6;
             this.clearButton.Text = "CLEAR";
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // pdcButton
             // 
+            this.pdcButton.AccessibleName = "Request PDC";
             this.pdcButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.pdcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.pdcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
@@ -136,13 +143,14 @@
             this.pdcButton.Location = new System.Drawing.Point(12, 8);
             this.pdcButton.Name = "pdcButton";
             this.pdcButton.Size = new System.Drawing.Size(94, 37);
-            this.pdcButton.TabIndex = 5;
+            this.pdcButton.TabIndex = 1;
             this.pdcButton.Text = "REQ PDC";
             this.pdcButton.UseVisualStyleBackColor = true;
-            this.pdcButton.Click += new System.EventHandler(this.pdcButton_Click);
+            this.pdcButton.Click += new System.EventHandler(this.PdcButton_Click);
             // 
             // logonButton
             // 
+            this.logonButton.AccessibleName = "Logon";
             this.logonButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.logonButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
             this.logonButton.ForeColor = System.Drawing.SystemColors.ControlLight;
@@ -150,10 +158,10 @@
             this.logonButton.Location = new System.Drawing.Point(112, 8);
             this.logonButton.Name = "logonButton";
             this.logonButton.Size = new System.Drawing.Size(94, 37);
-            this.logonButton.TabIndex = 8;
+            this.logonButton.TabIndex = 2;
             this.logonButton.Text = "LOGON";
             this.logonButton.UseVisualStyleBackColor = true;
-            this.logonButton.Click += new System.EventHandler(this.logonButton_Click);
+            this.logonButton.Click += new System.EventHandler(this.LogonButton_Click);
             // 
             // requestButton
             // 
@@ -164,10 +172,10 @@
             this.requestButton.Location = new System.Drawing.Point(212, 8);
             this.requestButton.Name = "requestButton";
             this.requestButton.Size = new System.Drawing.Size(94, 37);
-            this.requestButton.TabIndex = 9;
+            this.requestButton.TabIndex = 3;
             this.requestButton.Text = "REQUEST";
             this.requestButton.UseVisualStyleBackColor = true;
-            this.requestButton.Click += new System.EventHandler(this.requestButton_Click);
+            this.requestButton.Click += new System.EventHandler(this.RequestButton_Click);
             // 
             // radioContainer
             // 
@@ -235,10 +243,10 @@
             this.reportButton.Location = new System.Drawing.Point(312, 8);
             this.reportButton.Name = "reportButton";
             this.reportButton.Size = new System.Drawing.Size(94, 37);
-            this.reportButton.TabIndex = 13;
+            this.reportButton.TabIndex = 4;
             this.reportButton.Text = "REPORT";
             this.reportButton.UseVisualStyleBackColor = true;
-            this.reportButton.Click += new System.EventHandler(this.reportButton_Click);
+            this.reportButton.Click += new System.EventHandler(this.ReportButton_Click);
             // 
             // requestContainer
             // 

@@ -28,12 +28,12 @@ namespace EasyCPDLC
         public const int HT_CAPTION = 0x2;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-        public string hoppieLogonCode { get; set; }
-        public int vatsimCID { get; set; }
-        public bool remember { get; set; }
+        private static extern bool ReleaseCapture();
+        public string HoppieLogonCode { get; set; }
+        public int VatsimCID { get; set; }
+        public bool Remember { get; set; }
         public DataEntry(object _hoppieLogonCode = null, object _vatsimCID = null)
         {
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace EasyCPDLC
             try
             {
 
-                if (!(_hoppieLogonCode is null))
+                if (_hoppieLogonCode is not null)
                 {
                     hoppieCodeTextBox.Text = _hoppieLogonCode.ToString();
                 }
@@ -49,7 +49,7 @@ namespace EasyCPDLC
                 {
                     throw new Exception();
                 }
-                if (!(_vatsimCID is null))
+                if (_vatsimCID is not null)
                 {
                     vatsimCIDTextBox.Text = _vatsimCID.ToString();
                 }
@@ -68,18 +68,18 @@ namespace EasyCPDLC
             }
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void connectButton_Click(object sender, EventArgs e)
+        private void ConnectButton_Click(object sender, EventArgs e)
         {
             try
             {
-                hoppieLogonCode = hoppieCodeTextBox.Text;
-                vatsimCID = Convert.ToInt32(vatsimCIDTextBox.Text);
-                remember = rememberCheckBox.Checked;
+                HoppieLogonCode = hoppieCodeTextBox.Text;
+                VatsimCID = Convert.ToInt32(vatsimCIDTextBox.Text);
+                Remember = rememberCheckBox.Checked;
 
                 this.DialogResult = DialogResult.OK;
             }
@@ -90,7 +90,7 @@ namespace EasyCPDLC
 
         }
 
-        private void hoppieCodeTextBox_TextChanged(object sender, EventArgs e)
+        private void HoppieCodeTextBox_TextChanged(object sender, EventArgs e)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace EasyCPDLC
             }
         }
 
-        private void vatsimCIDTextBox_TextChanged(object sender, EventArgs e)
+        private void VatsimCIDTextBox_TextChanged(object sender, EventArgs e)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 

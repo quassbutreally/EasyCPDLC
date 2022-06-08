@@ -38,9 +38,9 @@ namespace EasyCPDLC
 
     public class TimerLabel : Label
     {
-        readonly Timer blinkTimer = new Timer();
+        readonly Timer blinkTimer = new();
         private bool _canFlash = false;
-        public bool canFlash
+        public bool CanFlash
         {
             get
             {
@@ -64,7 +64,7 @@ namespace EasyCPDLC
         {
             blinkTimer.Interval = 500;
             blinkTimer.Tick += new EventHandler(FlashElement);
-
+            SetStyle(ControlStyles.Selectable, true);
         }
 
         public void FlashElement(object sender, EventArgs e)
@@ -111,18 +111,18 @@ namespace EasyCPDLC
         {
             pevent.Graphics.Clear(BackColor);
 
-            using (SolidBrush brush = new SolidBrush(ForeColor))
+            using (SolidBrush brush = new(ForeColor))
                 pevent.Graphics.DrawString(Text, Font, brush, 27, 4);
 
-            Point pt = new Point(4, 4);
-            Rectangle rect = new Rectangle(pt, new Size(16, 16));
+            Point pt = new(4, 4);
+            Rectangle rect = new(pt, new Size(16, 16));
 
             pevent.Graphics.FillRectangle(new SolidBrush(BackColor), rect);
 
             if (Checked)
             {
-                using (SolidBrush brush = new SolidBrush(ForeColor))
-                    pevent.Graphics.FillEllipse(brush, pt.X + 4, pt.Y + 4, 8, 8);
+                using SolidBrush brush = new(ForeColor);
+                pevent.Graphics.FillEllipse(brush, pt.X + 4, pt.Y + 4, 8, 8);
             }
             pevent.Graphics.DrawRectangle(SystemPens.ControlLight, rect);
         }

@@ -36,9 +36,11 @@ namespace EasyCPDLC
         private const int cCaption = 32;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
+
+        private bool isReply = false;
 
         private readonly MainForm parent;
         private readonly Color controlBackColor;
@@ -55,13 +57,14 @@ namespace EasyCPDLC
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
             recipient = _recipient is null ? null : _recipient;
+            isReply = _recipient is null ? false : true;
 
             this.TopMost = parent.TopMost;
         }
 
-        private Label CreateTemplate(string _text)
+        private AccessibleLabel CreateTemplate(string _text)
         {
-            Label _temp = new Label
+            AccessibleLabel _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -72,7 +75,9 @@ namespace EasyCPDLC
                 Height = 20,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(0, 10, 0, 0),
-                Margin = new Padding(0, 0, 0, 0)
+                Margin = new Padding(0, 0, 0, 0),
+                TabStop = true,
+                TabIndex = 0
             };
 
             return _temp;
@@ -80,7 +85,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateTextBox(string _text, int _maxLength)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -93,7 +98,8 @@ namespace EasyCPDLC
                 Padding = new Padding(3, 0, 3, -10),
                 Margin = new Padding(3, 5, 3, -10),
                 Height = 20,
-                TextAlign = HorizontalAlignment.Center
+                TextAlign = HorizontalAlignment.Center,
+                TabIndex = 0
             };
 
             using (Graphics G = _temp.CreateGraphics())
@@ -108,7 +114,7 @@ namespace EasyCPDLC
 
         private UITextBox CreateMultiLineBox(string _text)
         {
-            UITextBox _temp = new UITextBox(controlFrontColor)
+            UITextBox _temp = new(controlFrontColor)
             {
                 BackColor = controlBackColor,
                 ForeColor = controlFrontColor,
@@ -119,7 +125,8 @@ namespace EasyCPDLC
                 WordWrap = true,
                 Text = _text,
                 MaxLength = 255,
-                Height = 20
+                Height = 20,
+                TabIndex = 0
             };
             _temp.TextChanged += ExpandMultiLineBox;
 
@@ -131,7 +138,7 @@ namespace EasyCPDLC
             return _temp;
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -141,7 +148,7 @@ namespace EasyCPDLC
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
         private void ReloadPanel(object sender, EventArgs e)
@@ -173,16 +180,14 @@ namespace EasyCPDLC
             ScrollToBottom(messageFormatPanel);
         }
 
-        private void ScrollToBottom(FlowLayoutPanel p)
+        private static void ScrollToBottom(FlowLayoutPanel p)
         {
-            using (Control c = new Control() { Parent = p, Dock = DockStyle.Bottom })
-            {
-                p.ScrollControlIntoView(c);
-                c.Parent = null;
-            }
+            using Control c = new() { Parent = p, Dock = DockStyle.Bottom };
+            p.ScrollControlIntoView(c);
+            c.Parent = null;
         }
 
-        private async void sendButton_Click(object sender, EventArgs e)
+        private void SendButton_Click(object sender, EventArgs e)
         {
             RadioButton radioBtn = radioContainer.Controls.OfType<RadioButton>()
                                        .Where(x => x.Checked).FirstOrDefault();
@@ -215,7 +220,10 @@ namespace EasyCPDLC
                     default:
                         break;
                 }
-
+                if(isReply)
+                {
+                    parent.ClearPreview();
+                }
                 this.Close();
 
 
@@ -232,7 +240,7 @@ namespace EasyCPDLC
         {
             if (m.Msg == 0x84)
             {  // Trap WM_NCHITTEST
-                Point pos = new Point(m.LParam.ToInt32());
+                Point pos = new(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
                 if (pos.Y < cCaption)
                 {
@@ -248,7 +256,7 @@ namespace EasyCPDLC
             base.WndProc(ref m);
         }
 
-        private void freeTextButton_Click(object sender, EventArgs e)
+        private void FreeTextButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("RECIPIENT:"));
@@ -261,7 +269,7 @@ namespace EasyCPDLC
             freeTextRadioButton.Checked = true;
         }
 
-        private void metarButton_Click(object sender, EventArgs e)
+        private void MetarButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
@@ -285,7 +293,7 @@ namespace EasyCPDLC
             metarRadioButton.Checked = true;
         }
 
-        private void atisButton_Click(object sender, EventArgs e)
+        private void AtisButton_Click(object sender, EventArgs e)
         {
             messageFormatPanel.Controls.Clear();
             messageFormatPanel.Controls.Add(CreateTemplate("STATION:"));
