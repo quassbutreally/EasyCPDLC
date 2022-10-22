@@ -67,7 +67,7 @@ namespace EasyCPDLC
             // titleLabel
             // 
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.titleLabel.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.titleLabel.Location = new System.Drawing.Point(28, 158);
             this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -81,7 +81,7 @@ namespace EasyCPDLC
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.exitButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.exitButton.Location = new System.Drawing.Point(217, 0);
             this.exitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -95,7 +95,7 @@ namespace EasyCPDLC
             // hoppieLogonLabel
             // 
             this.hoppieLogonLabel.AutoSize = true;
-            this.hoppieLogonLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.hoppieLogonLabel.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.hoppieLogonLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.hoppieLogonLabel.Location = new System.Drawing.Point(48, 217);
             this.hoppieLogonLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -107,7 +107,7 @@ namespace EasyCPDLC
             // vatsimCIDLabel
             // 
             this.vatsimCIDLabel.AutoSize = true;
-            this.vatsimCIDLabel.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.vatsimCIDLabel.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.vatsimCIDLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.vatsimCIDLabel.Location = new System.Drawing.Point(76, 280);
             this.vatsimCIDLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -120,7 +120,7 @@ namespace EasyCPDLC
             // 
             this.rememberCheckBox.AutoSize = true;
             this.rememberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.rememberCheckBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.rememberCheckBox.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.rememberCheckBox.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.rememberCheckBox.Location = new System.Drawing.Point(56, 342);
             this.rememberCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -134,7 +134,7 @@ namespace EasyCPDLC
             // 
             this.connectButton.Enabled = false;
             this.connectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.connectButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.connectButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.connectButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.connectButton.Location = new System.Drawing.Point(40, 380);
             this.connectButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -171,7 +171,7 @@ namespace EasyCPDLC
             // 
             this.vatsimCIDTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.vatsimCIDTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.vatsimCIDTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.vatsimCIDTextBox.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.vatsimCIDTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.vatsimCIDTextBox.Location = new System.Drawing.Point(7, 8);
             this.vatsimCIDTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -198,7 +198,7 @@ namespace EasyCPDLC
             // 
             this.hoppieCodeTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(5)))), ((int)(((byte)(5)))));
             this.hoppieCodeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.hoppieCodeTextBox.Font = new System.Drawing.Font("Oxygen", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.hoppieCodeTextBox.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.hoppieCodeTextBox.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.hoppieCodeTextBox.Location = new System.Drawing.Point(7, 7);
             this.hoppieCodeTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);

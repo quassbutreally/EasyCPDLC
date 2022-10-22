@@ -49,7 +49,7 @@
             // 
             this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.titleLabel.Font = new System.Drawing.Font(fonts.Families[1], 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.titleLabel.Location = new System.Drawing.Point(397, 6);
             this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -66,7 +66,7 @@
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.exitButton.Font = new System.Drawing.Font(fonts.Families[1], 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.exitButton.Location = new System.Drawing.Point(617, 4);
             this.exitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -103,7 +103,7 @@
             // 
             this.atcButton.Enabled = false;
             this.atcButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.atcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.atcButton.Font = new System.Drawing.Font(fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.atcButton.Location = new System.Drawing.Point(284, 14);
@@ -119,7 +119,7 @@
             // 
             this.telexButton.Enabled = false;
             this.telexButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.telexButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.telexButton.Font = new System.Drawing.Font(fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.telexButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.telexButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.telexButton.Location = new System.Drawing.Point(172, 14);
@@ -135,7 +135,7 @@
             // 
             this.retrieveButton.Enabled = false;
             this.retrieveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.retrieveButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.retrieveButton.Font = new System.Drawing.Font(fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.retrieveButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.retrieveButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.retrieveButton.Location = new System.Drawing.Point(14, 14);
@@ -151,7 +151,7 @@
             // 
             this.atcUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitLabel.AutoSize = true;
-            this.atcUnitLabel.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.atcUnitLabel.Font = new System.Drawing.Font(fonts.Families[1], 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcUnitLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcUnitLabel.Location = new System.Drawing.Point(403, 49);
             this.atcUnitLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -164,7 +164,7 @@
             // 
             this.atcUnitDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.atcUnitDisplay.AutoSize = true;
-            this.atcUnitDisplay.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.atcUnitDisplay.Font = new System.Drawing.Font(fonts.Families[1], 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.atcUnitDisplay.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atcUnitDisplay.Location = new System.Drawing.Point(551, 49);
             this.atcUnitDisplay.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -180,7 +180,7 @@
             this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.helpButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.helpButton.Font = new System.Drawing.Font("Oxygen", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.helpButton.Font = new System.Drawing.Font(fonts.Families[1], 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.helpButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.helpButton.Location = new System.Drawing.Point(598, 1);
             this.helpButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);

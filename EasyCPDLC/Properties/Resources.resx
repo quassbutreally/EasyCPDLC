@@ -136,4 +136,7 @@
   <data name="Oxygen_Bold" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Oxygen-Bold.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="B612Mono_Bold" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B612Mono-Bold.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -65,7 +65,7 @@
             this.clearButton.AccessibleName = "Clear";
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.clearButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.clearButton.Location = new System.Drawing.Point(304, 190);
@@ -82,7 +82,7 @@
             this.sendButton.AccessibleName = "Send";
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.sendButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.sendButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold);
             this.sendButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.sendButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.sendButton.Location = new System.Drawing.Point(414, 190);
@@ -101,7 +101,7 @@
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.exitButton.Location = new System.Drawing.Point(509, 0);
             this.exitButton.Name = "exitButton";
@@ -115,7 +115,7 @@
             // 
             this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.titleLabel.Location = new System.Drawing.Point(329, 9);
             this.titleLabel.Name = "titleLabel";
@@ -127,7 +127,7 @@
             // freeTextButton
             // 
             this.freeTextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.freeTextButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.freeTextButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold);
             this.freeTextButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.freeTextButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.freeTextButton.Location = new System.Drawing.Point(14, 10);
@@ -141,7 +141,7 @@
             // metarButton
             // 
             this.metarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.metarButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.metarButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold);
             this.metarButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.metarButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.metarButton.Location = new System.Drawing.Point(120, 10);
@@ -155,7 +155,7 @@
             // atisButton
             // 
             this.atisButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.atisButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold);
+            this.atisButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold);
             this.atisButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.atisButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.atisButton.Location = new System.Drawing.Point(226, 10);

@@ -57,7 +57,7 @@
             // 
             this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Oxygen", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.titleLabel.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.titleLabel.Location = new System.Drawing.Point(481, 9);
             this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -75,7 +75,7 @@
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Oxygen", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.exitButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.exitButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.exitButton.Location = new System.Drawing.Point(686, 0);
             this.exitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -92,7 +92,7 @@
             this.sendButton.AccessibleName = "Send";
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.sendButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.sendButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.sendButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.sendButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.sendButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.sendButton.Location = new System.Drawing.Point(576, 280);
@@ -110,7 +110,7 @@
             this.clearButton.AccessibleName = "Clear";
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.clearButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.clearButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.clearButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.clearButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.clearButton.Location = new System.Drawing.Point(448, 280);
@@ -126,7 +126,7 @@
             // 
             this.pdcButton.AccessibleName = "Request Clearance";
             this.pdcButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.pdcButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.pdcButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.pdcButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.pdcButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.pdcButton.Location = new System.Drawing.Point(14, 9);
@@ -142,7 +142,7 @@
             // 
             this.logonButton.AccessibleName = "Logon";
             this.logonButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.logonButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.logonButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.logonButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.logonButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.logonButton.Location = new System.Drawing.Point(131, 9);
@@ -157,7 +157,7 @@
             // requestButton
             // 
             this.requestButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.requestButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.requestButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.requestButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.requestButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.requestButton.Location = new System.Drawing.Point(247, 9);
@@ -247,7 +247,7 @@
             // 
             this.reportButton.Enabled = false;
             this.reportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.reportButton.Font = new System.Drawing.Font("Oxygen", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.reportButton.Font = new System.Drawing.Font(MainForm.fonts.Families[1], 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.reportButton.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.reportButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.reportButton.Location = new System.Drawing.Point(364, 9);
