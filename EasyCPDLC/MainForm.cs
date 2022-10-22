@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -210,11 +211,19 @@ namespace EasyCPDLC
             }
         }
 
-        public Font controlFont = new("Oxygen", 10.0f, FontStyle.Regular);
-        public Font controlFontBold = new("Oxygen", 10.0f, FontStyle.Bold);
-        public Font textFont = new("B612 Mono", 10.0f, FontStyle.Regular);
-        public Font textFontBold = new("B612 Mono", 12.5f, FontStyle.Bold);
-        public Font dataEntryFont = new("B612 Mono", 11.0f, FontStyle.Regular);
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
+            IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
+
+
+        public byte[][] fontResources = {Properties.Resources.B612Mono_Bold, Properties.Resources.B612Mono_Regular, Properties.Resources.Oxygen_Regular, Properties.Resources.Oxygen_Bold };
+        public static PrivateFontCollection fonts = new PrivateFontCollection();
+
+        public Font controlFont;// = new("Oxygen", 10.0f, FontStyle.Regular);
+        public Font controlFontBold;// = new("Oxygen", 10.0f, FontStyle.Bold);
+        public Font textFont;// = new("B612 Mono", 10.0f, FontStyle.Regular);
+        public Font textFontBold;// = new("B612 Mono", 12.5f, FontStyle.Bold);
+        public Font dataEntryFont;// = new("B612 Mono", 11.0f, FontStyle.Regular);
         public Color controlBackColor = Color.FromArgb(5, 5, 5);
         public Color controlFrontColor = SystemColors.ControlLight;
 
@@ -253,7 +262,23 @@ namespace EasyCPDLC
             LogManager.Configuration = config;
             Logger.Info("Logging initialised, beginning setup");
 
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            foreach(byte[] fontData in fontResources)
+            {
+                IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+                System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+                uint dummy = 0;
+                fonts.AddMemoryFont(fontPtr, fontData.Length);
+                AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
+                System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            }
+
+            textFont = new(fonts.Families[0], 10.0f, FontStyle.Regular);
+            textFontBold = new(fonts.Families[0], 12.5f, FontStyle.Bold);
+            controlFont = new(fonts.Families[1], 10.0f, FontStyle.Regular);
+            controlFontBold = new(fonts.Families[1], 10.0f, FontStyle.Bold);
+            dataEntryFont = new(fonts.Families[0], 11.0f, FontStyle.Regular);
+
+        AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             string _customSoundFile = System.Windows.Forms.Application.StartupPath + @"\Sounds\Notification.wav";
             if(File.Exists(_customSoundFile))

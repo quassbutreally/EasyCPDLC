@@ -106,7 +106,7 @@ namespace EasyCPDLC
             userVATSIMData = parent.userVATSIMData;
             controlBackColor = parent.controlBackColor;
             controlFrontColor = parent.controlFrontColor;
-            controlFontBold = new Font("Oxygen", 12.5F, FontStyle.Bold);
+            controlFontBold = new Font(MainForm.fonts.Families[1], 12.5F, FontStyle.Bold);
             textFont = parent.textFont;
             textFontBold = parent.textFontBold;
 
@@ -228,7 +228,6 @@ namespace EasyCPDLC
             messageFormatPanel.Controls.Add(CreateCheckBox("DUE TO A/C PERFORMANCE", "rsnParam"), 3, 2);
 
             AddRemarksField(messageFormatPanel);
-
 
         }
 
@@ -557,9 +556,9 @@ namespace EasyCPDLC
 
                     case "ocnClxRadioButton":
 
-                        for (int i = 0; i <= 13; i++)
+                        foreach (UITextBox _tb in messageFormatPanel.Controls.OfType<UITextBox>().Where(x => x.Multiline = false))
                         {
-                            if (messageFormatPanel.Controls[i].Text.Length < 1)
+                            if (_tb.Text.Length < 1)
                             {
                                 return;
                             }
@@ -573,14 +572,14 @@ namespace EasyCPDLC
                             messageFormatPanel.Controls[11].Text,
                             messageFormatPanel.Controls[13].Text
                             );
-                        _messageType = "TELEX";
+                        _messageType = "CPDLC";
                         break;
 
                     case "depClxRadioButton":
 
-                        for (int i = 0; i <= 13; i++)
+                        foreach(UITextBox _tb in messageFormatPanel.Controls.OfType<UITextBox>().Where(x => x.Multiline = false))
                         {
-                            if (messageFormatPanel.Controls[i].Text.Length < 1)
+                            if (_tb.Text.Length < 1)
                             {
                                 return;
                             }
