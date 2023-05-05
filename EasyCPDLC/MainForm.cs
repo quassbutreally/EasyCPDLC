@@ -412,7 +412,7 @@ namespace EasyCPDLC
             deleteLabel.Enter += (_sender, e) => DeleteElement(e, previewMessage);
 
             returnLabel = CreateSpecialLabel("< RETURN", false);
-            returnLabel.Click += ReturnMessage;     
+            returnLabel.Click += ReturnMessage;
             returnLabel.Enter += ReturnMessage;
 
             deleteAllMenu = CreateMenuItem("DELETE ALL");
