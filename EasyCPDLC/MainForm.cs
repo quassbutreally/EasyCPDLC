@@ -246,7 +246,7 @@ namespace EasyCPDLC
 
         private readonly SoundPlayer player = new();
 
-        private static readonly Regex hoppieParse = new(@"{(.*?)}");
+        private static readonly Regex hoppieParse = new(@"{([\S\s]*?)}");
         private static readonly Regex cpdlcHeaderParse = new(@"(\/\s*)\w*");
         private static readonly Regex cpdlcUnitParse = new(@"_@([\w]*)@_");
 
