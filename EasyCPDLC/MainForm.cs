@@ -1,4 +1,4 @@
-﻿/*  EASYCPDLC: CPDLC Client for the VATSIM Network
+/*  EASYCPDLC: CPDLC Client for the VATSIM Network
     Copyright (C) 2021 Joshua Seagrave joshseagrave@googlemail.com
 
     This program is free software: you can redistribute it and/or modify
@@ -246,7 +246,7 @@ namespace EasyCPDLC
 
         private readonly SoundPlayer player = new();
 
-        private static readonly Regex hoppieParse = new(@"{(.*?)}");
+        private static readonly Regex hoppieParse = new(@"{([\S\s]*?)}");
         private static readonly Regex cpdlcHeaderParse = new(@"(\/\s*)\w*");
         private static readonly Regex cpdlcUnitParse = new(@"_@([\w]*)@_");
 
@@ -381,39 +381,39 @@ namespace EasyCPDLC
 
             rogerLabel = CreateSpecialLabel("> ROGER", false);
             rogerLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "ROGER");
-            rogerLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "ROGER");
+            rogerLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "ROGER");
 
             wilcoLabel = CreateSpecialLabel("> WILCO", false);
             wilcoLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "WILCO");
-            wilcoLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "WILCO");
+            wilcoLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "WILCO");
 
             standbyLabel = CreateSpecialLabel("> STANDBY", false);
             standbyLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "STANDBY");
-            standbyLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "STANDBY");
+            standbyLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "STANDBY");
 
             unableLabel = CreateSpecialLabel("> UNABLE", false);
             unableLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "UNABLE");
-            unableLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "UNABLE");
+            unableLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "UNABLE");
 
             affirmativeLabel = CreateSpecialLabel("> AFFIRMATIVE", false);
             affirmativeLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
-            affirmativeLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
+            affirmativeLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
 
             negativeLabel = CreateSpecialLabel("> NEGATIVE", false);
             negativeLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
-            negativeLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
+            negativeLabel.Enter += (_sender, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
 
             freeTextLabel = CreateSpecialLabel("> FREE TEXT", false);
             freeTextLabel.Click += (_sender, e) => FreeTextMessage(previewMessage);
-            freeTextLabel.KeyDown += (_sender, e) => FreeTextMessage(previewMessage);
+            freeTextLabel.Enter += (_sender, e) => FreeTextMessage(previewMessage);
 
             deleteLabel = CreateSpecialLabel("> DELETE", false);
             deleteLabel.Click += (_sender, e) => DeleteElement(e, previewMessage);
-            deleteLabel.KeyDown += (_sender, e) => DeleteElement(e, previewMessage);
+            deleteLabel.Enter += (_sender, e) => DeleteElement(e, previewMessage);
 
             returnLabel = CreateSpecialLabel("< RETURN", false);
             returnLabel.Click += ReturnMessage;
-            returnLabel.KeyDown += ReturnMessage;
+            returnLabel.Enter += ReturnMessage;
 
             deleteAllMenu = CreateMenuItem("DELETE ALL");
             deleteAllMenu.Click += DeleteAllElement;
@@ -672,7 +672,7 @@ namespace EasyCPDLC
             return _message;
         }
 
-        private AccessibleLabel CreateLabel(string _text, bool _useMaxSize = true)
+        private AccessibleLabel CreateLabel(string _text, bool _useMaxSize = true, bool _useTabStop = true)
         {
             Size maxSize = new()
             {
@@ -688,7 +688,7 @@ namespace EasyCPDLC
                 Text = _text,
                 BorderStyle = BorderStyle.None,
                 Margin = new Padding(5, 3, 0, 0),
-                TabStop = true,
+                TabStop = _useTabStop,
                 TabIndex = 0
             };
             if (_useMaxSize)
@@ -872,7 +872,7 @@ namespace EasyCPDLC
                 messageFormatPanel.SetFlowBreak(returnLabel, true);
                 foreach (string line in _sender.message.Split('\n'))
                 {
-                    messageFormatPanel.Controls.Add(CreateLabel(line, false));
+                    messageFormatPanel.Controls.Add(CreateLabel(line, false, false));
                     messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
                 }
                 foreach (System.Windows.Forms.Label _response in responses)
@@ -883,7 +883,7 @@ namespace EasyCPDLC
                 {
                     messageFormatPanel.Controls.Add(deleteLabel);
                 }
-                messageFormatPanel.Controls[1].Focus();
+                messageFormatPanel.Controls[0].Focus();
             }
         }
         private Task ADSCParser(string _response, string _sender)
