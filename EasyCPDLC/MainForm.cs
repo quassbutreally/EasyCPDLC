@@ -194,14 +194,10 @@ namespace EasyCPDLC
                     if (_currentATCUnit is null)
                     {
                         atcUnitDisplay.Text = "----";
-                        rForm.NeedsLogon = true;
-
                     }
                     else
                     {
                         atcUnitDisplay.Text = _currentATCUnit;
-                        rForm.NeedsLogon = false;
-
                     }
                 }
                 catch (NullReferenceException)
