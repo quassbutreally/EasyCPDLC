@@ -1,5 +1,5 @@
 ﻿/*  EASYCPDLC: CPDLC Client for the VATSIM Network
-    Copyright (C) 2021 Joshua Seagrave joshseagrave@googlemail.com
+    Copyright (C) 2026 Joshua Seagrave joshseagrave@googlemail.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1180,7 +1180,7 @@ public sealed partial class MainForm
         MessageBox.Show(
             """
             EasyCPDLC
-            Copyright(C) 2022 Joshua Seagrave
+            Copyright(C) 2026 Joshua Seagrave
 
             This program is free software: you can redistribute it and / or modify
             it under the terms of the GNU General Public License as published by
