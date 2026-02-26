@@ -41,6 +41,30 @@ namespace EasyCPDLC
         public DataEntry(object hoppieLogonCode = null, object vatsimCid = null)
         {
             InitializeComponent();
+    
+            // Set tab order
+            hoppieCodeTextBox.TabIndex = 0;
+            vatsimCIDTextBox.TabIndex = 1;
+            rememberCheckBox.TabIndex = 2;
+            connectButton.TabIndex = 3;
+    
+            // Set accessible properties
+            hoppieCodeTextBox.AccessibleName = @"Hoppie Logon Code";
+            hoppieCodeTextBox.AccessibleDescription = @"Enter your Hoppie ACARS logon code";
+            vatsimCIDTextBox.AccessibleName = @"VATSIM CID";
+            vatsimCIDTextBox.AccessibleDescription = @"Enter your VATSIM CID number";
+            rememberCheckBox.AccessibleName = @"Remember credentials";
+            rememberCheckBox.AccessibleDescription = @"Save credentials for next time";
+            connectButton.AccessibleName = @"Connect";
+    
+            // Set as default button
+            AcceptButton = connectButton;
+    
+            // Handle Enter/Escape
+            KeyPreview = true;
+            KeyDown += (s, e) => {
+                if (e.KeyCode == Keys.Escape) this.Close();
+            };
 
             try
             {

@@ -36,6 +36,20 @@ public partial class SettingsForm
         Theme = new Theme(parentForm.controlBackColor, parentForm.controlFrontColor, parentForm.textFont, parentForm.textFontBold);
         InitializeComponent();
         InitialiseSettings();
+        
+        KeyPreview = true;
+        KeyDown += (s, e) =>
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter when okButton.Enabled:
+                    okButton.PerformClick();
+                    break;
+                case Keys.Escape:
+                    cancelButton.PerformClick();
+                    break;
+            }
+        };
     }
 
     private void InitialiseSettings()
@@ -43,11 +57,23 @@ public partial class SettingsForm
         settingsFormatPanel.Controls.Clear();
         stayOnTopBox = CreateCheckBox("Keep Window On Top", "0");
         stayOnTopBox.Checked = parent.StayOnTop;
+        stayOnTopBox.TabIndex = 0;
+        stayOnTopBox.AccessibleName = @"Keep Window On Top";
+    
         audiblePingBox = CreateCheckBox("Play Sound on Message Receive", "1");
         audiblePingBox.Checked = MainForm.PlaySound;
+        audiblePingBox.TabIndex = 1;
+        audiblePingBox.AccessibleName = @"Play Sound on Message Receive";
+    
         useFsuipcBox = CreateCheckBox("Use Simulator Connection (req. FSUIPC/XPUIPC)", "2");
         useFsuipcBox.Checked = MainForm.UseFsuipc;
+        useFsuipcBox.TabIndex = 2;
+        useFsuipcBox.AccessibleName = @"Use Simulator Connection";
+    
         simbriefTextBox = CreateTextBox(MainForm.SimbriefId, 7, false, true);
+        simbriefTextBox.TabIndex = 3;
+        simbriefTextBox.AccessibleName = @"SimBrief Pilot ID";
+        simbriefTextBox.AccessibleDescription = @"Enter your SimBrief pilot ID";
 
         settingsFormatPanel.Controls.Add(stayOnTopBox);
         settingsFormatPanel.SetFlowBreak(stayOnTopBox, true);
@@ -55,7 +81,9 @@ public partial class SettingsForm
         settingsFormatPanel.SetFlowBreak(audiblePingBox, true);
         settingsFormatPanel.Controls.Add(useFsuipcBox);
         settingsFormatPanel.SetFlowBreak(useFsuipcBox, true);
-        settingsFormatPanel.Controls.Add(CreateLabel("SIMBRIEF PILOT ID: "));
+        var simbriefLabel = CreateLabel("SIMBRIEF PILOT ID: ");
+        simbriefLabel.TabIndex = 4;
+        settingsFormatPanel.Controls.Add(simbriefLabel);
         settingsFormatPanel.Controls.Add(simbriefTextBox);
     }
 

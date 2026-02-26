@@ -48,6 +48,24 @@ public partial class TelexForm
         isReply = parentForm is not null;
         Theme = new Theme(controlBackColor, controlFrontColor, textFont, textFontBold);
 
+        freeTextButton.TabIndex = 0;
+        metarButton.TabIndex = 1;
+        atisButton.TabIndex = 2;
+        sendButton.TabIndex = 3;
+    
+        // Set accessible properties
+        freeTextButton.AccessibleName = @"Free Text Message";
+        metarButton.AccessibleName = @"Request METAR";
+        atisButton.AccessibleName = @"Request ATIS";
+        sendButton.AccessibleName = @"Send Message";
+    
+        // Handle Enter/Escape
+        this.KeyPreview = true;
+        this.KeyDown += (s, e) => {
+            if (e.KeyCode == Keys.Enter && sendButton.Enabled) sendButton.PerformClick();
+            if (e.KeyCode == Keys.Escape) this.Close();
+        };
+    
         TopMost = parent.TopMost;
     }
 

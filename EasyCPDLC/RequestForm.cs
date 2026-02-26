@@ -124,6 +124,39 @@ public partial class RequestForm
         rsnConversion.Add("DUE TO WX", "DUE TO WEATHER");
         rsnConversion.Add("DUE TO A/C PERFORMANCE", "DUE TO PERFORMANCE");
 
+        logonButton.TabIndex = 0;
+        requestButton.TabIndex = 1;
+        reportButton.TabIndex = 2;
+        sendButton.TabIndex = 3;
+        clearButton.TabIndex = 4;
+    
+        // Set accessible properties
+        logonButton.AccessibleName = @"Logon/Logoff";
+        logonButton.AccessibleDescription = @"Logon to or logoff from ATC unit";
+        requestButton.AccessibleName = @"Request";
+        requestButton.AccessibleDescription = @"Request clearance or route change";
+        reportButton.AccessibleName = @"Position Report";
+        reportButton.AccessibleDescription = @"Send position report";
+        sendButton.AccessibleName = @"Send";
+        sendButton.AccessibleDescription = @"Send the CPDLC message";
+        clearButton.AccessibleName = @"Clear";
+        clearButton.AccessibleDescription = @"Clear the message form";
+    
+        // Handle Enter/Escape
+        KeyPreview = true;
+        KeyDown += (_, e) =>
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter when sendButton.Enabled:
+                    sendButton.PerformClick();
+                    break;
+                case Keys.Escape:
+                    Close();
+                    break;
+            }
+        };
+    
         InitialisePopupMenu();
     }
 
