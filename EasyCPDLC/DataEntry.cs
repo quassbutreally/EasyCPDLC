@@ -19,44 +19,33 @@
 
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace EasyCPDLC
 {
     public partial class DataEntry : Form
     {
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
+        private const int WmNclbuttondown = 0xA1;
+        private const int HtCaption = 0x2;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool ReleaseCapture();
-        public string HoppieLogonCode { get; set; }
-        public int VatsimCID { get; set; }
-        public bool Remember { get; set; }
-        public DataEntry(object _hoppieLogonCode = null, object _vatsimCID = null)
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string HoppieLogonCode { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int VatsimCid { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool Remember { get; private set; }
+        public DataEntry(object hoppieLogonCode = null, object vatsimCid = null)
         {
             InitializeComponent();
 
             try
             {
-
-                if (_hoppieLogonCode is not null)
-                {
-                    hoppieCodeTextBox.Text = _hoppieLogonCode.ToString();
-                }
-                else
-                {
-                    throw new Exception();
-                }
-                if (_vatsimCID is not null)
-                {
-                    vatsimCIDTextBox.Text = _vatsimCID.ToString();
-                }
-                else
-                {
-                    throw new Exception();
-                }
+                hoppieCodeTextBox.Text = hoppieLogonCode?.ToString() ?? throw new InvalidOperationException();
+                vatsimCIDTextBox.Text = vatsimCid?.ToString() ?? throw new InvalidOperationException();
                 rememberCheckBox.Checked = true;
             }
 
@@ -78,63 +67,48 @@ namespace EasyCPDLC
             try
             {
                 HoppieLogonCode = hoppieCodeTextBox.Text;
-                VatsimCID = Convert.ToInt32(vatsimCIDTextBox.Text);
+                VatsimCid = Convert.ToInt32(vatsimCIDTextBox.Text);
                 Remember = rememberCheckBox.Checked;
 
                 this.DialogResult = DialogResult.OK;
             }
             catch (FormatException)
             {
-                MessageBox.Show("Invalid CID/Code, please check and try again.", "Error!", MessageBoxButtons.OK);
+                MessageBox.Show(@"Invalid CID/Code, please check and try again.", @"Error!", MessageBoxButtons.OK);
             }
 
         }
 
         private void HoppieCodeTextBox_TextChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1)
-                {
-                    throw new FormatException();
-                }
 
-                Convert.ToInt32(vatsimCIDTextBox.Text);
-                connectButton.Enabled = true;
-
-            }
-            catch (FormatException)
+            if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1 || !int.TryParse(vatsimCIDTextBox.Text, out _))
             {
                 connectButton.Enabled = false;
+                return;
             }
+
+
+            connectButton.Enabled = true;
         }
 
         private void VatsimCIDTextBox_TextChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1)
-                {
-                    throw new FormatException();
-                }
-
-                Convert.ToInt32(vatsimCIDTextBox.Text);
-                connectButton.Enabled = true;
-
-            }
-            catch (FormatException)
+            if (vatsimCIDTextBox.Text.Length < 1 || hoppieCodeTextBox.Text.Length < 1 || !int.TryParse(vatsimCIDTextBox.Text, out _))
             {
                 connectButton.Enabled = false;
+                return;
             }
+
+
+            connectButton.Enabled = true;
         }
 
         private void DataEntry_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
+            if (e.Button != MouseButtons.Left) return;
+            ReleaseCapture();
+            _ = SendMessage(Handle, WmNclbuttondown, HtCaption, 0);
         }
 
         private void NumsOnly(object sender, KeyPressEventArgs e)

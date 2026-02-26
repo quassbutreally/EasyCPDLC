@@ -20,52 +20,38 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace EasyCPDLC
 {
-    public class UITextBox : TextBox
+    public class UiTextBox : TextBox
     {
 
-        public UITextBox(Color _color)
+        public UiTextBox()
         {
             BorderStyle = BorderStyle.None;
             AutoSize = false;
             Margin = new Padding(0, 5, 0, -5);
-            //Controls.Add(new Label()
-            //{ Height = 1, Dock = DockStyle.Bottom, BackColor = _color, Margin = new Padding(0, -10, 0, 0) });
-        }
-    }
-
-    public partial class TabControlWithoutHeader : TabControl
-    {
-        public TabControlWithoutHeader()
-        {
-            if (!this.DesignMode) this.Multiline = true;
         }
 
-        protected override void WndProc(ref Message m)
+        public sealed override bool AutoSize
         {
-            if (m.Msg == 0x1328 && !this.DesignMode)
-                m.Result = new IntPtr(1);
-            else
-                base.WndProc(ref m);
+            get => base.AutoSize;
+            set => base.AutoSize = value;
         }
     }
 
     public class TimerLabel : Label
     {
-        readonly Timer blinkTimer = new();
-        private bool _canFlash = false;
+        private readonly Timer blinkTimer = new();
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool CanFlash
         {
-            get
-            {
-                return _canFlash;
-            }
             set
             {
-                _canFlash = value;
-                if(_canFlash)
+                field = value;
+                if (field)
                 {
                     blinkTimer.Start();
                 }
@@ -76,16 +62,17 @@ namespace EasyCPDLC
                 }
             }
         }
+
         public TimerLabel()
         {
             blinkTimer.Interval = 500;
-            blinkTimer.Tick += new EventHandler(FlashElement);
+            blinkTimer.Tick += FlashElement;
             SetStyle(ControlStyles.Selectable, true);
         }
 
-        public void FlashElement(object sender, EventArgs e)
+        private void FlashElement(object sender, EventArgs e)
         {
-            this.ForeColor = this.ForeColor == Color.Orange ? SystemColors.ControlLight : Color.Orange;
+            ForeColor = ForeColor == Color.Orange ? SystemColors.ControlLight : Color.Orange;
         }
     }
 
@@ -105,22 +92,34 @@ namespace EasyCPDLC
         protected override void OnResize(EventArgs e)
         {
             base.OnCreateControl();
-            this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(2, 3, this.Width, this.Height, 15, 15));
-            this.BorderStyle = BorderStyle.FixedSingle;
+            Region = Region.FromHrgn(CreateRoundRectRgn(2, 3, Width, Height, 15, 15));
+            BorderStyle = BorderStyle.FixedSingle;
         }
     }
 
-    public class UICheckBox : CheckBox
+    public class UiCheckBox : CheckBox
     {
-        public string group;
-        public UICheckBox(string _group)
+        public readonly string group;
+        public UiCheckBox(string boxGroup)
         {
-            group = _group;
+            group = boxGroup;
             FlatStyle = FlatStyle.Flat;
             TextAlign = ContentAlignment.MiddleRight;
             FlatAppearance.BorderSize = 0;
             AutoSize = false;
             Margin = new Padding(0, 5, 0, -10);
+        }
+
+        public sealed override bool AutoSize
+        {
+            get => base.AutoSize;
+            set => base.AutoSize = value;
+        }
+
+        public sealed override ContentAlignment TextAlign
+        {
+            get => base.TextAlign;
+            set => base.TextAlign = value;
         }
 
         protected override void OnPaint(PaintEventArgs pevent)

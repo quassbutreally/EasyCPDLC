@@ -16,56 +16,55 @@
 */
 
 using System;
+using System.Threading.Tasks;
 using System.Timers;
+using FSUIPC;
 
 namespace EasyCPDLC
 {
-    class Contract
+    internal class Contract(
+        string sender,
+        string contractLength,
+        Func<string, string, string, Task> sendMessage,
+        Func<FsuipcData> getFsuipc,
+        Func<string> getCallsign)
     {
-        public string sender;
-        public string contractLength;
-        private Timer timer;
-        readonly private MainForm parent;
+        public string Sender { get; } = sender;
+        public string ContractLength { get; } = contractLength;
 
-        public Contract(MainForm _parent, string _sender, string _timeSpan)
-        {
-            parent = _parent;
-            sender = _sender;
-            contractLength = _timeSpan;
-        }
+        private Timer _timer;
 
         public void StartContract()
         {
-            timer = new Timer(Convert.ToInt32(contractLength) * 1000)
+            _timer = new Timer(Convert.ToInt32(ContractLength) * 1000)
             {
                 AutoReset = true
             };
-            timer.Elapsed += new ElapsedEventHandler(SendReply);
-            timer.Start();
+            _timer.Elapsed += SendReply;
+            _timer.Start();
         }
 
-        private async void SendReply(Object source, ElapsedEventArgs e)
+        private async void SendReply(object source, ElapsedEventArgs e)
         {
             try
             {
-                if (MainForm.UseFSUIPC)
-                {
-                    string message = String.Format("REPORT {0} {1} {2} {3} {4}",
-                    parent.callsign,
-                    DateTime.UtcNow.ToString("ddHHmm"),
-                    Math.Round(parent.fsuipc.position.Latitude.DecimalDegrees, 5),
-                    Math.Round(parent.fsuipc.position.Longitude.DecimalDegrees, 5),
-                    Math.Round(parent.fsuipc.altitude.Feet / 100));
-                    await parent.SendCPDLCMessage(sender, "ADS-C", message, false);
-                }
+                if (!MainForm.UseFsuipc) return;
+                var fsuipc  = getFsuipc();
+                var message =
+                    $"REPORT {getCallsign()} {DateTime.UtcNow:ddHHmm} {Math.Round(fsuipc.position.Latitude.DecimalDegrees, 5)} {Math.Round(fsuipc.position.Longitude.DecimalDegrees, 5)} {Math.Round(fsuipc.altitude.Feet / 100)}";
+
+                await sendMessage(Sender, "ADS-C", message);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         public void StopContract()
         {
-            timer.Stop();
-            timer.Dispose();
+            _timer.Stop();
+            _timer.Dispose();
         }
     }
 }

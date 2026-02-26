@@ -4,29 +4,25 @@ using System.Windows.Forms;
 
 namespace EasyCPDLC
 {
-    public class CPDLCMessage : Label
+    public class CpdlcMessage : Label
     {
 
-        public string type;
+        public readonly string type;
         public bool acknowledged = false;
-        public string recipient;
-        public string message;
-        public bool outbound;
+        public readonly string recipient;
+        public readonly string contents;
+        public readonly bool outbound;
         private string storedText;
 
-        public CPDLCResponse header;
-
-        public CPDLCMessage()
+        public readonly CpdlcResponse header;
+        
+        public CpdlcMessage(string msgType, string msgRecipient, string msgContents, bool msgOutbound = false, CpdlcResponse msgHeader = null)
         {
-
-        }
-        public CPDLCMessage(string _type, string _recipient, string _message, bool _outbound = false, CPDLCResponse _header = null)
-        {
-            type = _type;
-            recipient = _recipient;
-            message = _message;
-            outbound = _outbound;
-            header = _header;
+            type = msgType;
+            recipient = msgRecipient;
+            contents = msgContents;
+            outbound = msgOutbound;
+            header = msgHeader;
             SetStyle(ControlStyles.Selectable, true);
         }
 
@@ -53,22 +49,21 @@ namespace EasyCPDLC
         }
     }
 
-    public class CPDLCResponse
+    public class CpdlcResponse
     {
-        public string DataType { get; set; }
-        public int MessageID { get; set; }
-        public int ResponseID { get; set; }
-        public string Responses { get; set; }
+        public int MessageId { get; init; }
+        public int ResponseId { get; set; }
+        public string Responses { get; init; }
 
     }
 
     public class AccessibleLabel : Label
     {
         private readonly Color foreColor;
-        public AccessibleLabel(Color _foreColor)
+        public AccessibleLabel(Color labelForeColor)
         {
             SetStyle(ControlStyles.Selectable, true);
-            foreColor = _foreColor;
+            foreColor = labelForeColor;
         }
 
         protected override void OnEnter(EventArgs e)

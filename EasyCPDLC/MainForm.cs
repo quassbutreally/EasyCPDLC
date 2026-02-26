@@ -18,813 +18,721 @@ using NLog;
 using Octokit;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Security.Principal;
 using FSUIPC;
+using System.ComponentModel;
 
-namespace EasyCPDLC
+namespace EasyCPDLC;
+
+public sealed partial class MainForm
 {
-    public partial class MainForm : Form
+
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+    public Pilot userVatsimData;
+    private VatsimRootobject vatsimData;
+    private Navlog simbriefData;
+    public string[] reportFixes;
+    public string nextFix = null;
+
+    public readonly FsuipcData fsuipc = new();
+    private bool fsConnectionOpen;
+    private int fsuipcErrorCount = 1;
+
+    private bool isErrorState;
+
+    private readonly Random random = new();
+
+    private readonly List<Contract> contracts = [];
+
+    private static readonly HttpClient Webclient = new();
+    private string logonCode;
+    private int cid;
+    public string callsign;
+
+    private RequestForm rForm;
+    private TelexForm tForm;
+    private SettingsForm sForm;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool StayOnTop
     {
-
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-        private const int cGrip = 16;
-        private const int cCaption = 32;
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern bool ReleaseCapture();
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public Pilot userVATSIMData;
-        private VATSIMRootobject vatsimData;
-        private Navlog simbriefData;
-        public string[] reportFixes;
-        public string nextFix = null;
-
-        public FSUIPCData fsuipc = new();
-        public bool fsConnectionOpen = false;
-        public int fsuipcErrorCount = 1;
-
-        private bool isErrorState = false;
-
-        public Random random = new();
-
-        readonly private List<Contract> contracts = new();
-
-        private static readonly HttpClient webclient = new();
-        private string logonCode;
-        private int cid;
-        public string callsign;
-
-        private RequestForm rForm;
-        private TelexForm tForm;
-        private SettingsForm sForm;
-
-        public bool StayOnTop
+        get => Properties.Settings.Default.StayOnTop;
+        set
         {
-            get
+            Properties.Settings.Default.StayOnTop = value;
+            this.TopMost = value;
+        }
+    }
+
+    public static bool PlaySound
+    {
+        get => Properties.Settings.Default.PlayAudibleAlert;
+        set => Properties.Settings.Default.PlayAudibleAlert = value;
+    }
+
+    public static bool UseFsuipc
+    {
+        get => Properties.Settings.Default.UseFSUIPC;
+        set => Properties.Settings.Default.UseFSUIPC = value;
+    }
+
+    private static int SavedCid
+    {
+        get => Properties.Settings.Default.CID;
+        set => Properties.Settings.Default.CID = value;
+    }
+
+    private static string SavedHoppieCode
+    {
+        get => Properties.Settings.Default.HoppieCode;
+        set => Properties.Settings.Default.HoppieCode = value;
+    }
+
+    public static string SimbriefId
+    {
+        get => Properties.Settings.Default.SimbriefUsername;
+        set => Properties.Settings.Default.SimbriefUsername = value;
+    }
+
+    public int messageOutCounter = 1;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    private bool Connected
+    {
+        get;
+        set
+        {
+            field = value;
+            if (field)
             {
-                return Properties.Settings.Default.StayOnTop;
+                retrieveButton.Text = @"DISCONNECT";
+                atcButton.Enabled = true;
+                telexButton.Enabled = true;
             }
-            set
+            else
             {
-                Properties.Settings.Default.StayOnTop = value;
-                this.TopMost = value;
+                retrieveButton.Text = @"CONNECT";
+                atcButton.Enabled = false;
+                telexButton.Enabled = false;
             }
         }
+    }
 
-        public static bool PlaySound
+    public string pendingLogon;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string CurrentAtcUnit
+    {
+        get;
+        set
         {
-            get
+            field = value;
+            try
             {
-                return Properties.Settings.Default.PlayAudibleAlert;
-            }
-            set
-            {
-                Properties.Settings.Default.PlayAudibleAlert = value;
-            }
-        }
-
-        public static bool UseFSUIPC
-        {
-            get
-            {
-                return Properties.Settings.Default.UseFSUIPC;
-            }
-            set
-            {
-                Properties.Settings.Default.UseFSUIPC = value;
-            }
-        }
-
-        public static int SavedCID
-        {
-            get
-            {
-                return Properties.Settings.Default.CID;
-            }
-            set
-            {
-                Properties.Settings.Default.CID = value;
-
-            }
-        }
-
-        public static string SavedHoppieCode
-        {
-            get
-            {
-                return Properties.Settings.Default.HoppieCode;
-            }
-            set
-            {
-                Properties.Settings.Default.HoppieCode = value;
-
-            }
-        }
-
-        public static string SimbriefID
-        {
-            get
-            {
-                return Properties.Settings.Default.SimbriefUsername;
-            }
-            set
-            {
-                Properties.Settings.Default.SimbriefUsername = value;
-            }
-        }
-
-        public int messageOutCounter = 1;
-        private bool _connected;
-        public bool Connected
-        {
-            get
-            {
-                return _connected;
-            }
-            set
-            {
-                _connected = value;
-                if (_connected)
+                if (field is null)
                 {
-                    retrieveButton.Text = "DISCONNECT";
-                    atcButton.Enabled = true;
-                    telexButton.Enabled = true;
+                    atcUnitDisplay.Text = @"----";
+                    rForm.NeedsLogon = true;
                 }
                 else
                 {
-                    retrieveButton.Text = "CONNECT";
-                    atcButton.Enabled = false;
-                    telexButton.Enabled = false;
+                    atcUnitDisplay.Text = field;
+                    rForm.NeedsLogon = false;
                 }
+            }
+            catch (NullReferenceException)
+            {
             }
         }
+    }
 
-        public string pendingLogon = null;
-        private string _currentATCUnit;
-        public string CurrentATCUnit
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
+        IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
+
+
+    private readonly byte[][] fontResources = [
+        Properties.Resources.B612Mono_Bold,
+        Properties.Resources.B612Mono_Regular,
+        Properties.Resources.Oxygen_Regular,
+        Properties.Resources.Oxygen_Bold
+    ];
+        
+    public static readonly PrivateFontCollection Fonts = new();
+
+    private readonly Font controlFont;// = new("Oxygen", 10.0f, FontStyle.Regular);
+    public readonly Font textFont;// = new("B612 Mono", 10.0f, FontStyle.Regular);
+    public readonly Font textFontBold;// = new("B612 Mono", 12.5f, FontStyle.Bold);
+    public Color controlBackColor = Color.FromArgb(5, 5, 5);
+    public Color controlFrontColor = SystemColors.ControlLight;
+
+    private readonly ContextMenuStrip popupMenu = new();
+    private ToolStripMenuItem deleteAllMenu;
+
+    private AccessibleLabel wilcoLabel;
+    private AccessibleLabel rogerLabel;
+    private AccessibleLabel affirmativeLabel;
+    private AccessibleLabel negativeLabel;
+    private AccessibleLabel standbyLabel;
+    private AccessibleLabel unableLabel;
+    private AccessibleLabel deleteLabel;
+    private AccessibleLabel freeTextLabel;
+    private AccessibleLabel returnLabel;
+
+    private AccessibleLabel[] replyOptionsList;
+
+    private CpdlcMessage previewMessage;
+
+    private readonly SoundPlayer player = new();
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    private static readonly Regex HoppieParse = HoppieRegex();
+    private static readonly Regex CpdlcHeaderParse = CpdlcHeaderRegex();
+    private static readonly Regex CpdlcUnitParse = CpdlcUnitRegex();
+
+    private static readonly TimeSpan UpdateTimer = TimeSpan.FromSeconds(20);
+    private CancellationTokenSource requestCancellationTokenSource;
+    private CancellationToken requestCancellationToken;
+        
+    public MainForm()
+    {
+        var config = new NLog.Config.LoggingConfiguration();
+        var logFile = new NLog.Targets.FileTarget("logfile") { FileName = "EasyCPDLCLog.txt" };
+        config.AddRule(LogLevel.Debug, LogLevel.Fatal, logFile);
+        LogManager.Configuration = config;
+        Logger.Info("Logging initialised, beginning setup");
+
+        foreach(byte[] fontData in fontResources)
         {
-            get
-            {
-                return _currentATCUnit;
-            }
-            set
-            {
-                _currentATCUnit = value;
-                try
-                {
-                    if (_currentATCUnit is null)
-                    {
-                        atcUnitDisplay.Text = "----";
-                        rForm.NeedsLogon = true;
-
-                    }
-                    else
-                    {
-                        atcUnitDisplay.Text = _currentATCUnit;
-                        rForm.NeedsLogon = false;
-
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            var fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            uint dummy = 0;
+            Fonts.AddMemoryFont(fontPtr, fontData.Length);
+            AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
+            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
         }
 
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
-            IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
-
-
-        public byte[][] fontResources = {Properties.Resources.B612Mono_Bold, Properties.Resources.B612Mono_Regular, Properties.Resources.Oxygen_Regular, Properties.Resources.Oxygen_Bold };
-        public static PrivateFontCollection fonts = new PrivateFontCollection();
-
-        public Font controlFont;// = new("Oxygen", 10.0f, FontStyle.Regular);
-        public Font controlFontBold;// = new("Oxygen", 10.0f, FontStyle.Bold);
-        public Font textFont;// = new("B612 Mono", 10.0f, FontStyle.Regular);
-        public Font textFontBold;// = new("B612 Mono", 12.5f, FontStyle.Bold);
-        public Font dataEntryFont;// = new("B612 Mono", 11.0f, FontStyle.Regular);
-        public Color controlBackColor = Color.FromArgb(5, 5, 5);
-        public Color controlFrontColor = SystemColors.ControlLight;
-
-        private readonly ContextMenuStrip popupMenu = new();
-        ToolStripMenuItem deleteAllMenu;
-
-        private AccessibleLabel wilcoLabel;
-        private AccessibleLabel rogerLabel;
-        private AccessibleLabel affirmativeLabel;
-        private AccessibleLabel negativeLabel;
-        private AccessibleLabel standbyLabel;
-        private AccessibleLabel unableLabel;
-        private AccessibleLabel deleteLabel;
-        private AccessibleLabel freeTextLabel;
-        private AccessibleLabel returnLabel;
-
-        private AccessibleLabel[] replyOptionsList;
-
-        private CPDLCMessage previewMessage;
-
-        private readonly SoundPlayer player = new();
-
-        private static readonly Regex hoppieParse = new(@"{(.*?)}");
-        private static readonly Regex cpdlcHeaderParse = new(@"(\/\s*)\w*");
-        private static readonly Regex cpdlcUnitParse = new(@"_@([\w]*)@_");
-
-        private static readonly TimeSpan updateTimer = TimeSpan.FromSeconds(20);
-        private CancellationTokenSource requestCancellationTokenSource;
-        private CancellationToken requestCancellationToken;
-
-        public MainForm()
-        {
-            var config = new NLog.Config.LoggingConfiguration();
-            var logFile = new NLog.Targets.FileTarget("logfile") { FileName = "EasyCPDLCLog.txt" };
-            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logFile);
-            LogManager.Configuration = config;
-            Logger.Info("Logging initialised, beginning setup");
-
-            foreach(byte[] fontData in fontResources)
-            {
-                IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
-                System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
-                uint dummy = 0;
-                fonts.AddMemoryFont(fontPtr, fontData.Length);
-                AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
-                System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
-            }
-
-            textFont = new(fonts.Families[0], 10.0f, FontStyle.Regular);
-            textFontBold = new(fonts.Families[0], 12.5f, FontStyle.Bold);
-            controlFont = new(fonts.Families[1], 10.0f, FontStyle.Regular);
-            controlFontBold = new(fonts.Families[1], 10.0f, FontStyle.Bold);
-            dataEntryFont = new(fonts.Families[0], 11.0f, FontStyle.Regular);
+        textFont = new Font(Fonts.Families[0], 10.0f, FontStyle.Regular);
+        textFontBold = new Font(Fonts.Families[0], 12.5f, FontStyle.Bold);
+        controlFont = new Font(Fonts.Families[1], 10.0f, FontStyle.Regular);
 
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-            string _customSoundFile = System.Windows.Forms.Application.StartupPath + @"\Sounds\Notification.wav";
-            if(File.Exists(_customSoundFile))
-            {
-                player.SoundLocation = _customSoundFile;
-            }
-            else
-            {
-                player.Stream = Properties.Resources.notification;
-            }
-            player.Play();
-            InitializeComponent();
-            this.TopMost = StayOnTop;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.ResizeRedraw, true);
-            CurrentATCUnit = null;
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-        }
-
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        var customSoundFile = System.Windows.Forms.Application.StartupPath + @"\Sounds\Notification.wav";
+        if(File.Exists(customSoundFile))
         {
-            if (new AssemblyName(args.Name).Name == "System.Runtime.CompilerServices.Unsafe")
-                return Assembly.LoadFrom(
-                    Path.Combine(System.Windows.Forms.Application.StartupPath, "System.Runtime.CompilerServices.Unsafe.dll"));
-            throw new Exception();
+            player.SoundLocation = customSoundFile;
         }
-        private void MainForm_Load(object sender, EventArgs e)
+        else
         {
-            outputTable.BorderStyle = BorderStyle.FixedSingle;
-            outputTable.HorizontalScroll.Maximum = 0;
-            outputTable.AutoScroll = false;
-            outputTable.VerticalScroll.Visible = false;
-            outputTable.AutoScroll = true;
+            player.Stream = Properties.Resources.notification;
+        }
+        player.Play();
+        InitializeComponent();
+        TopMost = StayOnTop;
+        FormBorderStyle = FormBorderStyle.None;
+        DoubleBuffered = true;
+        SetStyle(ControlStyles.ResizeRedraw, true);
+        CurrentAtcUnit = null;
+    }
 
-            CheckNewVersion();
-            //CheckAdministrator();
-            InitialisePopupMenu();
-            ShowSetupForm();
-            Setup();
+    private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    {
+        if (new AssemblyName(args.Name).Name == "System.Runtime.CompilerServices.Unsafe")
+            return Assembly.LoadFrom(
+                Path.Combine(System.Windows.Forms.Application.StartupPath, "System.Runtime.CompilerServices.Unsafe.dll"));
+        throw new Exception();
+    }
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        outputTable.BorderStyle = BorderStyle.FixedSingle;
+        outputTable.HorizontalScroll.Maximum = 0;
+        outputTable.AutoScroll = false;
+        outputTable.VerticalScroll.Visible = false;
+        outputTable.AutoScroll = true;
 
-            if(Properties.Settings.Default.MainWindowLocation != new Point(0, 0))
-            {
-                Location = Properties.Settings.Default.MainWindowLocation;
-                Size = Properties.Settings.Default.MainWindowSize;
-            }
+        CheckNewVersion();
+        InitialisePopupMenu();
+        ShowSetupForm();
+        Setup();
+
+        if(Properties.Settings.Default.MainWindowLocation != new Point(0, 0))
+        {
+            Location = Properties.Settings.Default.MainWindowLocation;
+            Size = Properties.Settings.Default.MainWindowSize;
+        }
             
-            Logger.Info("Setup completed successfully");
-        }
+        Logger.Info("Setup completed successfully");
+    }
 
-        private static async void CheckNewVersion()
+    private static async void CheckNewVersion()
+    {
+        try
         {
-            try
+            var client = new GitHubClient(new ProductHeaderValue("EasyCPDLC"));
+            var releases = await client.Repository.Release.GetAll("josh-seagrave", "EasyCPDLC");
+            var latest = releases[0];
+            var latestVersion = latest.TagName.Replace("cpdlc", "");
+            if (latestVersion == System.Windows.Forms.Application.ProductVersion) return;
+            var updateBox = MessageBox.Show(
+                $@"New Version {latestVersion} Available to download from Github. Would you like me to take you to the Github page for the latest release?", @"New Version Available", MessageBoxButtons.YesNo);
+            if (updateBox == DialogResult.Yes)
             {
-                var client = new GitHubClient(new ProductHeaderValue("EasyCPDLC"));
-                var releases = await client.Repository.Release.GetAll("josh-seagrave", "EasyCPDLC");
-                var latest = releases[0];
-                string latestVersion = latest.TagName.Replace("cpdlc", "");
-                if (latestVersion != System.Windows.Forms.Application.ProductVersion)
-                {
-                    DialogResult updateBox = MessageBox.Show(String.Format("New Version {0} Available to download from Github. Would you like me to take you to the Github page for the latest release?", latestVersion), "New Version Available", MessageBoxButtons.YesNo);
-                    if (updateBox == DialogResult.Yes)
-                    {
-                        System.Diagnostics.Process.Start(latest.HtmlUrl);
-                    }
-                }
-            }
-
-            catch { }
-        }
-
-        public static void CheckAdministrator()
-        {
-            if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)) 
-            {
-                MessageBox.Show("EasyCPDLC does not appear to be running in Administrator mode. This will limit certain functionalities of the program. Please restart EasyCPDLC in admin mode. The program will now exit.", "Error");
-                System.Windows.Forms.Application.Exit();
+                System.Diagnostics.Process.Start(latest.HtmlUrl);
             }
         }
 
-        private ToolStripMenuItem CreateMenuItem(string name)
+        catch
         {
-            ToolStripMenuItem _temp = new(name)
-            {
-                BackColor = controlBackColor,
-                ForeColor = controlFrontColor,
-                Font = controlFont,
-                TextAlign = ContentAlignment.TopLeft
-            };
-
-            return _temp;
+            // ignored
         }
-        private void InitialisePopupMenu()
+    }
+
+    private ToolStripMenuItem CreateMenuItem(string name)
+    {
+        ToolStripMenuItem temp = new(name)
         {
-            popupMenu.BackColor = controlBackColor;
-            popupMenu.ForeColor = controlFrontColor;
-            popupMenu.Font = controlFont;
-            popupMenu.ShowImageMargin = false;
+            BackColor = controlBackColor,
+            ForeColor = controlFrontColor,
+            Font = controlFont,
+            TextAlign = ContentAlignment.TopLeft
+        };
 
-            rogerLabel = CreateSpecialLabel("> ROGER", false);
-            rogerLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "ROGER");
-            rogerLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "ROGER");
+        return temp;
+    }
+    private void InitialisePopupMenu()
+    {
+        popupMenu.BackColor = controlBackColor;
+        popupMenu.ForeColor = controlFrontColor;
+        popupMenu.Font = controlFont;
+        popupMenu.ShowImageMargin = false;
 
-            wilcoLabel = CreateSpecialLabel("> WILCO", false);
-            wilcoLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "WILCO");
-            wilcoLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "WILCO");
+        rogerLabel = CreateSpecialLabel("> ROGER", false);
+        rogerLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "ROGER");
+        rogerLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "ROGER");
 
-            standbyLabel = CreateSpecialLabel("> STANDBY", false);
-            standbyLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "STANDBY");
-            standbyLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "STANDBY");
+        wilcoLabel = CreateSpecialLabel("> WILCO", false);
+        wilcoLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "WILCO");
+        wilcoLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "WILCO");
 
-            unableLabel = CreateSpecialLabel("> UNABLE", false);
-            unableLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "UNABLE");
-            unableLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "UNABLE");
+        standbyLabel = CreateSpecialLabel("> STANDBY", false);
+        standbyLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "STANDBY");
+        standbyLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "STANDBY");
 
-            affirmativeLabel = CreateSpecialLabel("> AFFIRMATIVE", false);
-            affirmativeLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
-            affirmativeLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
+        unableLabel = CreateSpecialLabel("> UNABLE", false);
+        unableLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "UNABLE");
+        unableLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "UNABLE");
 
-            negativeLabel = CreateSpecialLabel("> NEGATIVE", false);
-            negativeLabel.Click += (_sender, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
-            negativeLabel.KeyDown += (_sender, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
+        affirmativeLabel = CreateSpecialLabel("> AFFIRMATIVE", false);
+        affirmativeLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
+        affirmativeLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
 
-            freeTextLabel = CreateSpecialLabel("> FREE TEXT", false);
-            freeTextLabel.Click += (_sender, e) => FreeTextMessage(previewMessage);
-            freeTextLabel.KeyDown += (_sender, e) => FreeTextMessage(previewMessage);
+        negativeLabel = CreateSpecialLabel("> NEGATIVE", false);
+        negativeLabel.Click += (_, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
+        negativeLabel.KeyDown += (_, e) => ReplyMessage(e, previewMessage, "NEGATIVE");
 
-            deleteLabel = CreateSpecialLabel("> DELETE", false);
-            deleteLabel.Click += (_sender, e) => DeleteElement(e, previewMessage);
-            deleteLabel.KeyDown += (_sender, e) => DeleteElement(e, previewMessage);
+        freeTextLabel = CreateSpecialLabel("> FREE TEXT", false);
+        freeTextLabel.Click += (_, _) => FreeTextMessage(previewMessage);
+        freeTextLabel.KeyDown += (_, _) => FreeTextMessage(previewMessage);
 
-            returnLabel = CreateSpecialLabel("< RETURN", false);
-            returnLabel.Click += ReturnMessage;
-            returnLabel.KeyDown += ReturnMessage;
+        deleteLabel = CreateSpecialLabel("> DELETE", false);
+        deleteLabel.Click += (_, e) => DeleteElement(e, previewMessage);
+        deleteLabel.KeyDown += (_, e) => DeleteElement(e, previewMessage);
 
-            deleteAllMenu = CreateMenuItem("DELETE ALL");
-            deleteAllMenu.Click += DeleteAllElement;
+        returnLabel = CreateSpecialLabel("< RETURN", false);
+        returnLabel.Click += ReturnMessage;
+        returnLabel.KeyDown += ReturnMessage;
 
-            replyOptionsList = new AccessibleLabel[]
-            {
-                wilcoLabel, rogerLabel, unableLabel, affirmativeLabel, negativeLabel, standbyLabel, freeTextLabel
-            };
+        deleteAllMenu = CreateMenuItem("DELETE ALL");
+        deleteAllMenu.Click += DeleteAllElement;
 
-            Logger.Info("Login menu initialised");
+        replyOptionsList =
+        [
+            wilcoLabel, 
+            rogerLabel, 
+            unableLabel, 
+            affirmativeLabel,
+            negativeLabel, 
+            standbyLabel, 
+            freeTextLabel
+        ];
+
+        Logger.Info("Login menu initialised");
+    }
+
+    private void FreeTextMessage(CpdlcMessage message)
+    {
+
+        tForm = new TelexForm(this, message.recipient)
+        {
+            TopMost = StayOnTop
+        };
+        tForm.Show();
+    }
+
+    public void ClearPreview()
+    {
+        messageFormatPanel.Controls.Clear();
+        outputTable.Visible = true;
+        messageFormatPanel.Visible = false;
+
+    }
+
+    private void ReturnMessage(object sender, EventArgs e)
+    {
+        if (e is MouseEventArgs || (e is KeyEventArgs kE && (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)))
+        {
+            ClearPreview();
+        }
+    }
+    private void ReplyMessage(EventArgs e, CpdlcMessage message, string reply)
+    {
+        if (!(e is MouseEventArgs || (e is KeyEventArgs kE && (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)))) return;
+
+        foreach (var label in replyOptionsList)
+        {
+            label.Enabled = false;
         }
 
-        private void FreeTextMessage(CPDLCMessage message)
-        {
+        message.header.ResponseId = messageOutCounter;
 
-            tForm = new TelexForm(this, message.recipient)
-            {
-                TopMost = StayOnTop
-            };
-            tForm.Show();
+        if (reply != "STANDBY")
+        {
+            message.acknowledged = true;
+            int index = outputTable.Controls.GetChildIndex(message);
+            ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
+            outputTable.Controls[index + 1].ForeColor = controlFrontColor;
+            message.ForeColor = SystemColors.ControlDark;
         }
+            
+        _ = Task.Run(() => SendCpdlcMessage(message.recipient, message.type,
+            $"/data2/{message.header.ResponseId}/{message.header.MessageId}/N/{reply}"), requestCancellationToken);
+        messageOutCounter += 1;
+        ClearPreview();
 
-        public void ClearPreview()
+        foreach (var label in replyOptionsList)
         {
-            messageFormatPanel.Controls.Clear();
-            outputTable.Visible = true;
-            messageFormatPanel.Visible = false;
-
+            label.Enabled = true;
         }
+    }
+    private void ShowSetupForm()
+    {
 
-        private void ReturnMessage(object sender, EventArgs e)
+        Logger.Info("Login Form Displayed");
+
+        DataEntry dataEntry = new(SavedHoppieCode == String.Empty ? null : SavedHoppieCode, SavedCid == 0 ? null : SavedCid);
+
+        if (dataEntry.ShowDialog(this) == DialogResult.OK)
         {
-            try
+            logonCode = dataEntry.HoppieLogonCode;
+            cid = dataEntry.VatsimCid;
+            if (dataEntry.Remember)
             {
-                KeyEventArgs kE = (KeyEventArgs)e;
-                if(kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch
-            {
-                ClearPreview();
-            }
-        }
-        private void ReplyMessage(EventArgs e, CPDLCMessage message, string reply)
-        {
-            try
-            {
-                KeyEventArgs kE = (KeyEventArgs)e;
-                if (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch
-            {
-                foreach (AccessibleLabel _label in replyOptionsList)
-                {
-                    _label.Enabled = false;
-                }
-
-                message.header.ResponseID = messageOutCounter;
-
-                if (reply != "STANDBY")
-                {
-                    message.acknowledged = true;
-                    int index = outputTable.Controls.GetChildIndex(message);
-                    ((TimerLabel)outputTable.Controls[index + 1]).CanFlash = false;
-                    outputTable.Controls[index + 1].ForeColor = controlFrontColor;
-                    message.ForeColor = SystemColors.ControlDark;
-                }
-                
-                _ = Task.Run(() => SendCPDLCMessage(message.recipient, message.type, String.Format("/data2/{0}/{1}/N/{2}", message.header.ResponseID, message.header.MessageID, reply)));
-                messageOutCounter += 1;
-                ClearPreview();
-
-                foreach (AccessibleLabel _label in replyOptionsList)
-                {
-                    _label.Enabled = true;
-                }
-            }
-        }
-        private void ShowSetupForm()
-        {
-
-            Logger.Info("Login Form Displayed");
-
-            DataEntry dataEntry = new(SavedHoppieCode == String.Empty ? null : SavedHoppieCode, SavedCID == new int() ? null : global::EasyCPDLC.MainForm.SavedCID);
-
-            if (dataEntry.ShowDialog(this) == DialogResult.OK)
-            {
-                logonCode = dataEntry.HoppieLogonCode;
-                cid = dataEntry.VatsimCID;
-                if (dataEntry.Remember)
-                {
-                    Logger.Info("REMEMBER ME: TRUE. REGISTRY SET.");
-                    SavedHoppieCode = logonCode;
-                    SavedCID = cid;
-                }
-                else
-                {
-                    SavedCID = new int();
-                    SavedHoppieCode = String.Empty;
-                }
+                Logger.Info("REMEMBER ME: TRUE. REGISTRY SET.");
+                SavedHoppieCode = logonCode;
+                SavedCid = cid;
             }
             else
             {
-                Logger.Info("Goodbye");
-                LogManager.Shutdown();
-                FSUIPCData.CloseConnection();
-                System.Windows.Forms.Application.Exit();
+                SavedCid = 0;
+                SavedHoppieCode = string.Empty;
             }
         }
-        private void Setup()
+        else
         {
-            retrieveButton.Enabled = true;
-            Logger.Info("Setup Complete.");
+            Logger.Info("Goodbye");
+            LogManager.Shutdown();
+            FsuipcData.CloseConnection();
+            System.Windows.Forms.Application.Exit();
         }
-        private async Task PeriodicCheckMessage(TimeSpan interval, CancellationToken cancellationToken)
+    }
+    private void Setup()
+    {
+        retrieveButton.Enabled = true;
+        Logger.Info("Setup Complete.");
+    }
+    private async Task PeriodicCheckMessage(TimeSpan interval, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
         {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Logger.Debug("Attempting to poll Hoppie for new messages");
+            Logger.Debug("Attempting to poll Hoppie for new messages");
 
-                await SendCPDLCMessage("NONE", "poll", "");
-                await Task.Delay(interval, cancellationToken);
-                if(UseFSUIPC && fsConnectionOpen)
+            await SendCpdlcMessage("NONE", "poll", "");
+            await Task.Delay(interval, cancellationToken);
+            if(UseFsuipc && fsConnectionOpen)
+            {
+                try
                 {
-                    try
+                    fsuipc.RefreshData();
+                    fsuipcErrorCount = 1;
+                }
+                catch (FSUIPCException)
+                {
+                    if (fsuipcErrorCount <= 3)
                     {
-                        await fsuipc.RefreshData();
+                        try
+                        {
+                            fsConnectionOpen = FsuipcData.OpenConnection();
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        WriteMessage(
+                            $@"UNABLE TO CHECK FLIGHT SIM DATA. RETRYING (ATTEMPT {fsuipcErrorCount} OF 3)", "SYSTEM", "SYSTEM");
+                        fsuipcErrorCount += 1;
+                    }
+                    else
+                    {
+                        WriteMessage("FLIGHT SIM DATA RETRIEVAL FAILED 3 TIMES CONSECUTIVELY. DISCONNECTING FROM FLIGHT SIM", "SYSTEM", "SYSTEM");
+                        fsConnectionOpen = FsuipcData.CloseConnection();
                         fsuipcErrorCount = 1;
                     }
-                    catch (FSUIPCException)
-                    {
-                        if (fsuipcErrorCount <= 3)
-                        {
-                            try
-                            {
-                                fsConnectionOpen = FSUIPCData.OpenConnection();
-                            }
-                            catch { }
-                            WriteMessage(String.Format("UNABLE TO CHECK FLIGHT SIM DATA. RETRYING (ATTEMPT {0} OF 3)", fsuipcErrorCount), "SYSTEM", "SYSTEM");
-                            fsuipcErrorCount += 1;
-                        }
-                        else
-                        {
-                            WriteMessage("FLIGHT SIM DATA RETRIEVAL FAILED 3 TIMES CONSECUTIVELY. DISCONNECTING FROM FLIGHT SIM", "SYSTEM", "SYSTEM");
-                            fsConnectionOpen = FSUIPCData.CloseConnection();
-                            fsuipcErrorCount = 1;
-                        }
 
-                    }
                 }
-                
-                
             }
+                
+                
         }
-        public async Task SendCPDLCMessage(string recipient, string messageType, string packetData, bool _write = true)
+    }
+    public async Task SendCpdlcMessage(string recipient, string messageType, string packetData, bool write = true)
+    {
+
+        var connectionValues = new Dictionary<string, string> {
+            {"logon", logonCode},
+            {"from", callsign},
+            {"to", recipient},
+            {"type", messageType},
+            {"packet", packetData}
+        };
+
+        var content = new FormUrlEncodedContent(connectionValues);
+        try
         {
 
-            var connectionValues = new Dictionary<string, string> {
-                {"logon", logonCode},
-                {"from", callsign},
-                {"to", recipient},
-                {"type", messageType},
-                {"packet", packetData}
-            };
-
-            var content = new FormUrlEncodedContent(connectionValues);
-            try
+            if (write && messageType != "poll")
             {
+                SendingProgress.Invoke(() => SendingProgress.Visible = true);
+                SendingProgress.Invoke(() => SendingProgress.Value = 0);
+                await SendingProgress.InvokeAsync(() => SendingProgress.PerformStep(), requestCancellationToken);
+            }
 
-                if (_write && messageType != "poll")
+            var response = await Webclient.PostAsync("https://www.hoppie.nl/acars/system/connect.html", content, requestCancellationToken);
+
+            await SendingProgress.InvokeAsync(() => SendingProgress.PerformStep(), requestCancellationToken);
+
+            Logger.Debug($"PACKET SENT: {recipient} | {messageType} | {packetData} | {true} | {write}");
+            var responseString = await response.Content.ReadAsStringAsync(requestCancellationToken);
+            var printString = responseString.ToUpper().Trim();
+            Logger.Debug("RECEIVED: " + responseString);
+
+            if (printString.Contains("ERROR"))
+            {
+                throw new HttpRequestException();
+            }
+            else
+            {
+                if(isErrorState)
                 {
-                    SendingProgress.Invoke(() => SendingProgress.Visible = true);
-                    SendingProgress.Invoke(() => SendingProgress.Value = 0);
-                    SendingProgress.Invoke(() => SendingProgress.PerformStep());
+                    WriteMessage("HOPPIE CONNECTIVITY RESTORED.", "SYSTEM", "SYSTEM");
+                    isErrorState = false;
                 }
-
-                var response = await webclient.PostAsync("http://www.hoppie.nl/acars/system/connect.html", content);
-
-                SendingProgress.Invoke(() => SendingProgress.PerformStep());
-
-                Logger.Debug(String.Format("PACKET SENT: {0} | {1} | {2} | {3} | {4}", recipient, messageType, packetData, true, _write));
-                var responseString = await response.Content.ReadAsStringAsync();
-                string printString = responseString.ToString().ToUpper().Trim();
-                Logger.Debug("RECEIVED: " + responseString);
-
-                if (printString.Contains("ERROR"))
-                {
-                    throw new HttpRequestException();
-                }
-                else
-                {
-                    if(isErrorState)
-                    {
-                        WriteMessage("HOPPIE CONNECTIVITY RESTORED.", "SYSTEM", "SYSTEM");
-                        isErrorState = false;
-                    }
                     
-                    SendingProgress.Invoke(() => SendingProgress.PerformStep());
+                await SendingProgress.InvokeAsync(() => SendingProgress.PerformStep(), requestCancellationToken);
 
-                    if (_write && messageType != "poll")
+                if (write && messageType != "poll")
+                {
+                    WriteMessage(messageType == "CPDLC" ? packetData.Split('/').Last() : packetData, messageType, recipient, true);
+                }
+            }
+
+            if (printString != "OK")
+            {
+                await TelexParser(printString);
+            }
+
+            SendingProgress.Invoke(() => SendingProgress.Visible = false);
+        }
+
+        catch (Exception e)
+        {
+            if(!isErrorState)
+            {
+                Logger.Error($"{e.GetType().FullName}: {e.Message}");
+                WriteMessage("ERROR CHECKING FOR NEW MESSAGES. THIS IS LIKELY AN ERROR WITH THE HOPPIE NETWORK. THE SYSTEM WILL CONTINUE ATTEMPTING TO CONTACT THE SERVER AND LET YOU KNOW WHEN CONNECTION IS RE-ESTABLISHED.", "SYSTEM", "SYSTEM");
+                isErrorState = true;
+            }
+            SendingProgress.Invoke(() => SendingProgress.Visible = false);
+        }
+    }
+    private CpdlcMessage CreateCpdlcMessage(string contents, string type, string recipient, bool outbound = false, CpdlcResponse header = null)
+    {
+        CpdlcMessage message = new(type, recipient, contents, outbound, header)
+        {
+            AutoSize = true,
+            BackColor = controlBackColor,
+            ForeColor = SystemColors.ControlDark,
+            Font = textFont,
+            Text = type == "SYSTEM" ? "SYSTEM MESSAGE" : outbound ? string.Format("{1} MESSAGE TO {0}", recipient, type.ToUpper()) : string.Format("{1} MESSAGE FROM {0}", recipient, type.ToUpper()),
+            BorderStyle = BorderStyle.None,
+            TabStop = true,
+            TabIndex = 0,
+            Margin = new Padding(0, 3, 0, 0)
+        };
+
+        return message;
+    }
+
+    private AccessibleLabel CreateLabel(string text, bool useMaxSize = true)
+    {
+        Size maxSize = new()
+        {
+            Width = 65
+        };
+        AccessibleLabel message = new(SystemColors.ControlDark)
+        {
+            Width = 65,
+            AutoSize = true,
+            BackColor = controlBackColor,
+            ForeColor = SystemColors.ControlDark,
+            Font = textFont,
+            Text = text,
+            BorderStyle = BorderStyle.None,
+            Margin = new Padding(5, 3, 0, 0),
+            TabStop = true,
+            TabIndex = 0
+        };
+        if (useMaxSize)
+        {
+            message.MaximumSize = maxSize;
+        }
+        SetStyle(ControlStyles.Selectable, true);
+        return message;
+    }
+
+    private AccessibleLabel CreateSpecialLabel(string text, bool useMaxSize = true)
+    {
+        Size maxSize = new()
+        {
+            Width = 65
+        };
+        AccessibleLabel message = new(SystemColors.ControlLight)
+        {
+            Width = 65,
+            AutoSize = true,
+            BackColor = controlBackColor,
+            ForeColor = SystemColors.ControlLight,
+            Font = textFont,
+            Text = text,
+            BorderStyle = BorderStyle.None,
+            Margin = new Padding(5, 3, 0, 0),
+            TabStop = true,
+            TabIndex = 0,
+        };
+        if (useMaxSize)
+        {
+            message.MaximumSize = maxSize;
+        }
+        return message;
+    }
+
+    private TimerLabel CreateTimerLabel(string text, bool useMaxSize = true)
+    {
+        Size maxSize = new()
+        {
+            Width = 65
+        };
+        TimerLabel message = new()
+        {
+            Width = 65,
+            AutoSize = true,
+            BackColor = controlBackColor,
+            ForeColor = SystemColors.ControlLight,
+            Font = textFontBold,
+            Text = text,
+            BorderStyle = BorderStyle.None,
+            Margin = new Padding(10, 0, 0, 0),
+        };
+        if (useMaxSize)
+        {
+            message.MaximumSize = maxSize;
+        }
+        return message;
+    }
+    private void DeleteElement(EventArgs e, CpdlcMessage control)
+    {
+        if (e is MouseEventArgs || (e is KeyEventArgs kE && (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)))
+        {
+            TableLayoutHelper.RemoveArbitraryRow(outputTable, outputTable.GetPositionFromControl(control).Row);
+            ClearPreview();
+        }
+    }
+
+    private void DeleteAllElement(object sender, EventArgs e)
+    {
+        outputTable.Controls.Clear();
+    }
+
+    private void MessageClicked(object s, EventArgs e)
+    {
+        var messageIndex = outputTable.Controls.GetChildIndex((System.Windows.Forms.Label)s) - 1;
+        if (e is KeyEventArgs kE)
+        {
+            if (kE.KeyCode != Keys.Enter && kE.KeyCode != Keys.Space) return;
+            messageIndex++;
+        }
+
+        var sender = (CpdlcMessage)outputTable.Controls[messageIndex];
+        previewMessage = sender;
+        List<System.Windows.Forms.Label> responses = [];
+
+
+            switch (sender.type)
+            {
+                case "CPDLC" when !sender.outbound && !sender.acknowledged:
+                {
+                    if (sender.contents.Contains("CLR TO") || sender.contents.Contains("CLRD TO") || sender.contents.Contains("CLEARED TO"))
                     {
-                        WriteMessage(messageType == "CPDLC" ? packetData.Split('/').Last() : packetData, messageType, recipient, true);
-                    }
-                }
-
-                if (printString != "OK")
-                {
-                    await TelexParser(printString);
-                }
-
-                SendingProgress.Invoke(() => SendingProgress.Visible = false);
-            }
-
-            catch (Exception e)
-            {
-                if(!isErrorState)
-                {
-                    Logger.Error(String.Format("{0}: {1}", e.GetType().FullName, e.Message));
-                    WriteMessage("ERROR CHECKING FOR NEW MESSAGES. THIS IS LIKELY AN ERROR WITH THE HOPPIE NETWORK. THE SYSTEM WILL CONTINUE ATTEMPTING TO CONTACT THE SERVER AND LET YOU KNOW WHEN CONNECTION IS RE-ESTABLISHED.", "SYSTEM", "SYSTEM");
-                    isErrorState = true;
-                }
-                SendingProgress.Invoke(() => SendingProgress.Visible = false);
-            }
-
-            return;
-
-        }
-        private CPDLCMessage CreateCPDLCMessage(string _contents, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
-        {
-            CPDLCMessage _message = new(_type, _recipient, _contents, _outbound, _header)
-            {
-                AutoSize = true,
-                BackColor = controlBackColor,
-                ForeColor = SystemColors.ControlDark,
-                Font = textFont,
-                Text = _type == "SYSTEM" ? "SYSTEM MESSAGE" : _outbound ? String.Format("{1} MESSAGE TO {0}", _recipient, _type.ToUpper()) : String.Format("{1} MESSAGE FROM {0}", _recipient, _type.ToUpper()),
-                BorderStyle = BorderStyle.None,
-                TabStop = true,
-                TabIndex = 0,
-                Margin = new Padding(0, 3, 0, 0)
-            };
-
-            return _message;
-        }
-
-        private AccessibleLabel CreateLabel(string _text, bool _useMaxSize = true)
-        {
-            Size maxSize = new()
-            {
-                Width = 65
-            };
-            AccessibleLabel _message = new(SystemColors.ControlDark)
-            {
-                Width = 65,
-                AutoSize = true,
-                BackColor = controlBackColor,
-                ForeColor = SystemColors.ControlDark,
-                Font = textFont,
-                Text = _text,
-                BorderStyle = BorderStyle.None,
-                Margin = new Padding(5, 3, 0, 0),
-                TabStop = true,
-                TabIndex = 0
-            };
-            if (_useMaxSize)
-            {
-                _message.MaximumSize = maxSize;
-            }
-            SetStyle(ControlStyles.Selectable, true);
-            return _message;
-        }
-
-        private AccessibleLabel CreateSpecialLabel(string _text, bool _useMaxSize = true)
-        {
-            Size maxSize = new()
-            {
-                Width = 65
-            };
-            AccessibleLabel _message = new(SystemColors.ControlLight)
-            {
-                Width = 65,
-                AutoSize = true,
-                BackColor = controlBackColor,
-                ForeColor = SystemColors.ControlLight,
-                Font = textFont,
-                Text = _text,
-                BorderStyle = BorderStyle.None,
-                Margin = new Padding(5, 3, 0, 0),
-                TabStop = true,
-                TabIndex = 0,
-            };
-            if (_useMaxSize)
-            {
-                _message.MaximumSize = maxSize;
-            }
-            return _message;
-        }
-
-        private TimerLabel CreateTimerLabel(string _text, bool _useMaxSize = true)
-        {
-            Size maxSize = new()
-            {
-                Width = 65
-            };
-            TimerLabel _message = new()
-            {
-                Width = 65,
-                AutoSize = true,
-                BackColor = controlBackColor,
-                ForeColor = SystemColors.ControlLight,
-                Font = textFontBold,
-                Text = _text,
-                BorderStyle = BorderStyle.None,
-                Margin = new Padding(10, 0, 0, 0),
-            };
-            if (_useMaxSize)
-            {
-                _message.MaximumSize = maxSize;
-            }
-            return _message;
-        }
-        private void DeleteElement(EventArgs e, CPDLCMessage control)
-        {
-            try
-            {
-                KeyEventArgs kE = (KeyEventArgs)e;
-                if (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch
-            {
-                TableLayoutHelper.RemoveArbitraryRow(outputTable, outputTable.GetPositionFromControl(control).Row);
-                ClearPreview();
-            }
-        }
-
-        private void DeleteAllElement(object sender, EventArgs e)
-        {
-            outputTable.Controls.Clear();
-        }
-
-        private void MessageClicked(object sender, EventArgs e)
-        {
-            int messageIndex = outputTable.Controls.GetChildIndex((System.Windows.Forms.Label)sender) - 1;
-            try
-            {
-                KeyEventArgs kE = (KeyEventArgs)e;
-                if (kE.KeyCode == Keys.Enter || kE.KeyCode == Keys.Space)
-                {
-                    messageIndex++;
-                    throw new Exception();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch
-            {
-                CPDLCMessage _sender = (CPDLCMessage)outputTable.Controls[messageIndex];
-                previewMessage = _sender;
-                System.Windows.Forms.Label _timeStamp = (System.Windows.Forms.Label)outputTable.Controls[messageIndex - 1];
-                List<System.Windows.Forms.Label> responses = new();
-
-
-                if (_sender.type == "CPDLC" && !_sender.outbound && !_sender.acknowledged)
-                {
-                    if (_sender.message.Contains("CLR TO") || _sender.message.Contains("CLRD TO") || _sender.message.Contains("CLEARED TO"))
-                    {
-                        AccessibleLabel acceptLabel = CreateSpecialLabel("> ACCEPT", false);
-                        AccessibleLabel rejectLabel = CreateSpecialLabel("> REJECT", false);
-                        switch (_sender.header.Responses)
+                        var acceptLabel = CreateSpecialLabel("> ACCEPT", false);
+                        var rejectLabel = CreateSpecialLabel("> REJECT", false);
+                        switch (sender.header.Responses)
                         {
                             case "WU":
-                                acceptLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "WILCO");
-                                acceptLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "WILCO");
-                                rejectLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "UNABLE");
-                                rejectLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "UNABLE");
+                                acceptLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "WILCO");
+                                acceptLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "WILCO");
+                                rejectLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "UNABLE");
+                                rejectLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "UNABLE");
                                 break;
 
                             case "AN":
-                                acceptLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
-                                acceptLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
-                                rejectLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "NEGATIVE");
-                                rejectLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "NEGATIVE");
+                                acceptLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
+                                acceptLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "AFFIRMATIVE");
+                                rejectLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "NEGATIVE");
+                                rejectLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "NEGATIVE");
                                 break;
 
                             case "R":
-                                acceptLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "ROGER");
-                                acceptLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "ROGER");
-                                rejectLabel.Click += (lSender, le) => ReplyMessage(e, previewMessage, "UNABLE");
-                                rejectLabel.KeyDown += (lSender, le) => ReplyMessage(e, previewMessage, "UNABLE");
+                                acceptLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "ROGER");
+                                acceptLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "ROGER");
+                                rejectLabel.Click += (_, _) => ReplyMessage(e, previewMessage, "UNABLE");
+                                rejectLabel.KeyDown += (_, _) => ReplyMessage(e, previewMessage, "UNABLE");
                                 break;
 
 
@@ -837,7 +745,7 @@ namespace EasyCPDLC
 
                     else
                     {
-                        switch (_sender.header.Responses)
+                        switch (sender.header.Responses)
                         {
                             case "WU":
                                 responses.Add(wilcoLabel);
@@ -859,244 +767,232 @@ namespace EasyCPDLC
                     }
 
                     responses.Add(freeTextLabel);
+                    break;
                 }
-                else if (_sender.type == "TELEX" && !_sender.outbound)
-                {
+                case "TELEX" when !sender.outbound:
                     responses.Add(freeTextLabel);
-                }
-
-                messageFormatPanel.Size = outputTable.Size;
-                messageFormatPanel.Visible = true;
-                outputTable.Visible = false;
-                messageFormatPanel.Controls.Add(returnLabel);
-                messageFormatPanel.SetFlowBreak(returnLabel, true);
-                foreach (string line in _sender.message.Split('\n'))
-                {
-                    messageFormatPanel.Controls.Add(CreateLabel(line, false));
-                    messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[messageFormatPanel.Controls.Count - 1], true);
-                }
-                foreach (System.Windows.Forms.Label _response in responses)
-                {
-                    messageFormatPanel.Controls.Add(_response);
-                }
-                if (_sender.type != "CPDLC")
-                {
-                    messageFormatPanel.Controls.Add(deleteLabel);
-                }
-                messageFormatPanel.Controls[1].Focus();
+                    break;
             }
-        }
-        private Task ADSCParser(string _response, string _sender)
+
+            messageFormatPanel.Size = outputTable.Size;
+            messageFormatPanel.Visible = true;
+            outputTable.Visible = false;
+            messageFormatPanel.Controls.Add(returnLabel);
+            messageFormatPanel.SetFlowBreak(returnLabel, true);
+            foreach (var line in sender.contents.Split('\n'))
+            {
+                messageFormatPanel.Controls.Add(CreateLabel(line, false));
+                messageFormatPanel.SetFlowBreak(messageFormatPanel.Controls[^1], true);
+            }
+            foreach (var response in responses)
+            {
+                messageFormatPanel.Controls.Add(response);
+            }
+            if (sender.type != "CPDLC")
+            {
+                messageFormatPanel.Controls.Add(deleteLabel);
+            }
+            messageFormatPanel.Controls[1].Focus();
+    }
+    private Task AdscParser(string response, string sender)
+    {
+        var responseElements = response.Split(' ');
+        if (!int.TryParse(responseElements[2], out _))
         {
-            string[] responseElements = _response.Split(' ');
-            try
-            {
-                Convert.ToInt32(responseElements[2]);
-            }
-            catch
-            {
-                return Task.CompletedTask;
-            }
-            Contract _contract;
-            switch(responseElements[1])
-            {
-                case "PERIODIC":
-                    _contract = new Contract(this, _sender, responseElements[2]);
-                    contracts.Add(_contract);
-                    _contract.StartContract();
-
-                    break;
-
-                case "CANCEL":
-                    _contract = contracts.Where(x => x.sender == _sender && x.contractLength == responseElements[2]).FirstOrDefault();
-                    if(!_contract.Equals(default(Contract)))
-                    {
-                        _contract.StopContract();
-                        contracts.Remove(_contract);
-                    }
-
-                    break;
-            }
-
             return Task.CompletedTask;
         }
-
-        private async Task TelexParser(string response)
+            
+        Contract contract;
+        switch(responseElements[1])
         {
-            var responses = hoppieParse.Matches(response);
+            case "PERIODIC":
+                contract = new Contract(
+                    sender,
+                    responseElements[2],
+                    (to, type, msg) => SendCpdlcMessage(to, type, msg, false),
+                    () => fsuipc,
+                    () => callsign);
+                contracts.Add(contract);
+                contract.StartContract();
 
-            foreach (Match _response in responses)
-            {
-                string format_response = "";
-                string[] _modify = _response.Groups[1].Value.Replace("}", "").Split('{');
-                string sender = _modify[0].Split(' ')[0];
-                string type = _modify[0].Split(' ')[1];
+                break;
 
-                for (int i = 0; i < _modify.Length; i++)
+            case "CANCEL":
+                contract = contracts.FirstOrDefault(x => x.Sender == sender && x.ContractLength == responseElements[2]);
+                if  (contract != null)
                 {
-                    if (i > 0 && _modify[i].Length > 2)
+                    contract.StopContract();
+                    contracts.Remove(contract);
+                }
+
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task TelexParser(string telex)
+    {
+        var responses = HoppieParse.Matches(telex);
+
+        foreach (Match response in responses)
+        {
+            var formatResponse = "";
+            var modify = response.Groups[1].Value.Replace("}", "").Split('{');
+            var sender = modify[0].Split(' ')[0];
+            var type = modify[0].Split(' ')[1];
+
+            for (var i = 0; i < modify.Length; i++)
+            {
+                if (i <= 0 || modify[i].Length <= 2) continue;
+                if (modify[1].StartsWith("/DATA2/"))
+                {
+                    Logger.Debug("CPDLC Message identified, attempting to parse");
+                    await CpdlcParser(modify[1], sender);
+                    break;
+                }
+
+                if (type == "ADS-C")
+                {
+                    if (UseFsuipc)
                     {
-                        if (_modify[1].StartsWith("/DATA2/"))
-                        {
-                            Logger.Debug("CPDLC Message identified, attempting to parse");
-                            await CPDLCParser(_modify[1], sender);
-                            break;
-                        }
-
-                        if (type == "ADS-C")
-                        {
-                            if (UseFSUIPC)
-                            {
-                                Logger.Debug("ADS-C Message identified, attempting to parse");
-                                await ADSCParser(_modify[1], sender);
-                                break;
-                            }
-                            else
-                            {
-                                Logger.Debug("ADS-C Message identified, but no simulator connection was recognised. Ignoring.");
-                            }
-                        }
-
-                        format_response += _modify[1];
-                        WriteMessage(format_response, type, sender);
-                        FlashWindow.Flash(this);
+                        Logger.Debug("ADS-C Message identified, attempting to parse");
+                        await AdscParser(modify[1], sender);
+                        break;
+                    }
+                    else
+                    {
+                        Logger.Debug("ADS-C Message identified, but no simulator connection was recognised. Ignoring.");
                     }
                 }
-            }
-            return;
-        }
 
-        private async Task CPDLCParser(string _response, string _sender)
-        {
-            bool _showUser = true;
-            string messageString;
-
-            var unit = cpdlcUnitParse.Match(_response);
-            if (unit.Success)
-            {
-                CurrentATCUnit = unit.Value.Trim('_', '@');
-            }
-
-            var responses = cpdlcHeaderParse.Matches(_response);
-            CPDLCResponse header = new()
-            {
-                DataType = responses[0].Value.Trim('/'),
-                MessageID = Convert.ToInt32(responses[1].Value.Trim('/')),
-                ResponseID = responses[2].Value.Trim('/').Length < 1 ? 0 : Convert.ToInt32(responses[2].Value.Trim('/')),
-                Responses = responses[3].Value.Trim('/')
-            };
-
-            string[] messageContent = _response.Split(new string[] { header.Responses + "/" }, StringSplitOptions.None);
-            if (messageContent[1].Contains(callsign))
-            {
-                messageString = messageContent[1].Split(new string[] { callsign }, StringSplitOptions.None).Last();
-            }
-            else
-            {
-                messageString = messageContent[1];
-            }
-            if (messageString.StartsWith("HANDOVER"))
-            {
-                string nextATCUnit = messageString.Split(' ').Last().Trim('@').Trim();
-                CurrentATCUnit = null;
-                await SendCPDLCMessage(nextATCUnit, "CPDLC", String.Format("/data2/{0}//Y/REQUEST LOGON", messageOutCounter), false);
-                pendingLogon = nextATCUnit;
-                messageOutCounter += 1;
-                _showUser = false;
-            }
-            else if (messageString.StartsWith("LOGON ACCEPTED"))
-            {
-                CurrentATCUnit = pendingLogon;
-                WriteMessage("CURRENT ATS UNIT: " + pendingLogon, "CPDLC", _sender, false, header);
-                _showUser = false;
-            }
-            else if (messageString.StartsWith("CURRENT ATC UNIT") || messageString.StartsWith("CURRENT ATS UNIT"))
-            {
-                _showUser = false;
-            }
-
-            string message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_", "");
-            message = Regex.Replace(message, @"\s+", " ");
-
-            Logger.Debug(message);
-
-            if (message.Contains("LOGOFF"))
-            {
-                CurrentATCUnit = null;
-                pendingLogon = null;
-            }
-
-            if(_showUser)
-            {
-                WriteMessage(message, "CPDLC", _sender, false, header);
-
+                formatResponse += modify[1];
+                WriteMessage(formatResponse, type, sender);
                 FlashWindow.Flash(this);
             }
-
-            return;
         }
+    }
 
-        public CPDLCMessage WriteMessage(string _response, string _type, string _recipient, bool _outbound = false, CPDLCResponse _header = null)
+    private async Task CpdlcParser(string response, string sender)
+    {
+        var showUser = true;
+
+        var unit = CpdlcUnitParse.Match(response);
+        if (unit.Success)
         {
-            CPDLCMessage message;
-            if (_outbound)
-            {
-                message = CreateCPDLCMessage(_response, _type, _recipient, _outbound, _header);
-            }
-            else
-            {
-                message = CreateCPDLCMessage(_response, _type, _recipient, _outbound, _header);
-                if (PlaySound && _recipient != "SYSTEM") { player.Play(); }
-            }
-
-            Logger.Debug("Writing message: " + _response);
-
-            TimerLabel menuLabel = CreateTimerLabel(">>", true);
-            if (_type == "CPDLC" && !_outbound && _header.Responses != "NE")
-            {
-                menuLabel.CanFlash = true;
-            }
-            menuLabel.Click += MessageClicked;
-            message.KeyDown += MessageClicked;
-
-            outputTable.Invoke(new Action(() => outputTable.Controls.Add(CreateLabel(DateTime.Now.ToString("HH:mm")), 0, outputTable.RowCount - 1)));
-            outputTable.Invoke(new Action(() => outputTable.Controls.Add(message, 1, outputTable.RowCount - 1)));
-            outputTable.Invoke(new Action(() => outputTable.Controls.Add(menuLabel, 2, outputTable.RowCount - 1)));
-            outputTable.Invoke(new Action(() => outputTable.RowCount += 1));
-            outputTable.Invoke(new Action(() => outputTable.RowStyles.Add(new RowStyle(SizeType.AutoSize))));
-            outputTable.Invoke(new Action(() => outputTable.ScrollControlIntoView(message)));
-
-            return message;
+            CurrentAtcUnit = unit.Value.Trim('_', '@');
         }
 
-        public async void ArtificialDelay(string _message, string _type, string _sender, int _minDelay = 5, int _maxDelay = 15)
+        var responses = CpdlcHeaderParse.Matches(response);
+        CpdlcResponse header = new()
         {
-            await Task.Delay(random.Next(_minDelay, _maxDelay) * 1000);
-            await SendCPDLCMessage(_sender, _type, _message, false);
-            return;
-        }
-        private void ExitButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                requestCancellationTokenSource.Cancel();
-            }
-            catch (NullReferenceException) { }
-            this.Close();
+            MessageId = Convert.ToInt32(responses[1].Value.Trim('/')),
+            ResponseId = responses[2].Value.Trim('/').Length < 1 ? 0 : Convert.ToInt32(responses[2].Value.Trim('/')),
+            Responses = responses[3].Value.Trim('/')
+        };
 
-            LogManager.Shutdown();
-            FSUIPCData.CloseConnection();
-            System.Windows.Forms.Application.Exit();
-        }
-        private void MoveWindow(object sender, MouseEventArgs e)
+        var messageContent = response.Split([header.Responses + "/"], StringSplitOptions.None);
+        var messageString = messageContent[1].Contains(callsign) ? messageContent[1].Split([callsign], StringSplitOptions.None).Last() : messageContent[1];
+        if (messageString.StartsWith("HANDOVER"))
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
+            var nextAtcUnit = messageString.Split(' ').Last().Trim('@').Trim();
+            CurrentAtcUnit = null;
+            await SendCpdlcMessage(nextAtcUnit, "CPDLC", $"/data2/{messageOutCounter}//Y/REQUEST LOGON", false);
+            pendingLogon = nextAtcUnit;
+            messageOutCounter += 1;
+            showUser = false;
         }
-        private async void RetrieveButton_Click(object sender, EventArgs e)
+        else if (messageString.StartsWith("LOGON ACCEPTED"))
+        {
+            CurrentAtcUnit = pendingLogon;
+            WriteMessage("CURRENT ATS UNIT: " + pendingLogon, "CPDLC", sender, false, header);
+            showUser = false;
+        }
+        else if (messageString.StartsWith("CURRENT ATC UNIT") || messageString.StartsWith("CURRENT ATS UNIT"))
+        {
+            showUser = false;
+        }
+
+        var message = callsign + " " + messageString.Replace("@@", "N/A").Replace("@", Environment.NewLine).Replace("_", "");
+        message = Regex.Replace(message, @"\s+", " ");
+
+        Logger.Debug(message);
+
+        if (message.Contains("LOGOFF"))
+        {
+            CurrentAtcUnit = null;
+            pendingLogon = null;
+        }
+
+        if(showUser)
+        {
+            WriteMessage(message, "CPDLC", sender, false, header);
+
+            FlashWindow.Flash(this);
+        }
+    }
+
+    public void WriteMessage(string response, string type, string recipient, bool outbound = false,
+        CpdlcResponse header = null)
+    {
+        CpdlcMessage message;
+        if (outbound)
+        {
+            message = CreateCpdlcMessage(response, type, recipient, true, header);
+        }
+        else
+        {
+            message = CreateCpdlcMessage(response, type, recipient, false, header);
+            if (PlaySound && recipient != "SYSTEM") { player.Play(); }
+        }
+
+        Logger.Debug("Writing message: " + response);
+
+        var menuLabel = CreateTimerLabel(">>");
+        if (type == "CPDLC" && !outbound && header is not { Responses: "NE" })
+        {
+            menuLabel.CanFlash = true;
+        }
+        menuLabel.Click += MessageClicked;
+        message.KeyDown += MessageClicked;
+
+        outputTable.Invoke(() => outputTable.Controls.Add(CreateLabel(DateTime.Now.ToString("HH:mm")), 0, outputTable.RowCount - 1));
+        outputTable.Invoke(() => outputTable.Controls.Add(message, 1, outputTable.RowCount - 1));
+        outputTable.Invoke(() => outputTable.Controls.Add(menuLabel, 2, outputTable.RowCount - 1));
+        outputTable.Invoke(new Action(() => outputTable.RowCount += 1));
+        outputTable.Invoke(new Action(() => outputTable.RowStyles.Add(new RowStyle(SizeType.AutoSize))));
+        outputTable.Invoke(() => outputTable.ScrollControlIntoView(message));
+    }
+
+    public async void ArtificialDelay(string message, string type, string sender, int minDelay = 5, int maxDelay = 15)
+    {
+        try
+        {
+            await Task.Delay(random.Next(minDelay, maxDelay) * 1000, requestCancellationToken);
+            await SendCpdlcMessage(sender, type, message, false);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+    private void ExitButton_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            requestCancellationTokenSource.Cancel();
+        }
+        catch (NullReferenceException) { }
+        this.Close();
+
+        LogManager.Shutdown();
+        FsuipcData.CloseConnection();
+        System.Windows.Forms.Application.Exit();
+    }
+    private void MoveWindow(object sender, MouseEventArgs e) => DragWindow(sender, e);
+    private async void RetrieveButton_Click(object sender, EventArgs e)
+    {
+        try
         {
             string response = "";
 
@@ -1107,25 +1003,24 @@ namespace EasyCPDLC
                 {
                     using (HttpClient wc = new())
                     {
-                        vatsimData = JsonConvert.DeserializeObject<VATSIMRootobject>(wc.GetStringAsync("https://data.vatsim.net/v3/vatsim-data.json").Result);
+                        vatsimData = JsonSerializer.Deserialize<VatsimRootobject>(await wc.GetStringAsync("https://data.vatsim.net/v3/vatsim-data.json", requestCancellationToken), JsonOptions);
                         Logger.Debug("VATSIM Data Retrieved and Parsed");
 
                     }
 
-                    userVATSIMData = vatsimData.pilots.Where(i => i.cid == cid).FirstOrDefault();
-                    if(userVATSIMData is null)
+                    userVatsimData = vatsimData.pilots.FirstOrDefault(i => i.cid == cid);
+                    if(userVatsimData is null)
                     {
                         throw new IndexOutOfRangeException();
                     }
-
-                    string _fpTest = userVATSIMData.flight_plan.altitude;
-                    callsign = userVATSIMData.callsign;
+                    
+                    callsign = userVatsimData.callsign;
 
                     Connected = true;
 
                     requestCancellationTokenSource = new CancellationTokenSource();
                     requestCancellationToken = requestCancellationTokenSource.Token;
-                    _ = PeriodicCheckMessage(updateTimer, requestCancellationToken);                
+                    _ = PeriodicCheckMessage(UpdateTimer, requestCancellationToken);                
 
                 }
                 catch (IndexOutOfRangeException)
@@ -1154,13 +1049,15 @@ namespace EasyCPDLC
                 {
 
                     using HttpClient wc = new();
-                    var simbriefjson = wc.GetStringAsync(String.Format("https://www.simbrief.com/api/xml.fetcher.php?userid={0}&json=1", SimbriefID)).Result;
-                    var simbriefNavlog = JObject.Parse(simbriefjson)["navlog"].ToString();
-                    simbriefData = JsonConvert.DeserializeObject<Navlog>(simbriefNavlog);
+                    var simbriefjson = wc.GetStringAsync(
+                        $"https://www.simbrief.com/api/xml.fetcher.php?userid={SimbriefId}&json=1", requestCancellationToken).Result;
+                    using var simbriefDoc = JsonDocument.Parse(simbriefjson);
+                    var simbriefNavlog = simbriefDoc.RootElement.GetProperty("navlog").GetRawText();
+                    simbriefData = JsonSerializer.Deserialize<Navlog>(simbriefNavlog, JsonOptions);
 
                     Logger.Debug("Simbrief Data Retrieved and Parsed");
 
-                    reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new string[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
+                    reportFixes = simbriefData.fix.Where(x => x.is_sid_star == "0" && !new[] { "apt" }.Contains(x.type)).Select(x => x.ident).ToArray();
                     response += " SIMBRIEF OK,";
                 }
 
@@ -1169,11 +1066,11 @@ namespace EasyCPDLC
                     response += "SIMBRIEF ERROR,";
                 }
 
-                if (UseFSUIPC)
+                if (UseFsuipc)
                 {
                     try
                     {
-                        fsConnectionOpen = FSUIPCData.OpenConnection();
+                        fsConnectionOpen = FsuipcData.OpenConnection();
                         if (fsConnectionOpen)
                         {
                             response += "SIMULATOR OK.";
@@ -1193,21 +1090,21 @@ namespace EasyCPDLC
             }
             else
             {
-                if (CurrentATCUnit is not null)
+                if (CurrentAtcUnit is not null)
                 {
-                    await SendCPDLCMessage(CurrentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), false);
+                    await SendCpdlcMessage(CurrentAtcUnit, "CPDLC", $@"/data2/{messageOutCounter}//N/LOGOFF", false);
                 }
-                foreach(Contract _contract in contracts)
+                foreach(var contract in contracts)
                 {
-                    await SendCPDLCMessage(_contract.sender, "ADS-C", "REJECT " + _contract.contractLength, false);
+                    await SendCpdlcMessage(contract.Sender, "ADS-C", "REJECT " + contract.ContractLength, false);
                 }
-                requestCancellationTokenSource.Cancel();
+                await requestCancellationTokenSource.CancelAsync();
                 callsign = "";
                 response = "DISCONNECTED CLIENT";
-                vatsimData = new VATSIMRootobject();
-                userVATSIMData = new Pilot();
+                vatsimData = new VatsimRootobject();
+                userVatsimData = new Pilot();
                 simbriefData = new Navlog();
-                fsConnectionOpen = FSUIPCData.CloseConnection();
+                fsConnectionOpen = FsuipcData.CloseConnection();
 
                 atcButton.Enabled = false;
                 telexButton.Enabled = false;
@@ -1217,147 +1114,94 @@ namespace EasyCPDLC
 
             }
         }
-        private void TelexButton_Click(object sender, EventArgs e)
+        catch (Exception)
         {
-            tForm = new TelexForm(this);
-            tForm.Show();
+            // ignored
         }
-        private void RequestButton_Click(object sender, EventArgs e)
+    }
+    private void TelexButton_Click(object sender, EventArgs e)
+    {
+        tForm = new TelexForm(this);
+        tForm.Show();
+    }
+    private void RequestButton_Click(object sender, EventArgs e)
+    {
+        rForm = new RequestForm(this)
         {
-            rForm = new RequestForm(this)
-            {
-                TopMost = StayOnTop
-            };
-            rForm.Show();
-        }
+            TopMost = StayOnTop
+        };
+        rForm.Show();
+    }
 
-        private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        try
         {
             Properties.Settings.Default.MainWindowLocation = Location;
             Properties.Settings.Default.MainWindowSize = Size;
             Properties.Settings.Default.Save();
 
-            if (CurrentATCUnit is not null)
-            {
-                await SendCPDLCMessage(CurrentATCUnit, "CPDLC", String.Format("/data2/{0}//N/LOGOFF", messageOutCounter), false);
-                requestCancellationTokenSource.Cancel();
-            }
+            if (CurrentAtcUnit is null) return;
+            await SendCpdlcMessage(CurrentAtcUnit, "CPDLC", $@"/data2/{messageOutCounter}//N/LOGOFF", false);
+            await requestCancellationTokenSource.CancelAsync();
         }
-
-        private void OutputTable_Click(object sender, EventArgs e)
+        catch (Exception)
         {
-            MouseEventArgs me = (MouseEventArgs)e;
-
-            TableLayoutPanel _sender = (TableLayoutPanel)sender;
-
-            if (me.Button == MouseButtons.Right)
-            {
-                popupMenu.Items.Clear();
-                popupMenu.Items.Add(deleteAllMenu);
-
-                popupMenu.Show(_sender, _sender.PointToClient(Cursor.Position));
-            }
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x84)
-            {  // Trap WM_NCHITTEST
-                Point pos = new(m.LParam.ToInt32());
-                pos = this.PointToClient(pos);
-                if (pos.Y < cCaption)
-                {
-                    m.Result = (IntPtr)2;  // HTCAPTION
-                    return;
-                }
-                if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
-                {
-                    m.Result = (IntPtr)17; // HTBOTTOMRIGHT
-                    return;
-                }
-            }
-            base.WndProc(ref m);
-        }
-
-        private void SettingsButton_Click(object sender, EventArgs e)
-        {
-            sForm = new SettingsForm(this)
-            {
-                TopMost = StayOnTop
-            };
-            sForm.Show();
-        }
-
-        private void HelpButton_Click(object sender, EventArgs e)
-        {
-            //worst bodge I've ever had to pull, thanks to this: github.com/dotnet/runtime/issues/17938
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/josh-seagrave/EasyCPDLC/wiki"){ UseShellExecute = true });
-            MessageBox.Show(
-                @"EasyCPDLC
-Copyright(C) 2022 Joshua Seagrave
-
-This program is free software: you can redistribute it and / or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.If not, see <https://www.gnu.org/licenses/>.", String.Format("EasyCPDLC v{0} Licensing & Copyright Notice", System.Windows.Forms.Application.ProductVersion), MessageBoxButtons.OK);
+            // ignored
         }
     }
-    internal class NoHighlightRenderer : ToolStripProfessionalRenderer
+
+    private void OutputTable_Click(object s, EventArgs e)
     {
-        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
-        {
-            if (e.Item.OwnerItem == null)
-            {
-                base.OnRenderMenuItemBackground(e);
-            }
-        }
+        var me = (MouseEventArgs)e;
+
+        var sender = (TableLayoutPanel)s;
+
+        if (me.Button != MouseButtons.Right) return;
+        popupMenu.Items.Clear();
+        popupMenu.Items.Add(deleteAllMenu);
+
+        popupMenu.Show(sender, sender.PointToClient(Cursor.Position));
     }
-    public static class TableLayoutHelper
+
+    private void SettingsButton_Click(object sender, EventArgs e)
     {
-        public static void RemoveArbitraryRow(TableLayoutPanel panel, int rowIndex)
+        sForm = new SettingsForm(this)
         {
-            if (rowIndex >= panel.RowCount)
-            {
-                return;
-            }
-
-            // delete all controls of row that we want to delete
-            for (int i = 0; i < panel.ColumnCount; i++)
-            {
-                var control = panel.GetControlFromPosition(i, rowIndex);
-                panel.Controls.Remove(control);
-            }
-
-            // move up row controls that comes after row we want to remove
-            for (int i = rowIndex + 1; i < panel.RowCount; i++)
-            {
-                for (int j = 0; j < panel.ColumnCount; j++)
-                {
-                    var control = panel.GetControlFromPosition(j, i);
-                    if (control != null)
-                    {
-                        panel.SetRow(control, i - 1);
-                    }
-                }
-            }
-
-            var removeStyle = panel.RowCount - 1;
-
-            if (panel.RowStyles.Count > removeStyle)
-                panel.RowStyles.RemoveAt(removeStyle);
-
-            panel.RowCount--;
-
-            panel.AutoScroll = false;
-            panel.AutoScroll = true;
-        }
+            TopMost = StayOnTop
+        };
+        sForm.Show();
     }
+
+    private void HelpButton_Click(object sender, EventArgs e)
+    {
+        //worst bodge I've ever had to pull, thanks to this: github.com/dotnet/runtime/issues/17938
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/josh-seagrave/EasyCPDLC/wiki"){ UseShellExecute = true });
+        MessageBox.Show(
+            """
+            EasyCPDLC
+            Copyright(C) 2022 Joshua Seagrave
+
+            This program is free software: you can redistribute it and / or modify
+            it under the terms of the GNU General Public License as published by
+            the Free Software Foundation, either version 3 of the License, or
+            (at your option) any later version.
+
+            This program is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+            GNU General Public License for more details.
+
+            You should have received a copy of the GNU General Public License
+            along with this program.If not, see <https://www.gnu.org/licenses/>.
+            """,
+            $@"EasyCPDLC v{System.Windows.Forms.Application.ProductVersion} Licensing & Copyright Notice", MessageBoxButtons.OK);
+    }
+
+    [GeneratedRegex(@"{([\S\s]*?)}")]
+    private static partial Regex HoppieRegex();
+    [GeneratedRegex(@"(\/\s*)\w*")]
+    private static partial Regex CpdlcHeaderRegex();
+    [GeneratedRegex(@"_@([\w]*)@_")]
+    private static partial Regex CpdlcUnitRegex();
 }
